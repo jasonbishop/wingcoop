@@ -1,7 +1,7 @@
 # Small first grid: checks that the numbers look sane before the full run.
 # Every cell is played on the same seeds, so co-op and baseline games are paired.
 name: coop-goals-small
-seeds: {start: 1, count: 120}
+seeds: {start: 1, count: 100}
 players: [2, 3, 4, 5]
 conditions:
   baseline:  {plugins: {}, win_condition: individual}
@@ -14,5 +14,7 @@ group_policy: ["fixed(1)", "fixed(2)", "fixed(3)", "ladder(2,+1,0)", estimate]
 # Both definitions are run; it only matters where a group score exists.
 group_share: [false, true]
 # The estimate policy plays extra rollouts for every difficulty choice, so it runs on fewer seeds.
-seed_limits: {estimate: 30}
-logging:     {level: summary, full_sample: 0.02, full_if: [group_fail_round_4, spread_gt_40]}
+seed_limits: {estimate: 24}
+# The spec's example also keeps full logs for group_fail_round_4. With the untuned greedy bots most
+# co-op games fail round 4, so that rule would log (and re-run) nearly every game; it is left out here.
+logging:     {level: summary, full_sample: 0.02, full_if: [spread_gt_40]}

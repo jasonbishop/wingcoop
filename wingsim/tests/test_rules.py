@@ -314,3 +314,23 @@ def test_illegal_choice_is_rejected_and_apply_is_pure():
     assert s2 is not s and api.pending_decision(s) == d
     with pytest.raises(api.IllegalChoice):
         api.apply(s2, d, d.options[0])                    # stale decision: a different one is pending now
+
+
+def test_empty_deck_reshuffles_the_discard_pile():
+    s = fresh()
+    put(s, 0, pick(lambda b: b.timing is None, 1)[0], "grassland")
+    s.discard = s.deck[:10]
+    s.deck = []
+    set_turn(s, 0)
+    drive(s, ("cards",))                                   # tray is empty, so the draw comes from the deck
+    assert len(s.players[0].hand) == 1 and s.turn == 1
+    assert s.discard == [] and len(s.deck) + len(s.tray) == 9   # 10 reshuffled, 1 drawn, tray refilled
+    assert any(e["e"] == "deck_reshuffled" for e in s.events)
+
+
+def test_no_cards_anywhere_is_survivable():
+    s = fresh()
+    s.tucked.extend(s.deck)                                # park every card out of play
+    s.deck = []
+    turn(s, 0, ("cards",))
+    assert s.players[0].hand == [] and s.tray == []
