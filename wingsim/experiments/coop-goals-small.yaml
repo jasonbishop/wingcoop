@@ -1,0 +1,18 @@
+# Small first grid: checks that the numbers look sane before the full run.
+# Every cell is played on the same seeds, so co-op and baseline games are paired.
+name: coop-goals-small
+seeds: {start: 1, count: 120}
+players: [2, 3, 4, 5]
+conditions:
+  baseline:  {plugins: {}, win_condition: individual}
+  coop:      {plugins: {coop_goals: {penalty: avg_x_d, allowed_changes: [0, 1]}, open_hands: true},
+              win_condition: team_total}
+agents:      {type: greedy, weights: "tuned/{condition}.json"}
+motivation:  [0.0, 0.5, 1.0]          # w, applied to every player
+group_policy: ["fixed(1)", "fixed(2)", "fixed(3)", "ladder(2,+1,0)", estimate]
+# Whether an equal share of the group score counts as a player's own score.
+# Both definitions are run; it only matters where a group score exists.
+group_share: [false, true]
+# The estimate policy plays extra rollouts for every difficulty choice, so it runs on fewer seeds.
+seed_limits: {estimate: 30}
+logging:     {level: summary, full_sample: 0.02, full_if: [group_fail_round_4, spread_gt_40]}

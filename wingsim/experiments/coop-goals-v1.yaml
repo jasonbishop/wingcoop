@@ -1,0 +1,15 @@
+# The full grid from the build spec, with both definitions of "own score".
+# About 216,000 games; expect many hours on a small machine.
+name: coop-goals-v1
+seeds: {start: 1, count: 2000}
+players: [2, 3, 4, 5]
+conditions:
+  baseline:  {plugins: {}, win_condition: individual}
+  coop:      {plugins: {coop_goals: {penalty: avg_x_d, allowed_changes: [0, 1]}, open_hands: true},
+              win_condition: team_total}
+agents:      {type: greedy, weights: "tuned/{condition}.json"}
+motivation:  [0.0, 0.5, 1.0]          # w, applied to every player
+group_policy: ["fixed(2)", "fixed(3)", "ladder(2,+1,0)", estimate]
+group_share: [false, true]
+seed_limits: {estimate: 200}
+logging:     {level: summary, full_sample: 0.02, full_if: [group_fail_round_4, spread_gt_40]}
