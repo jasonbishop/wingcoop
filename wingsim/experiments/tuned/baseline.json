@@ -1,0 +1,119 @@
+{
+ "condition": "baseline",
+ "experiment": "coop-goals-small",
+ "weights": {
+  "food": 0.9,
+  "food_decay": 0.85,
+  "card": 0.52,
+  "card_vp": 0.0798,
+  "card_decay": 0.86,
+  "room": 0.6,
+  "rate_forest": 0.2,
+  "rate_grassland": 0.27,
+  "rate_wetland": 0.19,
+  "horizon": 5.0,
+  "goal_rate": 0.3
+ },
+ "adopted": true,
+ "note": null,
+ "searched_weights": {
+  "food": 0.9,
+  "food_decay": 0.85,
+  "card": 0.52,
+  "card_vp": 0.0798,
+  "card_decay": 0.86,
+  "room": 0.6,
+  "rate_forest": 0.2,
+  "rate_grassland": 0.27,
+  "rate_wetland": 0.19,
+  "horizon": 5.0,
+  "goal_rate": 0.3
+ },
+ "start": {
+  "food": 0.9,
+  "food_decay": 0.85,
+  "card": 0.52,
+  "card_vp": 0.06,
+  "card_decay": 0.86,
+  "room": 0.6,
+  "rate_forest": 0.2,
+  "rate_grassland": 0.27,
+  "rate_wetland": 0.19,
+  "horizon": 5.0,
+  "goal_rate": 0.3
+ },
+ "counts": {
+  "candidates": 94,
+  "confirmation_runs": 43,
+  "accepted": 1
+ },
+ "settings": {
+  "minutes": 18.0,
+  "tune_seeds": 40,
+  "confirm_seeds": 40,
+  "holdout_seeds": 160,
+  "objective": "mean over seats of each player's own objective"
+ },
+ "holdout": {
+  "default": {
+   "mean": 67.864,
+   "half": 2.048
+  },
+  "tuned for baseline": {
+   "mean": 69.905,
+   "half": 2.317
+  },
+  "tuned for coop": {
+   "mean": 67.572,
+   "half": 2.205
+  }
+ },
+ "holdout_gain_over_default": {
+  "mean": 2.041,
+  "half": 1.586
+ },
+ "history": [
+  {
+   "step": 0,
+   "tune": 68.63541666666666,
+   "confirm": 68.11916666666667,
+   "weights": {
+    "food": 0.9,
+    "food_decay": 0.85,
+    "card": 0.52,
+    "card_vp": 0.06,
+    "card_decay": 0.86,
+    "room": 0.6,
+    "rate_forest": 0.2,
+    "rate_grassland": 0.27,
+    "rate_wetland": 0.19,
+    "horizon": 5.0,
+    "goal_rate": 0.3
+   }
+  },
+  {
+   "step": 7,
+   "tune": 70.79875,
+   "confirm": 69.35625,
+   "changed": {
+    "card_vp": [
+     0.06,
+     0.0798
+    ]
+   },
+   "weights": {
+    "food": 0.9,
+    "food_decay": 0.85,
+    "card": 0.52,
+    "card_vp": 0.0798,
+    "card_decay": 0.86,
+    "room": 0.6,
+    "rate_forest": 0.2,
+    "rate_grassland": 0.27,
+    "rate_wetland": 0.19,
+    "horizon": 5.0,
+    "goal_rate": 0.3
+   }
+  }
+ ]
+}

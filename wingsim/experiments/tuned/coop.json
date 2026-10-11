@@ -1,0 +1,175 @@
+{
+ "condition": "coop",
+ "experiment": "coop-goals-small",
+ "weights": {
+  "food": 0.9,
+  "food_decay": 0.85,
+  "card": 0.52,
+  "card_vp": 0.06,
+  "card_decay": 0.86,
+  "room": 0.6,
+  "rate_forest": 0.2,
+  "rate_grassland": 0.27,
+  "rate_wetland": 0.19,
+  "horizon": 5.0,
+  "goal_rate": 0.3
+ },
+ "adopted": false,
+ "note": "The search found no held-out improvement, so the starting weights are kept.",
+ "searched_weights": {
+  "food": 0.9,
+  "food_decay": 0.7395,
+  "card": 0.52,
+  "card_vp": 0.0599,
+  "card_decay": 0.86,
+  "room": 0.522,
+  "rate_forest": 0.2,
+  "rate_grassland": 0.27,
+  "rate_wetland": 0.2185,
+  "horizon": 5.0,
+  "goal_rate": 0.3
+ },
+ "start": {
+  "food": 0.9,
+  "food_decay": 0.85,
+  "card": 0.52,
+  "card_vp": 0.06,
+  "card_decay": 0.86,
+  "room": 0.6,
+  "rate_forest": 0.2,
+  "rate_grassland": 0.27,
+  "rate_wetland": 0.19,
+  "horizon": 5.0,
+  "goal_rate": 0.3
+ },
+ "counts": {
+  "candidates": 120,
+  "confirmation_runs": 8,
+  "accepted": 3
+ },
+ "settings": {
+  "minutes": 18.0,
+  "tune_seeds": 40,
+  "confirm_seeds": 40,
+  "holdout_seeds": 160,
+  "objective": "mean over seats of each player's own objective"
+ },
+ "holdout": {
+  "default": {
+   "mean": 60.102,
+   "half": 2.011
+  },
+  "tuned for baseline": {
+   "mean": 62.129,
+   "half": 2.202
+  },
+  "tuned for coop": {
+   "mean": 59.479,
+   "half": 2.22
+  }
+ },
+ "holdout_gain_over_default": {
+  "mean": -0.624,
+  "half": 1.824
+ },
+ "history": [
+  {
+   "step": 0,
+   "tune": 60.37676736111111,
+   "confirm": 58.38745138888889,
+   "weights": {
+    "food": 0.9,
+    "food_decay": 0.85,
+    "card": 0.52,
+    "card_vp": 0.06,
+    "card_decay": 0.86,
+    "room": 0.6,
+    "rate_forest": 0.2,
+    "rate_grassland": 0.27,
+    "rate_wetland": 0.19,
+    "horizon": 5.0,
+    "goal_rate": 0.3
+   }
+  },
+  {
+   "step": 2,
+   "tune": 63.65159375,
+   "confirm": 58.776520833333336,
+   "changed": {
+    "food_decay": [
+     0.85,
+     0.7395
+    ],
+    "card_vp": [
+     0.06,
+     0.045
+    ]
+   },
+   "weights": {
+    "food": 0.9,
+    "food_decay": 0.7395,
+    "card": 0.52,
+    "card_vp": 0.045,
+    "card_decay": 0.86,
+    "room": 0.6,
+    "rate_forest": 0.2,
+    "rate_grassland": 0.27,
+    "rate_wetland": 0.19,
+    "horizon": 5.0,
+    "goal_rate": 0.3
+   }
+  },
+  {
+   "step": 9,
+   "tune": 64.49209722222221,
+   "confirm": 58.90200694444444,
+   "changed": {
+    "rate_wetland": [
+     0.19,
+     0.2185
+    ]
+   },
+   "weights": {
+    "food": 0.9,
+    "food_decay": 0.7395,
+    "card": 0.52,
+    "card_vp": 0.045,
+    "card_decay": 0.86,
+    "room": 0.6,
+    "rate_forest": 0.2,
+    "rate_grassland": 0.27,
+    "rate_wetland": 0.2185,
+    "horizon": 5.0,
+    "goal_rate": 0.3
+   }
+  },
+  {
+   "step": 92,
+   "tune": 64.77175,
+   "confirm": 59.55775694444444,
+   "changed": {
+    "card_vp": [
+     0.045,
+     0.0599
+    ],
+    "room": [
+     0.6,
+     0.522
+    ]
+   },
+   "weights": {
+    "food": 0.9,
+    "food_decay": 0.7395,
+    "card": 0.52,
+    "card_vp": 0.0599,
+    "card_decay": 0.86,
+    "room": 0.522,
+    "rate_forest": 0.2,
+    "rate_grassland": 0.27,
+    "rate_wetland": 0.2185,
+    "horizon": 5.0,
+    "goal_rate": 0.3
+   }
+  }
+ ]
+}
