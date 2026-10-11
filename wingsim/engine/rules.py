@@ -1024,6 +1024,21 @@ def resume(s, choice):
     run(s)
 
 
+def play_random(s, rng):
+    """Play uniformly random choices in place until the game is over. `rng` is a random.Random."""
+    rnd = rng.random
+    stack = s.stack
+    while True:
+        pend = s.pend
+        if pend is None:
+            return
+        opts = pend[2]
+        s.pend = None
+        f = stack[-1]
+        RESUME[f[0]](s, f, opts[int(rnd() * len(opts))])
+        run(s)
+
+
 def deal(cfg, seed):
     """Set up a new game up to the first decision."""
     from .state import Player, State

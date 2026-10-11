@@ -13,6 +13,7 @@ from multiprocessing import Pool
 from .agents import group_policies
 from .agents.base import Objective
 from .agents.greedy import GreedyAgent
+from .agents.mcts import MCTSAgent
 from .agents.random import RandomAgent
 from .analysis.metrics import DecisionTally
 from .engine import api
@@ -92,6 +93,10 @@ class Table:
         for i in range(cfg.n):
             if kind == "greedy":
                 a = GreedyAgent(self.cell["weights"], seed)
+            elif kind == "mcts":
+                opts = {k: self.cell["agent"][k] for k in ("iterations", "ms", "minor_iterations", "c", "rollout")
+                        if k in self.cell["agent"]}
+                a = MCTSAgent(seed=seed, greedy_weights=self.cell["weights"], **opts)
             elif kind == "random":
                 a = RandomAgent(seed * 131 + i)
             else:

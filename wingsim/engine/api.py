@@ -16,7 +16,7 @@ from .state import GROUP, OVER, SETUP, TURNS, PRE_ROUND
 
 __all__ = ["GameConfig", "Decision", "GROUP", "HIDDEN", "IllegalChoice", "Observation", "new_game",
            "pending_decision", "apply", "apply_in_place", "observe", "is_over", "final_scores", "scores",
-           "totals", "goal_counts", "score_goal_counts", "simulate_turn", "turns_left", "round_turns_left"]
+           "totals", "goal_counts", "score_goal_counts", "simulate_turn", "play_random", "turns_left", "round_turns_left"]
 
 Decision = namedtuple("Decision", "player kind options context")
 
@@ -116,3 +116,8 @@ def simulate_turn(state, player, habitat, chooser):
     while s.pend is not None:
         rules.resume(s, chooser(s, s.pend))
     return s
+
+
+def play_random(state, rng):
+    """Finish the game in place with uniformly random choices by every player (a fast rollout)."""
+    rules.play_random(state, rng)

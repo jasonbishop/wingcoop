@@ -1,0 +1,16 @@
+# Full games played by tree-search bots, for the positive and negative controls:
+# 5 players, selfish (w = 0) and team-minded (w = 1) tables, baseline and co-op.
+# The report's "Shared-benefit birds" section gives the pick rates.
+name: controls-mcts
+seeds: {start: 9001, count: 24}
+players: [5]
+conditions:
+  baseline:  {plugins: {}, win_condition: individual}
+  coop:      {plugins: {coop_goals: {penalty: avg_x_d, allowed_changes: [0, 1]}, open_hands: true},
+              win_condition: team_total}
+# 200 iterations for "which action" decisions, 40 for the smaller follow-up choices.
+agents:      {type: mcts, iterations: 200, minor_iterations: 40}
+motivation:  [0.0, 1.0]
+group_policy: ["fixed(2)"]
+group_share: [false]
+logging:     {level: summary, full_sample: 0.1}
