@@ -41,8 +41,10 @@ class CoopGoals(Plugin):
         s.variant["coop.d"] = choice[1]
 
     def round_end_scoring(self, s, counts):
-        d = s.variant["coop.d"]
+        d = s.variant.get("coop.d")
         n = len(counts)
+        if d is None:   # asked before the group has set a difficulty (during setup)
+            return [0.0] * n, 0.0, ("coop", None, None)
         capped = [c if c < 5 else 5 for c in counts]
         mean = sum(capped) / n
         success = min(capped) >= d
