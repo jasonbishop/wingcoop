@@ -1,0 +1,3320 @@
+{
+ "2": {
+  "name": "Acorn Woodpecker",
+  "text": "Gain 1 [seed] from the birdfeeder, if available. You may cache it on this bird.",
+  "template": "gain_feeder_may_cache",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "feeder",
+     "food": [
+      "seed"
+     ],
+     "n": 1,
+     "who": "self",
+     "may_cache": true
+    }
+   ]
+  }
+ },
+ "3": {
+  "name": "American Avocet",
+  "text": "When another player takes the “lay eggs” action, lay 1 [egg] on another bird with a [ground] nest.",
+  "template": "pink_lay_eggs_lay_other_nest",
+  "spec": {
+   "timing": "pink",
+   "trigger": {
+    "on": "on_other_player_lay_eggs"
+   },
+   "steps": [
+    {
+     "op": "lay_eggs",
+     "n": 1,
+     "on": "any",
+     "nest": "ground",
+     "who": "self",
+     "other_than_this": true
+    }
+   ]
+  }
+ },
+ "4": {
+  "name": "American Bittern",
+  "text": "Player(s) with the fewest birds in their [wetland] draw 1 [card].",
+  "template": "fewest_draw",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "draw_cards",
+     "from": "any",
+     "n": 1,
+     "who": "fewest_in_habitat",
+     "habitat": "wetland"
+    }
+   ]
+  }
+ },
+ "5": {
+  "name": "American Coot",
+  "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].",
+  "template": "tuck_hand_then_draw",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "if_then",
+     "if": {
+      "op": "tuck",
+      "from": "hand",
+      "n": 1
+     },
+     "then": [
+      {
+       "op": "draw_cards",
+       "from": "any",
+       "n": 1,
+       "who": "self"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "6": {
+  "name": "American Crow",
+  "text": "Discard 1 [egg] from any of your other birds to gain 1 [wild] from the supply.",
+  "template": "discard_egg_other_gain_wild",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "discard_to_gain",
+     "cost": {
+      "what": "egg",
+      "from": "other_birds"
+     },
+     "then": [
+      {
+       "op": "gain_food",
+       "from": "supply",
+       "food": "any",
+       "n": 1,
+       "who": "self"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "7": {
+  "name": "American Goldfinch",
+  "text": "Gain 3 [seed] from the supply.",
+  "template": "gain_supply",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "supply",
+     "food": [
+      "seed"
+     ],
+     "n": 3,
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "8": {
+  "name": "American Kestrel",
+  "text": "Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird.",
+  "template": "roll_dice_cache",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "roll_dice_not_in_feeder",
+     "food": "rodent",
+     "then": [
+      {
+       "op": "cache_food",
+       "food": "rodent",
+       "n": 1
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "9": {
+  "name": "American Oystercatcher",
+  "text": "Draw [card] equal to the number of players +1. Starting with you and proceeding clockwise, each player selects 1 of those cards and places it in their hand. You keep the extra card.",
+  "template": "override:draft_players_plus_one",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "draft_cards",
+     "n": "players_plus_1",
+     "from": "any"
+    }
+   ]
+  }
+ },
+ "10": {
+  "name": "American Redstart",
+  "text": "Gain 1 [die] from the birdfeeder.",
+  "template": "gain_die",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "feeder",
+     "food": "any",
+     "n": 1,
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "11": {
+  "name": "American Robin",
+  "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].",
+  "template": "tuck_hand_then_draw",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "if_then",
+     "if": {
+      "op": "tuck",
+      "from": "hand",
+      "n": 1
+     },
+     "then": [
+      {
+       "op": "draw_cards",
+       "from": "any",
+       "n": 1,
+       "who": "self"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "12": {
+  "name": "American White Pelican",
+  "text": "Discard 1 [fish] to tuck 2 [card] from the deck behind this bird.",
+  "template": "discard_food_tuck_deck",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "discard_to_gain",
+     "cost": {
+      "what": "food",
+      "food": [
+       "fish"
+      ]
+     },
+     "then": [
+      {
+       "op": "tuck",
+       "from": "deck",
+       "n": 2
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "14": {
+  "name": "Anhinga",
+  "text": "Roll all dice not in birdfeeder. If any are [fish], cache 1 [fish] from the supply on this bird.",
+  "template": "roll_dice_cache",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "roll_dice_not_in_feeder",
+     "food": "fish",
+     "then": [
+      {
+       "op": "cache_food",
+       "food": "fish",
+       "n": 1
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "15": {
+  "name": "Anna's Hummingbird",
+  "text": "Each player gains 1 [die] from the birdfeeder, starting with the player of your choice.",
+  "template": "each_gain_die_in_order",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "feeder",
+     "food": "any",
+     "n": 1,
+     "who": "each_from_feeder_in_order",
+     "may_decline": true
+    }
+   ]
+  }
+ },
+ "16": {
+  "name": "Ash-Throated Flycatcher",
+  "text": "Lay 1 [egg] on each of your birds with a [cavity] nest.",
+  "template": "lay_each_nest",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "lay_eggs",
+     "n": 1,
+     "on": "each",
+     "nest": "cavity",
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "17": {
+  "name": "Atlantic Puffin",
+  "text": "Draw 2 new bonus cards and keep 1.",
+  "template": "draw_bonus_keep",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "draw_bonus_keep",
+     "draw": 2,
+     "keep": 1
+    }
+   ]
+  }
+ },
+ "19": {
+  "name": "Baird's Sparrow",
+  "text": "Lay 1 [egg] on any bird.",
+  "template": "lay_any",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "lay_eggs",
+     "n": 1,
+     "on": "any",
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "20": {
+  "name": "Bald Eagle",
+  "text": "Gain all [fish] that are in the birdfeeder.",
+  "template": "gain_all_feeder",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "feeder",
+     "food": [
+      "fish"
+     ],
+     "n": "all",
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "21": {
+  "name": "Baltimore Oriole",
+  "text": "All players gain 1 [fruit] from the supply.",
+  "template": "all_gain_supply",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "supply",
+     "food": [
+      "fruit"
+     ],
+     "n": 1,
+     "who": "all"
+    }
+   ]
+  }
+ },
+ "22": {
+  "name": "Barn Owl",
+  "text": "Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird.",
+  "template": "roll_dice_cache",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "roll_dice_not_in_feeder",
+     "food": "rodent",
+     "then": [
+      {
+       "op": "cache_food",
+       "food": "rodent",
+       "n": 1
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "23": {
+  "name": "Barn Swallow",
+  "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].",
+  "template": "tuck_hand_then_draw",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "if_then",
+     "if": {
+      "op": "tuck",
+      "from": "hand",
+      "n": 1
+     },
+     "then": [
+      {
+       "op": "draw_cards",
+       "from": "any",
+       "n": 1,
+       "who": "self"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "24": {
+  "name": "Barred Owl",
+  "text": "Look at a [card] from the deck. If less than 75cm, tuck it behind this bird. If not, discard it.",
+  "template": "look_at_deck_tuck_if_small",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "look_at_deck_card",
+     "max_wingspan": 75
+    }
+   ]
+  }
+ },
+ "25": {
+  "name": "Barrow's Goldeneye",
+  "text": "When another player takes the “lay eggs” action, lay 1 [egg] on another bird with a [cavity] nest.",
+  "template": "pink_lay_eggs_lay_other_nest",
+  "spec": {
+   "timing": "pink",
+   "trigger": {
+    "on": "on_other_player_lay_eggs"
+   },
+   "steps": [
+    {
+     "op": "lay_eggs",
+     "n": 1,
+     "on": "any",
+     "nest": "cavity",
+     "who": "self",
+     "other_than_this": true
+    }
+   ]
+  }
+ },
+ "26": {
+  "name": "Bell's Vireo",
+  "text": "Draw 2 new bonus cards and keep 1.",
+  "template": "draw_bonus_keep",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "draw_bonus_keep",
+     "draw": 2,
+     "keep": 1
+    }
+   ]
+  }
+ },
+ "27": {
+  "name": "Belted Kingfisher",
+  "text": "When another player plays a bird in their [wetland], gain 1 [fish] from the supply.",
+  "template": "pink_play_bird_gain_supply",
+  "spec": {
+   "timing": "pink",
+   "trigger": {
+    "on": "on_other_player_play_bird_in",
+    "habitat": "wetland"
+   },
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "supply",
+     "food": [
+      "fish"
+     ],
+     "n": 1,
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "28": {
+  "name": "Bewick's Wren",
+  "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat.",
+  "template": "move_if_rightmost",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "move_bird",
+     "if": "rightmost"
+    }
+   ]
+  }
+ },
+ "30": {
+  "name": "Black Skimmer",
+  "text": "Roll all dice not in birdfeeder. If any are [fish], cache 1 [fish] from the supply on this bird.",
+  "template": "roll_dice_cache",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "roll_dice_not_in_feeder",
+     "food": "fish",
+     "then": [
+      {
+       "op": "cache_food",
+       "food": "fish",
+       "n": 1
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "31": {
+  "name": "Black Tern",
+  "text": "Draw 1 [card]. If you do, discard 1 [card] from your hand at the end of your turn.",
+  "template": "draw_discard_end_of_turn",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "draw_cards",
+     "from": "any",
+     "n": 1,
+     "who": "self",
+     "discard_eot": 1
+    }
+   ]
+  }
+ },
+ "32": {
+  "name": "Black Vulture",
+  "text": "When another player's [predator] succeeds, gain 1 [die] from the birdfeeder.",
+  "template": "pink_predator_gain_die",
+  "spec": {
+   "timing": "pink",
+   "trigger": {
+    "on": "on_other_player_predator_success"
+   },
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "feeder",
+     "food": "any",
+     "n": 1,
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "34": {
+  "name": "Black-Bellied Whistling-Duck",
+  "text": "Discard 1 [seed] to tuck 2 [card] from the deck behind this bird.",
+  "template": "discard_food_tuck_deck",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "discard_to_gain",
+     "cost": {
+      "what": "food",
+      "food": [
+       "seed"
+      ]
+     },
+     "then": [
+      {
+       "op": "tuck",
+       "from": "deck",
+       "n": 2
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "35": {
+  "name": "Black-Billed Magpie",
+  "text": "When another player's [predator] succeeds, gain 1 [die] from the birdfeeder.",
+  "template": "pink_predator_gain_die",
+  "spec": {
+   "timing": "pink",
+   "trigger": {
+    "on": "on_other_player_predator_success"
+   },
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "feeder",
+     "food": "any",
+     "n": 1,
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "36": {
+  "name": "Black-Chinned Hummingbird",
+  "text": "All players gain 1 [fruit] from the supply.",
+  "template": "all_gain_supply",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "supply",
+     "food": [
+      "fruit"
+     ],
+     "n": 1,
+     "who": "all"
+    }
+   ]
+  }
+ },
+ "37": {
+  "name": "Black-Crowned Night-Heron",
+  "text": "Discard 1 [egg] from any of your other birds to gain 1 [wild] from the supply.",
+  "template": "discard_egg_other_gain_wild",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "discard_to_gain",
+     "cost": {
+      "what": "egg",
+      "from": "other_birds"
+     },
+     "then": [
+      {
+       "op": "gain_food",
+       "from": "supply",
+       "food": "any",
+       "n": 1,
+       "who": "self"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "39": {
+  "name": "Black-Necked Stilt",
+  "text": "Draw 2 [card].",
+  "template": "draw",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "draw_cards",
+     "from": "any",
+     "n": 2,
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "42": {
+  "name": "Blue Grosbeak",
+  "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat.",
+  "template": "move_if_rightmost",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "move_bird",
+     "if": "rightmost"
+    }
+   ]
+  }
+ },
+ "43": {
+  "name": "Blue Jay",
+  "text": "Gain 1 [seed] from the birdfeeder, if available. You may cache it on this bird.",
+  "template": "gain_feeder_may_cache",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "feeder",
+     "food": [
+      "seed"
+     ],
+     "n": 1,
+     "who": "self",
+     "may_cache": true
+    }
+   ]
+  }
+ },
+ "44": {
+  "name": "Blue-Gray Gnatcatcher",
+  "text": "Gain 1 [invertebrate] from the supply.",
+  "template": "gain_supply",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "supply",
+     "food": [
+      "invertebrate"
+     ],
+     "n": 1,
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "47": {
+  "name": "Bobolink",
+  "text": "Lay 1 [egg] on each of your birds with a [ground] nest.",
+  "template": "lay_each_nest",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "lay_eggs",
+     "n": 1,
+     "on": "each",
+     "nest": "ground",
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "49": {
+  "name": "Brant",
+  "text": "Draw the 3 face-up [card] in the bird tray.",
+  "template": "draw_tray_all",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "draw_cards",
+     "from": "tray",
+     "n": "all",
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "50": {
+  "name": "Brewer's Blackbird",
+  "text": "Tuck 1 [card] from your hand behind this bird. If you do, you may also lay 1 [egg] on this bird.",
+  "template": "tuck_hand_then_may_lay_this",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "if_then",
+     "if": {
+      "op": "tuck",
+      "from": "hand",
+      "n": 1
+     },
+     "then": [
+      {
+       "op": "lay_eggs",
+       "n": 1,
+       "on": "this",
+       "who": "self",
+       "optional": true
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "51": {
+  "name": "Broad-Winged Hawk",
+  "text": "Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird.",
+  "template": "roll_dice_cache",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "roll_dice_not_in_feeder",
+     "food": "rodent",
+     "then": [
+      {
+       "op": "cache_food",
+       "food": "rodent",
+       "n": 1
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "52": {
+  "name": "Bronzed Cowbird",
+  "text": "When another player takes the “lay eggs” action, lay 1 [egg] on a bird with a [bowl] nest.",
+  "template": "pink_lay_eggs_lay_nest",
+  "spec": {
+   "timing": "pink",
+   "trigger": {
+    "on": "on_other_player_lay_eggs"
+   },
+   "steps": [
+    {
+     "op": "lay_eggs",
+     "n": 1,
+     "on": "any",
+     "nest": "bowl",
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "53": {
+  "name": "Brown Pelican",
+  "text": "Gain 3 [fish] from the supply.",
+  "template": "gain_supply",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "supply",
+     "food": [
+      "fish"
+     ],
+     "n": 3,
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "54": {
+  "name": "Brown-Headed Cowbird",
+  "text": "When another player takes the “lay eggs” action, lay 1 [egg] on a bird with a [bowl] nest.",
+  "template": "pink_lay_eggs_lay_nest",
+  "spec": {
+   "timing": "pink",
+   "trigger": {
+    "on": "on_other_player_lay_eggs"
+   },
+   "steps": [
+    {
+     "op": "lay_eggs",
+     "n": 1,
+     "on": "any",
+     "nest": "bowl",
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "56": {
+  "name": "Burrowing Owl",
+  "text": "Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird.",
+  "template": "roll_dice_cache",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "roll_dice_not_in_feeder",
+     "food": "rodent",
+     "then": [
+      {
+       "op": "cache_food",
+       "food": "rodent",
+       "n": 1
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "57": {
+  "name": "Bushtit",
+  "text": "Tuck 1 [card] from your hand behind this bird. If you do, you may also lay 1 [egg] on this bird.",
+  "template": "tuck_hand_then_may_lay_this",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "if_then",
+     "if": {
+      "op": "tuck",
+      "from": "hand",
+      "n": 1
+     },
+     "then": [
+      {
+       "op": "lay_eggs",
+       "n": 1,
+       "on": "this",
+       "who": "self",
+       "optional": true
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "58": {
+  "name": "California Condor",
+  "text": "Draw 2 new bonus cards and keep 1.",
+  "template": "draw_bonus_keep",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "draw_bonus_keep",
+     "draw": 2,
+     "keep": 1
+    }
+   ]
+  }
+ },
+ "59": {
+  "name": "California Quail",
+  "text": "Lay 1 [egg] on this bird.",
+  "template": "lay_this",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "lay_eggs",
+     "n": 1,
+     "on": "this",
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "60": {
+  "name": "Canada Goose",
+  "text": "Discard 1 [seed] to tuck 2 [card] from the deck behind this bird.",
+  "template": "discard_food_tuck_deck",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "discard_to_gain",
+     "cost": {
+      "what": "food",
+      "food": [
+       "seed"
+      ]
+     },
+     "then": [
+      {
+       "op": "tuck",
+       "from": "deck",
+       "n": 2
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "61": {
+  "name": "Canvasback",
+  "text": "All players draw 1 [card] from the deck.",
+  "template": "all_draw_deck",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "draw_cards",
+     "from": "deck",
+     "n": 1,
+     "who": "all"
+    }
+   ]
+  }
+ },
+ "62": {
+  "name": "Carolina Chickadee",
+  "text": "Cache 1 [seed] from the supply on this bird.",
+  "template": "cache_supply",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "cache_food",
+     "food": "seed",
+     "n": 1
+    }
+   ]
+  }
+ },
+ "63": {
+  "name": "Carolina Wren",
+  "text": "Draw 2 [card].",
+  "template": "draw",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "draw_cards",
+     "from": "any",
+     "n": 2,
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "65": {
+  "name": "Cassin's Finch",
+  "text": "Draw 2 new bonus cards and keep 1.",
+  "template": "draw_bonus_keep",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "draw_bonus_keep",
+     "draw": 2,
+     "keep": 1
+    }
+   ]
+  }
+ },
+ "66": {
+  "name": "Cassin's Sparrow",
+  "text": "Lay 1 [egg] on any bird.",
+  "template": "lay_any",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "lay_eggs",
+     "n": 1,
+     "on": "any",
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "67": {
+  "name": "Cedar Waxwing",
+  "text": "Tuck 1 [card] from your hand behind this bird. If you do, gain 1 [fruit] from the supply.",
+  "template": "tuck_hand_then_gain",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "if_then",
+     "if": {
+      "op": "tuck",
+      "from": "hand",
+      "n": 1
+     },
+     "then": [
+      {
+       "op": "gain_food",
+       "from": "supply",
+       "food": [
+        "fruit"
+       ],
+       "n": 1,
+       "who": "self"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "68": {
+  "name": "Cerulean Warbler",
+  "text": "Draw 2 new bonus cards and keep 1.",
+  "template": "draw_bonus_keep",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "draw_bonus_keep",
+     "draw": 2,
+     "keep": 1
+    }
+   ]
+  }
+ },
+ "70": {
+  "name": "Chestnut-Collared Longspur",
+  "text": "Draw 2 new bonus cards and keep 1.",
+  "template": "draw_bonus_keep",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "draw_bonus_keep",
+     "draw": 2,
+     "keep": 1
+    }
+   ]
+  }
+ },
+ "71": {
+  "name": "Chihuahuan Raven",
+  "text": "Discard 1 [egg] from any of your other birds to gain 2 [wild] from the supply.",
+  "template": "discard_egg_other_gain_wild",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "discard_to_gain",
+     "cost": {
+      "what": "egg",
+      "from": "other_birds"
+     },
+     "then": [
+      {
+       "op": "gain_food",
+       "from": "supply",
+       "food": "any",
+       "n": 2,
+       "who": "self"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "72": {
+  "name": "Chimney Swift",
+  "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat.",
+  "template": "move_if_rightmost",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "move_bird",
+     "if": "rightmost"
+    }
+   ]
+  }
+ },
+ "73": {
+  "name": "Chipping Sparrow",
+  "text": "Lay 1 [egg] on any bird.",
+  "template": "lay_any",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "lay_eggs",
+     "n": 1,
+     "on": "any",
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "74": {
+  "name": "Clark's Grebe",
+  "text": "Draw 1 [card]. If you do, discard 1 [card] from your hand at the end of your turn.",
+  "template": "draw_discard_end_of_turn",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "draw_cards",
+     "from": "any",
+     "n": 1,
+     "who": "self",
+     "discard_eot": 1
+    }
+   ]
+  }
+ },
+ "75": {
+  "name": "Clark's Nutcracker",
+  "text": "Gain 1 [seed] from the birdfeeder, if available. You may cache it on this bird.",
+  "template": "gain_feeder_may_cache",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "feeder",
+     "food": [
+      "seed"
+     ],
+     "n": 1,
+     "who": "self",
+     "may_cache": true
+    }
+   ]
+  }
+ },
+ "83": {
+  "name": "Common Grackle",
+  "text": "Tuck 1 [card] from your hand behind this bird. If you do, you may also lay 1 [egg] on this bird.",
+  "template": "tuck_hand_then_may_lay_this",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "if_then",
+     "if": {
+      "op": "tuck",
+      "from": "hand",
+      "n": 1
+     },
+     "then": [
+      {
+       "op": "lay_eggs",
+       "n": 1,
+       "on": "this",
+       "who": "self",
+       "optional": true
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "86": {
+  "name": "Common Loon",
+  "text": "Player(s) with the fewest birds in their [wetland] draw 1 [card].",
+  "template": "fewest_draw",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "draw_cards",
+     "from": "any",
+     "n": 1,
+     "who": "fewest_in_habitat",
+     "habitat": "wetland"
+    }
+   ]
+  }
+ },
+ "87": {
+  "name": "Common Merganser",
+  "text": "Roll all dice not in birdfeeder. If any are [fish], cache 1 [fish] from the supply on this bird.",
+  "template": "roll_dice_cache",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "roll_dice_not_in_feeder",
+     "food": "fish",
+     "then": [
+      {
+       "op": "cache_food",
+       "food": "fish",
+       "n": 1
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "89": {
+  "name": "Common Nighthawk",
+  "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat.",
+  "template": "move_if_rightmost",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "move_bird",
+     "if": "rightmost"
+    }
+   ]
+  }
+ },
+ "91": {
+  "name": "Common Raven",
+  "text": "Discard 1 [egg] from any of your other birds to gain 2 [wild] from the supply.",
+  "template": "discard_egg_other_gain_wild",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "discard_to_gain",
+     "cost": {
+      "what": "egg",
+      "from": "other_birds"
+     },
+     "then": [
+      {
+       "op": "gain_food",
+       "from": "supply",
+       "food": "any",
+       "n": 2,
+       "who": "self"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "94": {
+  "name": "Common Yellowthroat",
+  "text": "Draw 2 [card]. If you do, discard 1 [card] from your hand at the end of your turn.",
+  "template": "draw_discard_end_of_turn",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "draw_cards",
+     "from": "any",
+     "n": 2,
+     "who": "self",
+     "discard_eot": 1
+    }
+   ]
+  }
+ },
+ "95": {
+  "name": "Cooper's Hawk",
+  "text": "Look at a [card] from the deck. If less than 75cm, tuck it behind this bird. If not, discard it.",
+  "template": "look_at_deck_tuck_if_small",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "look_at_deck_card",
+     "max_wingspan": 75
+    }
+   ]
+  }
+ },
+ "97": {
+  "name": "Dark-Eyed Junco",
+  "text": "Tuck 1 [card] from your hand behind this bird. If you do, gain 1 [seed] from the supply.",
+  "template": "tuck_hand_then_gain",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "if_then",
+     "if": {
+      "op": "tuck",
+      "from": "hand",
+      "n": 1
+     },
+     "then": [
+      {
+       "op": "gain_food",
+       "from": "supply",
+       "food": [
+        "seed"
+       ],
+       "n": 1,
+       "who": "self"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "98": {
+  "name": "Dickcissel",
+  "text": "Tuck 1 [card] from your hand behind this bird. If you do, you may also lay 1 [egg] on this bird.",
+  "template": "tuck_hand_then_may_lay_this",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "if_then",
+     "if": {
+      "op": "tuck",
+      "from": "hand",
+      "n": 1
+     },
+     "then": [
+      {
+       "op": "lay_eggs",
+       "n": 1,
+       "on": "this",
+       "who": "self",
+       "optional": true
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "99": {
+  "name": "Double-Crested Cormorant",
+  "text": "Discard 1 [fish] to tuck 2 [card] from the deck behind this bird.",
+  "template": "discard_food_tuck_deck",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "discard_to_gain",
+     "cost": {
+      "what": "food",
+      "food": [
+       "fish"
+      ]
+     },
+     "then": [
+      {
+       "op": "tuck",
+       "from": "deck",
+       "n": 2
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "100": {
+  "name": "Downy Woodpecker",
+  "text": "Play an additional bird in your [forest]. Pay its normal cost.",
+  "template": "play_additional_in_habitat",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "play_additional_bird",
+     "habitat": "forest"
+    }
+   ]
+  }
+ },
+ "102": {
+  "name": "Eastern Bluebird",
+  "text": "Play an additional bird in your [grassland]. Pay its normal cost.",
+  "template": "play_additional_in_habitat",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "play_additional_bird",
+     "habitat": "grassland"
+    }
+   ]
+  }
+ },
+ "104": {
+  "name": "Eastern Kingbird",
+  "text": "When another player plays a bird in their [forest], gain 1 [invertebrate] from the supply.",
+  "template": "pink_play_bird_gain_supply",
+  "spec": {
+   "timing": "pink",
+   "trigger": {
+    "on": "on_other_player_play_bird_in",
+    "habitat": "forest"
+   },
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "supply",
+     "food": [
+      "invertebrate"
+     ],
+     "n": 1,
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "105": {
+  "name": "Eastern Phoebe",
+  "text": "All players gain 1 [invertebrate] from the supply.",
+  "template": "all_gain_supply",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "supply",
+     "food": [
+      "invertebrate"
+     ],
+     "n": 1,
+     "who": "all"
+    }
+   ]
+  }
+ },
+ "106": {
+  "name": "Eastern Screech-Owl",
+  "text": "Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird.",
+  "template": "roll_dice_cache",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "roll_dice_not_in_feeder",
+     "food": "rodent",
+     "then": [
+      {
+       "op": "cache_food",
+       "food": "rodent",
+       "n": 1
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "124": {
+  "name": "Ferruginous Hawk",
+  "text": "Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird.",
+  "template": "roll_dice_cache",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "roll_dice_not_in_feeder",
+     "food": "rodent",
+     "then": [
+      {
+       "op": "cache_food",
+       "food": "rodent",
+       "n": 1
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "125": {
+  "name": "Fish Crow",
+  "text": "Discard 1 [egg] from any of your other birds to gain 1 [wild] from the supply.",
+  "template": "discard_egg_other_gain_wild",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "discard_to_gain",
+     "cost": {
+      "what": "egg",
+      "from": "other_birds"
+     },
+     "then": [
+      {
+       "op": "gain_food",
+       "from": "supply",
+       "food": "any",
+       "n": 1,
+       "who": "self"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "126": {
+  "name": "Forster's Tern",
+  "text": "Draw 1 [card]. If you do, discard 1 [card] from your hand at the end of your turn.",
+  "template": "draw_discard_end_of_turn",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "draw_cards",
+     "from": "any",
+     "n": 1,
+     "who": "self",
+     "discard_eot": 1
+    }
+   ]
+  }
+ },
+ "127": {
+  "name": "Franklin's Gull",
+  "text": "Discard 1 [egg] to draw 2 [card].",
+  "template": "discard_egg_draw",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "discard_to_gain",
+     "cost": {
+      "what": "egg",
+      "from": "any_bird"
+     },
+     "then": [
+      {
+       "op": "draw_cards",
+       "from": "any",
+       "n": 2,
+       "who": "self"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "129": {
+  "name": "Golden Eagle",
+  "text": "Look at a [card] from the deck. If less than 100cm, tuck it behind this bird. If not, discard it.",
+  "template": "look_at_deck_tuck_if_small",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "look_at_deck_card",
+     "max_wingspan": 100
+    }
+   ]
+  }
+ },
+ "130": {
+  "name": "Grasshopper Sparrow",
+  "text": "Lay 1 [egg] on any bird.",
+  "template": "lay_any",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "lay_eggs",
+     "n": 1,
+     "on": "any",
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "131": {
+  "name": "Gray Catbird",
+  "text": "Repeat a brown power on another bird in this habitat.",
+  "template": "repeat_brown",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "repeat_power",
+     "filter": "brown"
+    }
+   ]
+  }
+ },
+ "132": {
+  "name": "Great Blue Heron",
+  "text": "Play an additional bird in your [wetland]. Pay its normal cost.",
+  "template": "play_additional_in_habitat",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "play_additional_bird",
+     "habitat": "wetland"
+    }
+   ]
+  }
+ },
+ "133": {
+  "name": "Great Crested Flycatcher",
+  "text": "Gain 1 [invertebrate] from the birdfeeder, if available.",
+  "template": "gain_feeder_if_available",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "feeder",
+     "food": [
+      "invertebrate"
+     ],
+     "n": 1,
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "135": {
+  "name": "Great Egret",
+  "text": "Play an additional bird in your [wetland]. Pay its normal cost.",
+  "template": "play_additional_in_habitat",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "play_additional_bird",
+     "habitat": "wetland"
+    }
+   ]
+  }
+ },
+ "136": {
+  "name": "Great Horned Owl",
+  "text": "Look at a [card] from the deck. If less than 100cm, tuck it behind this bird. If not, discard it.",
+  "template": "look_at_deck_tuck_if_small",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "look_at_deck_card",
+     "max_wingspan": 100
+    }
+   ]
+  }
+ },
+ "139": {
+  "name": "Greater Prairie-Chicken",
+  "text": "Draw 2 new bonus cards and keep 1.",
+  "template": "draw_bonus_keep",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "draw_bonus_keep",
+     "draw": 2,
+     "keep": 1
+    }
+   ]
+  }
+ },
+ "140": {
+  "name": "Greater Roadrunner",
+  "text": "Look at a [card] from the deck. If less than 50cm, tuck it behind this bird. If not, discard it.",
+  "template": "look_at_deck_tuck_if_small",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "look_at_deck_card",
+     "max_wingspan": 50
+    }
+   ]
+  }
+ },
+ "141": {
+  "name": "Green Heron",
+  "text": "Trade 1 [wild] for any other type from the supply.",
+  "template": "trade_food",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "discard_to_gain",
+     "cost": {
+      "what": "food",
+      "food": "any"
+     },
+     "then": [
+      {
+       "op": "gain_food",
+       "from": "supply",
+       "food": "any_other",
+       "n": 1,
+       "who": "self"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "146": {
+  "name": "Hermit Thrush",
+  "text": "Player(s) with the fewest birds in their [forest] gain 1 [die] from birdfeeder.",
+  "template": "fewest_gain_die",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "feeder",
+     "food": "any",
+     "n": 1,
+     "who": "fewest_in_habitat",
+     "habitat": "forest"
+    }
+   ]
+  }
+ },
+ "148": {
+  "name": "Hooded Merganser",
+  "text": "Repeat 1 [predator] power in this habitat.",
+  "template": "repeat_predator",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "repeat_power",
+     "filter": "predator"
+    }
+   ]
+  }
+ },
+ "150": {
+  "name": "Horned Lark",
+  "text": "When another player plays a bird in their [grassland], tuck 1 [card] from your hand behind this bird.",
+  "template": "pink_play_bird_tuck",
+  "spec": {
+   "timing": "pink",
+   "trigger": {
+    "on": "on_other_player_play_bird_in",
+    "habitat": "grassland"
+   },
+   "steps": [
+    {
+     "op": "tuck",
+     "from": "hand",
+     "n": 1
+    }
+   ]
+  }
+ },
+ "151": {
+  "name": "House Finch",
+  "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].",
+  "template": "tuck_hand_then_draw",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "if_then",
+     "if": {
+      "op": "tuck",
+      "from": "hand",
+      "n": 1
+     },
+     "then": [
+      {
+       "op": "draw_cards",
+       "from": "any",
+       "n": 1,
+       "who": "self"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "153": {
+  "name": "House Wren",
+  "text": "Play an additional bird in this bird's habitat. Pay its normal cost.",
+  "template": "play_additional_same_habitat",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "play_additional_bird",
+     "habitat": "this"
+    }
+   ]
+  }
+ },
+ "154": {
+  "name": "Inca Dove",
+  "text": "Lay 1 [egg] on each of your birds with a [platform] nest.",
+  "template": "lay_each_nest",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "lay_eggs",
+     "n": 1,
+     "on": "each",
+     "nest": "platform",
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "155": {
+  "name": "Indigo Bunting",
+  "text": "Gain 1 [invertebrate] or [fruit] from the birdfeeder, if available.",
+  "template": "gain_feeder_either_if_available",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "feeder",
+     "food": [
+      "invertebrate",
+      "fruit"
+     ],
+     "n": 1,
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "156": {
+  "name": "Juniper Titmouse",
+  "text": "Cache 1 [seed] from the supply on this bird.",
+  "template": "cache_supply",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "cache_food",
+     "food": "seed",
+     "n": 1
+    }
+   ]
+  }
+ },
+ "157": {
+  "name": "Killdeer",
+  "text": "Discard 1 [egg] to draw 2 [card].",
+  "template": "discard_egg_draw",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "discard_to_gain",
+     "cost": {
+      "what": "egg",
+      "from": "any_bird"
+     },
+     "then": [
+      {
+       "op": "draw_cards",
+       "from": "any",
+       "n": 2,
+       "who": "self"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "158": {
+  "name": "King Rail",
+  "text": "Draw 2 new bonus cards and keep 1.",
+  "template": "draw_bonus_keep",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "draw_bonus_keep",
+     "draw": 2,
+     "keep": 1
+    }
+   ]
+  }
+ },
+ "159": {
+  "name": "Lazuli Bunting",
+  "text": "All players lay 1 [egg] on any 1 [bowl] bird. You may lay 1 [egg] on 1 additional [bowl] bird.",
+  "template": "all_lay_nest_plus_one",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "lay_eggs",
+     "n": 1,
+     "on": "any",
+     "nest": "bowl",
+     "who": "all",
+     "may_decline": true
+    },
+    {
+     "op": "lay_eggs",
+     "n": 1,
+     "on": "any",
+     "nest": "bowl",
+     "who": "self",
+     "different_bird": true,
+     "may_decline": true
+    }
+   ]
+  }
+ },
+ "161": {
+  "name": "Lincoln's Sparrow",
+  "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat.",
+  "template": "move_if_rightmost",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "move_bird",
+     "if": "rightmost"
+    }
+   ]
+  }
+ },
+ "164": {
+  "name": "Loggerhead Shrike",
+  "text": "When another player takes the “gain food” action, if they gain any number of [rodent], cache 1 [rodent] from the supply on this bird.",
+  "template": "pink_gain_food_cache",
+  "spec": {
+   "timing": "pink",
+   "trigger": {
+    "on": "on_other_player_gain_food",
+    "food": "rodent"
+   },
+   "steps": [
+    {
+     "op": "cache_food",
+     "food": "rodent",
+     "n": 1
+    }
+   ]
+  }
+ },
+ "166": {
+  "name": "Mallard",
+  "text": "Draw 1 [card].",
+  "template": "draw",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "draw_cards",
+     "from": "any",
+     "n": 1,
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "167": {
+  "name": "Mississippi Kite",
+  "text": "Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird.",
+  "template": "roll_dice_cache",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "roll_dice_not_in_feeder",
+     "food": "rodent",
+     "then": [
+      {
+       "op": "cache_food",
+       "food": "rodent",
+       "n": 1
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "170": {
+  "name": "Mountain Bluebird",
+  "text": "Play an additional bird in your [grassland]. Pay its normal cost.",
+  "template": "play_additional_in_habitat",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "play_additional_bird",
+     "habitat": "grassland"
+    }
+   ]
+  }
+ },
+ "171": {
+  "name": "Mountain Chickadee",
+  "text": "Cache 1 [seed] from the supply on this bird.",
+  "template": "cache_supply",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "cache_food",
+     "food": "seed",
+     "n": 1
+    }
+   ]
+  }
+ },
+ "172": {
+  "name": "Mourning Dove",
+  "text": "Lay 1 [egg] on this bird.",
+  "template": "lay_this",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "lay_eggs",
+     "n": 1,
+     "on": "this",
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "174": {
+  "name": "Northern Bobwhite",
+  "text": "Lay 1 [egg] on this bird.",
+  "template": "lay_this",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "lay_eggs",
+     "n": 1,
+     "on": "this",
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "175": {
+  "name": "Northern Cardinal",
+  "text": "Gain 1 [fruit] from the supply.",
+  "template": "gain_supply",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "supply",
+     "food": [
+      "fruit"
+     ],
+     "n": 1,
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "176": {
+  "name": "Northern Flicker",
+  "text": "Gain all [invertebrate] that are in the birdfeeder.",
+  "template": "gain_all_feeder",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "feeder",
+     "food": [
+      "invertebrate"
+     ],
+     "n": "all",
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "179": {
+  "name": "Northern Harrier",
+  "text": "Look at a [card] from the deck. If less than 75cm, tuck it behind this bird. If not, discard it.",
+  "template": "look_at_deck_tuck_if_small",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "look_at_deck_card",
+     "max_wingspan": 75
+    }
+   ]
+  }
+ },
+ "180": {
+  "name": "Northern Mockingbird",
+  "text": "Repeat a brown power on another bird in this habitat.",
+  "template": "repeat_brown",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "repeat_power",
+     "filter": "brown"
+    }
+   ]
+  }
+ },
+ "181": {
+  "name": "Northern Shoveler",
+  "text": "All players draw 1 [card] from the deck.",
+  "template": "all_draw_deck",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "draw_cards",
+     "from": "deck",
+     "n": 1,
+     "who": "all"
+    }
+   ]
+  }
+ },
+ "182": {
+  "name": "Osprey",
+  "text": "All players gain 1 [fish] from the supply.",
+  "template": "all_gain_supply",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "supply",
+     "food": [
+      "fish"
+     ],
+     "n": 1,
+     "who": "all"
+    }
+   ]
+  }
+ },
+ "183": {
+  "name": "Painted Bunting",
+  "text": "Draw 2 new bonus cards and keep 1.",
+  "template": "draw_bonus_keep",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "draw_bonus_keep",
+     "draw": 2,
+     "keep": 1
+    }
+   ]
+  }
+ },
+ "184": {
+  "name": "Painted Whitestart",
+  "text": "Gain 1 [invertebrate] from the supply.",
+  "template": "gain_supply",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "supply",
+     "food": [
+      "invertebrate"
+     ],
+     "n": 1,
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "186": {
+  "name": "Peregrine Falcon",
+  "text": "Look at a [card] from the deck. If less than 100cm, tuck it behind this bird. If not, discard it.",
+  "template": "look_at_deck_tuck_if_small",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "look_at_deck_card",
+     "max_wingspan": 100
+    }
+   ]
+  }
+ },
+ "187": {
+  "name": "Pied-Billed Grebe",
+  "text": "Draw 2 [card]. If you do, discard 1 [card] from your hand at the end of your turn.",
+  "template": "draw_discard_end_of_turn",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "draw_cards",
+     "from": "any",
+     "n": 2,
+     "who": "self",
+     "discard_eot": 1
+    }
+   ]
+  }
+ },
+ "188": {
+  "name": "Pileated Woodpecker",
+  "text": "All players lay 1 [egg] on any 1 [cavity] bird. You may lay 1 [egg] on 1 additional [cavity] bird.",
+  "template": "all_lay_nest_plus_one",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "lay_eggs",
+     "n": 1,
+     "on": "any",
+     "nest": "cavity",
+     "who": "all",
+     "may_decline": true
+    },
+    {
+     "op": "lay_eggs",
+     "n": 1,
+     "on": "any",
+     "nest": "cavity",
+     "who": "self",
+     "different_bird": true,
+     "may_decline": true
+    }
+   ]
+  }
+ },
+ "189": {
+  "name": "Pine Siskin",
+  "text": "Tuck 1 [card] from your hand behind this bird. If you do, gain 1 [seed] from the supply.",
+  "template": "tuck_hand_then_gain",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "if_then",
+     "if": {
+      "op": "tuck",
+      "from": "hand",
+      "n": 1
+     },
+     "then": [
+      {
+       "op": "gain_food",
+       "from": "supply",
+       "food": [
+        "seed"
+       ],
+       "n": 1,
+       "who": "self"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "191": {
+  "name": "Purple Gallinule",
+  "text": "All players draw 1 [card] from the deck.",
+  "template": "all_draw_deck",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "draw_cards",
+     "from": "deck",
+     "n": 1,
+     "who": "all"
+    }
+   ]
+  }
+ },
+ "192": {
+  "name": "Purple Martin",
+  "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].",
+  "template": "tuck_hand_then_draw",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "if_then",
+     "if": {
+      "op": "tuck",
+      "from": "hand",
+      "n": 1
+     },
+     "then": [
+      {
+       "op": "draw_cards",
+       "from": "any",
+       "n": 1,
+       "who": "self"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "193": {
+  "name": "Pygmy Nuthatch",
+  "text": "Tuck 1 [card] from your hand behind this bird. If you do, gain 1 [invertebrate] or [seed] from the supply.",
+  "template": "tuck_hand_then_gain_either",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "if_then",
+     "if": {
+      "op": "tuck",
+      "from": "hand",
+      "n": 1
+     },
+     "then": [
+      {
+       "op": "gain_food",
+       "from": "supply",
+       "food": [
+        "invertebrate",
+        "seed"
+       ],
+       "n": 1,
+       "who": "self"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "194": {
+  "name": "Red Crossbill",
+  "text": "All players gain 1 [seed] from the supply.",
+  "template": "all_gain_supply",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "supply",
+     "food": [
+      "seed"
+     ],
+     "n": 1,
+     "who": "all"
+    }
+   ]
+  }
+ },
+ "198": {
+  "name": "Red-Bellied Woodpecker",
+  "text": "Gain 1 [seed] from the birdfeeder, if available. You may cache it on this bird.",
+  "template": "gain_feeder_may_cache",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "feeder",
+     "food": [
+      "seed"
+     ],
+     "n": 1,
+     "who": "self",
+     "may_cache": true
+    }
+   ]
+  }
+ },
+ "199": {
+  "name": "Red-Breasted Merganser",
+  "text": "Draw 2 [card]. If you do, discard 1 [card] from your hand at the end of your turn.",
+  "template": "draw_discard_end_of_turn",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "draw_cards",
+     "from": "any",
+     "n": 2,
+     "who": "self",
+     "discard_eot": 1
+    }
+   ]
+  }
+ },
+ "200": {
+  "name": "Red-Breasted Nuthatch",
+  "text": "Cache 1 [seed] from the supply on this bird.",
+  "template": "cache_supply",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "cache_food",
+     "food": "seed",
+     "n": 1
+    }
+   ]
+  }
+ },
+ "201": {
+  "name": "Red-Cockaded Woodpecker",
+  "text": "Draw 2 new bonus cards and keep 1.",
+  "template": "draw_bonus_keep",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "draw_bonus_keep",
+     "draw": 2,
+     "keep": 1
+    }
+   ]
+  }
+ },
+ "202": {
+  "name": "Red-Eyed Vireo",
+  "text": "Play an additional bird in your [forest]. Pay its normal cost.",
+  "template": "play_additional_in_habitat",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "play_additional_bird",
+     "habitat": "forest"
+    }
+   ]
+  }
+ },
+ "203": {
+  "name": "Red-Headed Woodpecker",
+  "text": "Gain 1 [seed] from the birdfeeder, if available. You may cache it on this bird.",
+  "template": "gain_feeder_may_cache",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "feeder",
+     "food": [
+      "seed"
+     ],
+     "n": 1,
+     "who": "self",
+     "may_cache": true
+    }
+   ]
+  }
+ },
+ "205": {
+  "name": "Red-Shouldered Hawk",
+  "text": "Look at a [card] from the deck. If less than 75cm, tuck it behind this bird. If not, discard it.",
+  "template": "look_at_deck_tuck_if_small",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "look_at_deck_card",
+     "max_wingspan": 75
+    }
+   ]
+  }
+ },
+ "206": {
+  "name": "Red-Tailed Hawk",
+  "text": "Look at a [card] from the deck. If less than 75cm, tuck it behind this bird. If not, discard it.",
+  "template": "look_at_deck_tuck_if_small",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "look_at_deck_card",
+     "max_wingspan": 75
+    }
+   ]
+  }
+ },
+ "207": {
+  "name": "Red-Winged Blackbird",
+  "text": "Tuck 1 [card] from your hand behind this bird. If you do, you may also lay 1 [egg] on this bird.",
+  "template": "tuck_hand_then_may_lay_this",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "if_then",
+     "if": {
+      "op": "tuck",
+      "from": "hand",
+      "n": 1
+     },
+     "then": [
+      {
+       "op": "lay_eggs",
+       "n": 1,
+       "on": "this",
+       "who": "self",
+       "optional": true
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "208": {
+  "name": "Ring-Billed Gull",
+  "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].",
+  "template": "tuck_hand_then_draw",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "if_then",
+     "if": {
+      "op": "tuck",
+      "from": "hand",
+      "n": 1
+     },
+     "then": [
+      {
+       "op": "draw_cards",
+       "from": "any",
+       "n": 1,
+       "who": "self"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "209": {
+  "name": "Rose-Breasted Grosbeak",
+  "text": "Gain 1 [seed] or [fruit] from the birdfeeder, if available.",
+  "template": "gain_feeder_either_if_available",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "feeder",
+     "food": [
+      "seed",
+      "fruit"
+     ],
+     "n": 1,
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "210": {
+  "name": "Roseate Spoonbill",
+  "text": "Draw 2 new bonus cards and keep 1.",
+  "template": "draw_bonus_keep",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "draw_bonus_keep",
+     "draw": 2,
+     "keep": 1
+    }
+   ]
+  }
+ },
+ "211": {
+  "name": "Ruby-Crowned Kinglet",
+  "text": "Play an additional bird in your [forest]. Pay its normal cost.",
+  "template": "play_additional_in_habitat",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "play_additional_bird",
+     "habitat": "forest"
+    }
+   ]
+  }
+ },
+ "212": {
+  "name": "Ruby-Throated Hummingbird",
+  "text": "Each player gains 1 [die] from the birdfeeder, starting with the player of your choice.",
+  "template": "each_gain_die_in_order",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "feeder",
+     "food": "any",
+     "n": 1,
+     "who": "each_from_feeder_in_order",
+     "may_decline": true
+    }
+   ]
+  }
+ },
+ "213": {
+  "name": "Ruddy Duck",
+  "text": "Draw 2 [card]. If you do, discard 1 [card] from your hand at the end of your turn.",
+  "template": "draw_discard_end_of_turn",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "draw_cards",
+     "from": "any",
+     "n": 2,
+     "who": "self",
+     "discard_eot": 1
+    }
+   ]
+  }
+ },
+ "215": {
+  "name": "Sandhill Crane",
+  "text": "Discard 1 [seed] to tuck 2 [card] from the deck behind this bird.",
+  "template": "discard_food_tuck_deck",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "discard_to_gain",
+     "cost": {
+      "what": "food",
+      "food": [
+       "seed"
+      ]
+     },
+     "then": [
+      {
+       "op": "tuck",
+       "from": "deck",
+       "n": 2
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "216": {
+  "name": "Savannah Sparrow",
+  "text": "Play an additional bird in your [grassland]. Pay its normal cost.",
+  "template": "play_additional_in_habitat",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "play_additional_bird",
+     "habitat": "grassland"
+    }
+   ]
+  }
+ },
+ "218": {
+  "name": "Say's Phoebe",
+  "text": "Lay 1 [egg] on each of your birds with a [bowl] nest.",
+  "template": "lay_each_nest",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "lay_eggs",
+     "n": 1,
+     "on": "each",
+     "nest": "bowl",
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "219": {
+  "name": "Scaled Quail",
+  "text": "Lay 1 [egg] on this bird.",
+  "template": "lay_this",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "lay_eggs",
+     "n": 1,
+     "on": "this",
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "220": {
+  "name": "Scissor-Tailed Flycatcher",
+  "text": "All players gain 1 [invertebrate] from the supply.",
+  "template": "all_gain_supply",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "supply",
+     "food": [
+      "invertebrate"
+     ],
+     "n": 1,
+     "who": "all"
+    }
+   ]
+  }
+ },
+ "223": {
+  "name": "Snowy Egret",
+  "text": "Roll all dice not in birdfeeder. If any are [fish], cache 1 [fish] from the supply on this bird.",
+  "template": "roll_dice_cache",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "roll_dice_not_in_feeder",
+     "food": "fish",
+     "then": [
+      {
+       "op": "cache_food",
+       "food": "fish",
+       "n": 1
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "225": {
+  "name": "Song Sparrow",
+  "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat.",
+  "template": "move_if_rightmost",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "move_bird",
+     "if": "rightmost"
+    }
+   ]
+  }
+ },
+ "226": {
+  "name": "Spotted Owl",
+  "text": "Draw 2 new bonus cards and keep 1.",
+  "template": "draw_bonus_keep",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "draw_bonus_keep",
+     "draw": 2,
+     "keep": 1
+    }
+   ]
+  }
+ },
+ "227": {
+  "name": "Spotted Sandpiper",
+  "text": "All players draw 1 [card] from the deck.",
+  "template": "all_draw_deck",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "draw_cards",
+     "from": "deck",
+     "n": 1,
+     "who": "all"
+    }
+   ]
+  }
+ },
+ "228": {
+  "name": "Spotted Towhee",
+  "text": "Gain 1 [seed] from the supply.",
+  "template": "gain_supply",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "supply",
+     "food": [
+      "seed"
+     ],
+     "n": 1,
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "229": {
+  "name": "Sprague's Pipit",
+  "text": "Draw 2 new bonus cards and keep 1.",
+  "template": "draw_bonus_keep",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "draw_bonus_keep",
+     "draw": 2,
+     "keep": 1
+    }
+   ]
+  }
+ },
+ "231": {
+  "name": "Steller's Jay",
+  "text": "Gain 1 [seed] from the birdfeeder, if available. You may cache it on this bird.",
+  "template": "gain_feeder_may_cache",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "feeder",
+     "food": [
+      "seed"
+     ],
+     "n": 1,
+     "who": "self",
+     "may_cache": true
+    }
+   ]
+  }
+ },
+ "232": {
+  "name": "Swainson's Hawk",
+  "text": "Look at a [card] from the deck. If less than 75cm, tuck it behind this bird. If not, discard it.",
+  "template": "look_at_deck_tuck_if_small",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "look_at_deck_card",
+     "max_wingspan": 75
+    }
+   ]
+  }
+ },
+ "234": {
+  "name": "Tree Swallow",
+  "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].",
+  "template": "tuck_hand_then_draw",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "if_then",
+     "if": {
+      "op": "tuck",
+      "from": "hand",
+      "n": 1
+     },
+     "then": [
+      {
+       "op": "draw_cards",
+       "from": "any",
+       "n": 1,
+       "who": "self"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "236": {
+  "name": "Tufted Titmouse",
+  "text": "Play an additional bird in your [forest]. Pay its normal cost.",
+  "template": "play_additional_in_habitat",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "play_additional_bird",
+     "habitat": "forest"
+    }
+   ]
+  }
+ },
+ "237": {
+  "name": "Turkey Vulture",
+  "text": "When another player's [predator] succeeds, gain 1 [die] from the birdfeeder.",
+  "template": "pink_predator_gain_die",
+  "spec": {
+   "timing": "pink",
+   "trigger": {
+    "on": "on_other_player_predator_success"
+   },
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "feeder",
+     "food": "any",
+     "n": 1,
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "238": {
+  "name": "Vaux's Swift",
+  "text": "Tuck 1 [card] from your hand behind this bird. If you do, gain 1 [invertebrate] from the supply.",
+  "template": "tuck_hand_then_gain",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "if_then",
+     "if": {
+      "op": "tuck",
+      "from": "hand",
+      "n": 1
+     },
+     "then": [
+      {
+       "op": "gain_food",
+       "from": "supply",
+       "food": [
+        "invertebrate"
+       ],
+       "n": 1,
+       "who": "self"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "239": {
+  "name": "Violet-Green Swallow",
+  "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].",
+  "template": "tuck_hand_then_draw",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "if_then",
+     "if": {
+      "op": "tuck",
+      "from": "hand",
+      "n": 1
+     },
+     "then": [
+      {
+       "op": "draw_cards",
+       "from": "any",
+       "n": 1,
+       "who": "self"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "240": {
+  "name": "Western Meadowlark",
+  "text": "All players lay 1 [egg] on any 1 [ground] bird. You may lay 1 [egg] on 1 additional [ground] bird.",
+  "template": "all_lay_nest_plus_one",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "lay_eggs",
+     "n": 1,
+     "on": "any",
+     "nest": "ground",
+     "who": "all",
+     "may_decline": true
+    },
+    {
+     "op": "lay_eggs",
+     "n": 1,
+     "on": "any",
+     "nest": "ground",
+     "who": "self",
+     "different_bird": true,
+     "may_decline": true
+    }
+   ]
+  }
+ },
+ "241": {
+  "name": "Western Tanager",
+  "text": "Gain 1 [invertebrate] or [fruit] from the birdfeeder, if available.",
+  "template": "gain_feeder_either_if_available",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "feeder",
+     "food": [
+      "invertebrate",
+      "fruit"
+     ],
+     "n": 1,
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "245": {
+  "name": "White-Breasted Nuthatch",
+  "text": "Cache 1 [seed] from the supply on this bird.",
+  "template": "cache_supply",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "cache_food",
+     "food": "seed",
+     "n": 1
+    }
+   ]
+  }
+ },
+ "246": {
+  "name": "White-Crowned Sparrow",
+  "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat.",
+  "template": "move_if_rightmost",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "move_bird",
+     "if": "rightmost"
+    }
+   ]
+  }
+ },
+ "247": {
+  "name": "White-Faced Ibis",
+  "text": "Roll all dice not in birdfeeder. If any are [fish], cache 1 [fish] from the supply on this bird.",
+  "template": "roll_dice_cache",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "roll_dice_not_in_feeder",
+     "food": "fish",
+     "then": [
+      {
+       "op": "cache_food",
+       "food": "fish",
+       "n": 1
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "249": {
+  "name": "White-Throated Swift",
+  "text": "Tuck 1 [card] from your hand behind this bird. If you do, lay 1 [egg] on any bird.",
+  "template": "tuck_hand_then_lay_any",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "if_then",
+     "if": {
+      "op": "tuck",
+      "from": "hand",
+      "n": 1
+     },
+     "then": [
+      {
+       "op": "lay_eggs",
+       "n": 1,
+       "on": "any",
+       "who": "self"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "250": {
+  "name": "Whooping Crane",
+  "text": "Draw 2 new bonus cards and keep 1.",
+  "template": "draw_bonus_keep",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "draw_bonus_keep",
+     "draw": 2,
+     "keep": 1
+    }
+   ]
+  }
+ },
+ "252": {
+  "name": "Willet",
+  "text": "Roll all dice not in birdfeeder. If any are [fish], cache 1 [fish] from the supply on this bird.",
+  "template": "roll_dice_cache",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "roll_dice_not_in_feeder",
+     "food": "fish",
+     "then": [
+      {
+       "op": "cache_food",
+       "food": "fish",
+       "n": 1
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "253": {
+  "name": "Wilson's Snipe",
+  "text": "All players draw 1 [card] from the deck.",
+  "template": "all_draw_deck",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "draw_cards",
+     "from": "deck",
+     "n": 1,
+     "who": "all"
+    }
+   ]
+  }
+ },
+ "255": {
+  "name": "Wood Duck",
+  "text": "Draw 2 [card]. If you do, discard 1 [card] from your hand at the end of your turn.",
+  "template": "draw_discard_end_of_turn",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "draw_cards",
+     "from": "any",
+     "n": 2,
+     "who": "self",
+     "discard_eot": 1
+    }
+   ]
+  }
+ },
+ "256": {
+  "name": "Wood Stork",
+  "text": "Draw 2 new bonus cards and keep 1.",
+  "template": "draw_bonus_keep",
+  "spec": {
+   "timing": "white",
+   "steps": [
+    {
+     "op": "draw_bonus_keep",
+     "draw": 2,
+     "keep": 1
+    }
+   ]
+  }
+ },
+ "257": {
+  "name": "Yellow-Bellied Sapsucker",
+  "text": "Gain 1 [invertebrate] from the supply.",
+  "template": "gain_supply",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "gain_food",
+     "from": "supply",
+     "food": [
+      "invertebrate"
+     ],
+     "n": 1,
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "258": {
+  "name": "Yellow-Billed Cuckoo",
+  "text": "When another player takes the “lay eggs” action, lay 1 [egg] on a bird with a [bowl] nest.",
+  "template": "pink_lay_eggs_lay_nest",
+  "spec": {
+   "timing": "pink",
+   "trigger": {
+    "on": "on_other_player_lay_eggs"
+   },
+   "steps": [
+    {
+     "op": "lay_eggs",
+     "n": 1,
+     "on": "any",
+     "nest": "bowl",
+     "who": "self"
+    }
+   ]
+  }
+ },
+ "259": {
+  "name": "Yellow-Breasted Chat",
+  "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat.",
+  "template": "move_if_rightmost",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "move_bird",
+     "if": "rightmost"
+    }
+   ]
+  }
+ },
+ "260": {
+  "name": "Yellow-Headed Blackbird",
+  "text": "Tuck 1 [card] from your hand behind this bird. If you do, you may also lay 1 [egg] on this bird.",
+  "template": "tuck_hand_then_may_lay_this",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "if_then",
+     "if": {
+      "op": "tuck",
+      "from": "hand",
+      "n": 1
+     },
+     "then": [
+      {
+       "op": "lay_eggs",
+       "n": 1,
+       "on": "this",
+       "who": "self",
+       "optional": true
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "261": {
+  "name": "Yellow-Rumped Warbler",
+  "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].",
+  "template": "tuck_hand_then_draw",
+  "spec": {
+   "timing": "brown",
+   "steps": [
+    {
+     "op": "if_then",
+     "if": {
+      "op": "tuck",
+      "from": "hand",
+      "n": 1
+     },
+     "then": [
+      {
+       "op": "draw_cards",
+       "from": "any",
+       "n": 1,
+       "who": "self"
+      }
+     ]
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,10 @@
+# Hand-written effect specs for power texts that no regex template in build.py
+# matches. Each entry is keyed by the exact printed text.
+overrides:
+  - name: draft_players_plus_one
+    text: "Draw [card] equal to the number of players +1. Starting with you and proceeding clockwise, each player selects 1 of those cards and places it in their hand. You keep the extra card."
+    # Rulings 20200617 and 20221123: the cards may come from the tray and/or the
+    # deck. Ruling 20201010: all of them must be drawn. Ruling 20250603: they
+    # are revealed before anyone picks.
+    steps:
+      - {op: draft_cards, n: players_plus_1, from: any}

@@ -1,0 +1,18 @@
+[project]
+name = "wingsim"
+version = "0.1.0"
+description = "Wingspan co-op house-rule simulator"
+requires-python = ">=3.12"
+dependencies = []
+
+[project.optional-dependencies]
+analysis = ["numpy", "pandas", "pyarrow", "matplotlib", "pyyaml"]
+dev = ["pytest", "pyyaml"]
+
+[tool.setuptools.packages.find]
+include = ["wingsim*"]
+
+[tool.pytest.ini_options]
+testpaths = ["wingsim/tests"]
+addopts = "-q"
+markers = ["slow: long-running checks (full 10,000-game fuzz)"]

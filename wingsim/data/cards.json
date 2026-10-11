@@ -1,0 +1,6932 @@
+{
+ "source": "navarog/wingsearch",
+ "commit": "43e5036",
+ "birds": [
+  {
+   "id": 2,
+   "name": "Acorn Woodpecker",
+   "color": "brown",
+   "vp": 5,
+   "nest": "cavity",
+   "egg_limit": 4,
+   "wingspan": 46,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    0,
+    3,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1005,
+    1016,
+    1019
+   ],
+   "text": "Gain 1 [seed] from the birdfeeder, if available. You may cache it on this bird.",
+   "rulings": [
+    "20200423"
+   ]
+  },
+  {
+   "id": 3,
+   "name": "American Avocet",
+   "color": "pink",
+   "vp": 6,
+   "nest": "ground",
+   "egg_limit": 2,
+   "wingspan": 79,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    2,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1005,
+    1007,
+    1011,
+    1018,
+    1029
+   ],
+   "text": "When another player takes the “lay eggs” action, lay 1 [egg] on another bird with a [ground] nest.",
+   "rulings": [
+    "20200109b",
+    "20190921"
+   ]
+  },
+  {
+   "id": 4,
+   "name": "American Bittern",
+   "color": "brown",
+   "vp": 7,
+   "nest": "platform",
+   "egg_limit": 2,
+   "wingspan": 107,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    1,
+    0,
+    1,
+    0,
+    1
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1007,
+    1014,
+    1018,
+    1024,
+    1026,
+    1029
+   ],
+   "text": "Player(s) with the fewest birds in their [wetland] draw 1 [card].",
+   "rulings": [
+    "20200322"
+   ]
+  },
+  {
+   "id": 5,
+   "name": "American Coot",
+   "color": "brown",
+   "vp": 3,
+   "nest": "platform",
+   "egg_limit": 5,
+   "wingspan": 61,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    0,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 1,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": true,
+   "bonus": [
+    1001,
+    1004,
+    1005,
+    1007,
+    1020,
+    1024,
+    1029
+   ],
+   "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].",
+   "rulings": []
+  },
+  {
+   "id": 6,
+   "name": "American Crow",
+   "color": "brown",
+   "vp": 4,
+   "nest": "platform",
+   "egg_limit": 2,
+   "wingspan": 99,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 1,
+   "either": false,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1007,
+    1018,
+    1020,
+    1024
+   ],
+   "text": "Discard 1 [egg] from any of your other birds to gain 1 [wild] from the supply.",
+   "rulings": [
+    "20200703"
+   ]
+  },
+  {
+   "id": 7,
+   "name": "American Goldfinch",
+   "color": "white",
+   "vp": 3,
+   "nest": "bowl",
+   "egg_limit": 3,
+   "wingspan": 23,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    0,
+    2,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1005,
+    1007,
+    1022,
+    1023,
+    1025,
+    1030
+   ],
+   "text": "Gain 3 [seed] from the supply.",
+   "rulings": []
+  },
+  {
+   "id": 8,
+   "name": "American Kestrel",
+   "color": "brown",
+   "vp": 5,
+   "nest": "cavity",
+   "egg_limit": 3,
+   "wingspan": 56,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    0,
+    1
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": true,
+   "flocking": false,
+   "bonus": [
+    1007,
+    1013,
+    1019,
+    1025,
+    1026
+   ],
+   "text": "Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird.",
+   "rulings": []
+  },
+  {
+   "id": 9,
+   "name": "American Oystercatcher",
+   "color": "white",
+   "vp": 5,
+   "nest": "ground",
+   "egg_limit": 2,
+   "wingspan": 81,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    2,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1007,
+    1011,
+    1015,
+    1018,
+    1029
+   ],
+   "text": "Draw [card] equal to the number of players +1. Starting with you and proceeding clockwise, each player selects 1 of those cards and places it in their hand. You keep the extra card.",
+   "rulings": [
+    "20200617",
+    "20201010",
+    "20250603",
+    "20221123",
+    "20190311"
+   ]
+  },
+  {
+   "id": 10,
+   "name": "American Redstart",
+   "color": "brown",
+   "vp": 4,
+   "nest": "bowl",
+   "egg_limit": 2,
+   "wingspan": 20,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1007,
+    1016,
+    1022,
+    1023,
+    1028,
+    1030
+   ],
+   "text": "Gain 1 [die] from the birdfeeder.",
+   "rulings": [
+    "20191126b",
+    "20191207"
+   ]
+  },
+  {
+   "id": 11,
+   "name": "American Robin",
+   "color": "brown",
+   "vp": 1,
+   "nest": "bowl",
+   "egg_limit": 4,
+   "wingspan": 43,
+   "habitats": [
+    0,
+    1
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": true,
+   "bonus": [
+    1001,
+    1004,
+    1007,
+    1028,
+    1030
+   ],
+   "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].",
+   "rulings": []
+  },
+  {
+   "id": 12,
+   "name": "American White Pelican",
+   "color": "brown",
+   "vp": 5,
+   "nest": "ground",
+   "egg_limit": 1,
+   "wingspan": 274,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    2,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": true,
+   "bonus": [
+    1004,
+    1007,
+    1011,
+    1014,
+    1018,
+    1023,
+    1029
+   ],
+   "text": "Discard 1 [fish] to tuck 2 [card] from the deck behind this bird.",
+   "rulings": [
+    "20220213a"
+   ]
+  },
+  {
+   "id": 13,
+   "name": "American Woodcock",
+   "color": null,
+   "vp": 9,
+   "nest": "ground",
+   "egg_limit": 2,
+   "wingspan": 46,
+   "habitats": [
+    0,
+    1
+   ],
+   "cost": [
+    2,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1005,
+    1007,
+    1011
+   ],
+   "text": null,
+   "rulings": [
+    "20201104"
+   ]
+  },
+  {
+   "id": 14,
+   "name": "Anhinga",
+   "color": "brown",
+   "vp": 6,
+   "nest": "platform",
+   "egg_limit": 2,
+   "wingspan": 114,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    2,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": true,
+   "flocking": false,
+   "bonus": [
+    1013,
+    1014,
+    1018,
+    1024,
+    1029
+   ],
+   "text": "Roll all dice not in birdfeeder. If any are [fish], cache 1 [fish] from the supply on this bird.",
+   "rulings": []
+  },
+  {
+   "id": 15,
+   "name": "Anna's Hummingbird",
+   "color": "brown",
+   "vp": 4,
+   "nest": "bowl",
+   "egg_limit": 2,
+   "wingspan": 13,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 1,
+   "either": false,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1017,
+    1020,
+    1022,
+    1030
+   ],
+   "text": "Each player gains 1 [die] from the birdfeeder, starting with the player of your choice.",
+   "rulings": [
+    "20200420",
+    "20200405a"
+   ]
+  },
+  {
+   "id": 16,
+   "name": "Ash-Throated Flycatcher",
+   "color": "white",
+   "vp": 4,
+   "nest": "cavity",
+   "egg_limit": 4,
+   "wingspan": 30,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    2,
+    0,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1019,
+    1022,
+    1023,
+    1025,
+    1028
+   ],
+   "text": "Lay 1 [egg] on each of your birds with a [cavity] nest.",
+   "rulings": []
+  },
+  {
+   "id": 17,
+   "name": "Atlantic Puffin",
+   "color": "white",
+   "vp": 8,
+   "nest": "wild",
+   "egg_limit": 1,
+   "wingspan": 53,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    3,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1007,
+    1011,
+    1014,
+    1019,
+    1024,
+    1029,
+    1030
+   ],
+   "text": "Draw 2 new bonus cards and keep 1.",
+   "rulings": []
+  },
+  {
+   "id": 19,
+   "name": "Baird's Sparrow",
+   "color": "brown",
+   "vp": 3,
+   "nest": "ground",
+   "egg_limit": 2,
+   "wingspan": 23,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1005,
+    1011,
+    1017,
+    1022,
+    1025
+   ],
+   "text": "Lay 1 [egg] on any bird.",
+   "rulings": []
+  },
+  {
+   "id": 20,
+   "name": "Bald Eagle",
+   "color": "white",
+   "vp": 9,
+   "nest": "platform",
+   "egg_limit": 1,
+   "wingspan": 203,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    2,
+    0,
+    1
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1014,
+    1018,
+    1024,
+    1026,
+    1029
+   ],
+   "text": "Gain all [fish] that are in the birdfeeder.",
+   "rulings": []
+  },
+  {
+   "id": 21,
+   "name": "Baltimore Oriole",
+   "color": "brown",
+   "vp": 9,
+   "nest": "wild",
+   "egg_limit": 2,
+   "wingspan": 30,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    2,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1007,
+    1011,
+    1016,
+    1019,
+    1022,
+    1024,
+    1028,
+    1030
+   ],
+   "text": "All players gain 1 [fruit] from the supply.",
+   "rulings": []
+  },
+  {
+   "id": 22,
+   "name": "Barn Owl",
+   "color": "brown",
+   "vp": 5,
+   "nest": "cavity",
+   "egg_limit": 4,
+   "wingspan": 107,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    0,
+    0,
+    2
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": true,
+   "flocking": false,
+   "bonus": [
+    1013,
+    1018,
+    1019,
+    1026
+   ],
+   "text": "Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird.",
+   "rulings": []
+  },
+  {
+   "id": 23,
+   "name": "Barn Swallow",
+   "color": "brown",
+   "vp": 1,
+   "nest": "wild",
+   "egg_limit": 3,
+   "wingspan": 38,
+   "habitats": [
+    1,
+    2
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": true,
+   "bonus": [
+    1001,
+    1004,
+    1011,
+    1015,
+    1019,
+    1024,
+    1030
+   ],
+   "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].",
+   "rulings": []
+  },
+  {
+   "id": 24,
+   "name": "Barred Owl",
+   "color": "brown",
+   "vp": 3,
+   "nest": "cavity",
+   "egg_limit": 2,
+   "wingspan": 107,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    0,
+    0,
+    0,
+    0,
+    1
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 1,
+   "predator": true,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1013,
+    1016,
+    1018,
+    1019,
+    1026
+   ],
+   "text": "Look at a [card] from the deck. If less than 75cm, tuck it behind this bird. If not, discard it.",
+   "rulings": [
+    "20190724"
+   ]
+  },
+  {
+   "id": 25,
+   "name": "Barrow's Goldeneye",
+   "color": "pink",
+   "vp": 5,
+   "nest": "cavity",
+   "egg_limit": 4,
+   "wingspan": 71,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    1,
+    1,
+    1,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1005,
+    1014,
+    1017,
+    1018,
+    1019,
+    1023,
+    1029
+   ],
+   "text": "When another player takes the “lay eggs” action, lay 1 [egg] on another bird with a [cavity] nest.",
+   "rulings": [
+    "20200109b",
+    "20190921",
+    "20190729"
+   ]
+  },
+  {
+   "id": 26,
+   "name": "Bell's Vireo",
+   "color": "white",
+   "vp": 4,
+   "nest": "wild",
+   "egg_limit": 2,
+   "wingspan": 18,
+   "habitats": [
+    0,
+    1
+   ],
+   "cost": [
+    2,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1011,
+    1015,
+    1017,
+    1019,
+    1022,
+    1024,
+    1030
+   ],
+   "text": "Draw 2 new bonus cards and keep 1.",
+   "rulings": []
+  },
+  {
+   "id": 27,
+   "name": "Belted Kingfisher",
+   "color": "pink",
+   "vp": 4,
+   "nest": "wild",
+   "egg_limit": 4,
+   "wingspan": 53,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    1,
+    0,
+    0
+   ],
+   "wild": 1,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1011,
+    1014,
+    1019,
+    1020,
+    1024,
+    1029,
+    1030
+   ],
+   "text": "When another player plays a bird in their [wetland], gain 1 [fish] from the supply.",
+   "rulings": [
+    "20200716a"
+   ]
+  },
+  {
+   "id": 28,
+   "name": "Bewick's Wren",
+   "color": "brown",
+   "vp": 4,
+   "nest": "cavity",
+   "egg_limit": 3,
+   "wingspan": 18,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    2,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1005,
+    1017,
+    1019,
+    1022
+   ],
+   "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat.",
+   "rulings": [
+    "02a"
+   ]
+  },
+  {
+   "id": 30,
+   "name": "Black Skimmer",
+   "color": "brown",
+   "vp": 6,
+   "nest": "ground",
+   "egg_limit": 2,
+   "wingspan": 112,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    2,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": true,
+   "flocking": false,
+   "bonus": [
+    1011,
+    1013,
+    1014,
+    1018,
+    1023,
+    1029
+   ],
+   "text": "Roll all dice not in birdfeeder. If any are [fish], cache 1 [fish] from the supply on this bird.",
+   "rulings": []
+  },
+  {
+   "id": 31,
+   "name": "Black Tern",
+   "color": "brown",
+   "vp": 4,
+   "nest": "wild",
+   "egg_limit": 2,
+   "wingspan": 61,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    1,
+    0,
+    1,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1011,
+    1014,
+    1019,
+    1023,
+    1024,
+    1029,
+    1030
+   ],
+   "text": "Draw 1 [card]. If you do, discard 1 [card] from your hand at the end of your turn.",
+   "rulings": []
+  },
+  {
+   "id": 32,
+   "name": "Black Vulture",
+   "color": "pink",
+   "vp": 2,
+   "nest": "cavity",
+   "egg_limit": 1,
+   "wingspan": 150,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 0,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1016,
+    1018,
+    1019,
+    1023
+   ],
+   "text": "When another player's [predator] succeeds, gain 1 [die] from the birdfeeder.",
+   "rulings": [
+    "20231229",
+    "20220209",
+    "20231030"
+   ]
+  },
+  {
+   "id": 34,
+   "name": "Black-Bellied Whistling-Duck",
+   "color": "brown",
+   "vp": 2,
+   "nest": "cavity",
+   "egg_limit": 5,
+   "wingspan": 76,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    0,
+    2,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": true,
+   "bonus": [
+    1000,
+    1001,
+    1004,
+    1005,
+    1018,
+    1019,
+    1023,
+    1029
+   ],
+   "text": "Discard 1 [seed] to tuck 2 [card] from the deck behind this bird.",
+   "rulings": [
+    "20201010b"
+   ]
+  },
+  {
+   "id": 35,
+   "name": "Black-Billed Magpie",
+   "color": "pink",
+   "vp": 3,
+   "nest": "wild",
+   "egg_limit": 3,
+   "wingspan": 64,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 2,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1001,
+    1011,
+    1019,
+    1020,
+    1023,
+    1024,
+    1025,
+    1030
+   ],
+   "text": "When another player's [predator] succeeds, gain 1 [die] from the birdfeeder.",
+   "rulings": [
+    "20201203a",
+    "20210321",
+    "20231030",
+    "20240115"
+   ]
+  },
+  {
+   "id": 36,
+   "name": "Black-Chinned Hummingbird",
+   "color": "brown",
+   "vp": 4,
+   "nest": "bowl",
+   "egg_limit": 2,
+   "wingspan": 8,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 1,
+   "either": false,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1020,
+    1022,
+    1023,
+    1030
+   ],
+   "text": "All players gain 1 [fruit] from the supply.",
+   "rulings": []
+  },
+  {
+   "id": 37,
+   "name": "Black-Crowned Night-Heron",
+   "color": "brown",
+   "vp": 9,
+   "nest": "platform",
+   "egg_limit": 2,
+   "wingspan": 112,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    1,
+    0,
+    1,
+    0,
+    1
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1014,
+    1018,
+    1023,
+    1024,
+    1026,
+    1029
+   ],
+   "text": "Discard 1 [egg] from any of your other birds to gain 1 [wild] from the supply.",
+   "rulings": []
+  },
+  {
+   "id": 39,
+   "name": "Black-Necked Stilt",
+   "color": "white",
+   "vp": 4,
+   "nest": "ground",
+   "egg_limit": 2,
+   "wingspan": 74,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    2,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1011,
+    1015,
+    1018,
+    1023,
+    1029
+   ],
+   "text": "Draw 2 [card].",
+   "rulings": []
+  },
+  {
+   "id": 42,
+   "name": "Blue Grosbeak",
+   "color": "brown",
+   "vp": 4,
+   "nest": "bowl",
+   "egg_limit": 3,
+   "wingspan": 28,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    1,
+    2,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1005,
+    1022,
+    1023,
+    1030
+   ],
+   "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat.",
+   "rulings": [
+    "20250319",
+    "02a",
+    "20200528",
+    "20221228"
+   ]
+  },
+  {
+   "id": 43,
+   "name": "Blue Jay",
+   "color": "brown",
+   "vp": 3,
+   "nest": "bowl",
+   "egg_limit": 2,
+   "wingspan": 41,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    0,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 1,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1005,
+    1016,
+    1020,
+    1023,
+    1030
+   ],
+   "text": "Gain 1 [seed] from the birdfeeder, if available. You may cache it on this bird.",
+   "rulings": [
+    "20200423",
+    "20231126",
+    "20190901",
+    "20200113"
+   ]
+  },
+  {
+   "id": 44,
+   "name": "Blue-Gray Gnatcatcher",
+   "color": "brown",
+   "vp": 1,
+   "nest": "bowl",
+   "egg_limit": 3,
+   "wingspan": 15,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1015,
+    1016,
+    1022,
+    1023,
+    1030
+   ],
+   "text": "Gain 1 [invertebrate] from the supply.",
+   "rulings": []
+  },
+  {
+   "id": 45,
+   "name": "Blue-Winged Warbler",
+   "color": null,
+   "vp": 8,
+   "nest": "bowl",
+   "egg_limit": 2,
+   "wingspan": 20,
+   "habitats": [
+    0,
+    1
+   ],
+   "cost": [
+    2,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1015,
+    1022,
+    1023,
+    1030
+   ],
+   "text": null,
+   "rulings": [
+    "20240105"
+   ]
+  },
+  {
+   "id": 47,
+   "name": "Bobolink",
+   "color": "white",
+   "vp": 4,
+   "nest": "ground",
+   "egg_limit": 3,
+   "wingspan": 30,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    1,
+    2,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1005,
+    1011,
+    1022,
+    1025
+   ],
+   "text": "Lay 1 [egg] on each of your birds with a [ground] nest.",
+   "rulings": []
+  },
+  {
+   "id": 49,
+   "name": "Brant",
+   "color": "white",
+   "vp": 3,
+   "nest": "ground",
+   "egg_limit": 2,
+   "wingspan": 114,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    0,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 1,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1005,
+    1011,
+    1018,
+    1020,
+    1029
+   ],
+   "text": "Draw the 3 face-up [card] in the bird tray.",
+   "rulings": []
+  },
+  {
+   "id": 50,
+   "name": "Brewer's Blackbird",
+   "color": "brown",
+   "vp": 3,
+   "nest": "bowl",
+   "egg_limit": 3,
+   "wingspan": 41,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    0,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 1,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": true,
+   "bonus": [
+    1001,
+    1004,
+    1005,
+    1017,
+    1020,
+    1023,
+    1025,
+    1030
+   ],
+   "text": "Tuck 1 [card] from your hand behind this bird. If you do, you may also lay 1 [egg] on this bird.",
+   "rulings": [
+    "20190203"
+   ]
+  },
+  {
+   "id": 51,
+   "name": "Broad-Winged Hawk",
+   "color": "brown",
+   "vp": 4,
+   "nest": "platform",
+   "egg_limit": 2,
+   "wingspan": 85,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    0,
+    0,
+    0,
+    0,
+    1
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 1,
+   "predator": true,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1013,
+    1016,
+    1018,
+    1024,
+    1026
+   ],
+   "text": "Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird.",
+   "rulings": []
+  },
+  {
+   "id": 52,
+   "name": "Bronzed Cowbird",
+   "color": "pink",
+   "vp": 5,
+   "nest": "none",
+   "egg_limit": 0,
+   "wingspan": 36,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1005,
+    1023,
+    1025
+   ],
+   "text": "When another player takes the “lay eggs” action, lay 1 [egg] on a bird with a [bowl] nest.",
+   "rulings": [
+    "20190718",
+    "20200109b",
+    "20190921"
+   ]
+  },
+  {
+   "id": 53,
+   "name": "Brown Pelican",
+   "color": "white",
+   "vp": 4,
+   "nest": "platform",
+   "egg_limit": 2,
+   "wingspan": 201,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    2,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1014,
+    1018,
+    1023,
+    1024,
+    1029
+   ],
+   "text": "Gain 3 [fish] from the supply.",
+   "rulings": []
+  },
+  {
+   "id": 54,
+   "name": "Brown-Headed Cowbird",
+   "color": "pink",
+   "vp": 3,
+   "nest": "none",
+   "egg_limit": 0,
+   "wingspan": 30,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    0,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1001,
+    1005,
+    1022,
+    1023,
+    1025
+   ],
+   "text": "When another player takes the “lay eggs” action, lay 1 [egg] on a bird with a [bowl] nest.",
+   "rulings": [
+    "20210107",
+    "20200411",
+    "20200109b",
+    "20200323",
+    "20190921"
+   ]
+  },
+  {
+   "id": 56,
+   "name": "Burrowing Owl",
+   "color": "brown",
+   "vp": 5,
+   "nest": "wild",
+   "egg_limit": 4,
+   "wingspan": 53,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    0,
+    1
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": true,
+   "flocking": false,
+   "bonus": [
+    1011,
+    1013,
+    1019,
+    1024,
+    1025,
+    1026,
+    1030
+   ],
+   "text": "Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird.",
+   "rulings": [
+    "20190522"
+   ]
+  },
+  {
+   "id": 57,
+   "name": "Bushtit",
+   "color": "brown",
+   "vp": 2,
+   "nest": "wild",
+   "egg_limit": 5,
+   "wingspan": 15,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": true,
+   "bonus": [
+    1001,
+    1004,
+    1005,
+    1011,
+    1019,
+    1022,
+    1024,
+    1030
+   ],
+   "text": "Tuck 1 [card] from your hand behind this bird. If you do, you may also lay 1 [egg] on this bird.",
+   "rulings": [
+    "20190203",
+    "20201020b"
+   ]
+  },
+  {
+   "id": 58,
+   "name": "California Condor",
+   "color": "white",
+   "vp": 1,
+   "nest": "ground",
+   "egg_limit": 1,
+   "wingspan": 277,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 0,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1007,
+    1011,
+    1018
+   ],
+   "text": "Draw 2 new bonus cards and keep 1.",
+   "rulings": []
+  },
+  {
+   "id": 59,
+   "name": "California Quail",
+   "color": "brown",
+   "vp": 3,
+   "nest": "ground",
+   "egg_limit": 6,
+   "wingspan": 36,
+   "habitats": [
+    0,
+    1
+   ],
+   "cost": [
+    1,
+    2,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1005,
+    1007,
+    1011
+   ],
+   "text": "Lay 1 [egg] on this bird.",
+   "rulings": [
+    "20210130"
+   ]
+  },
+  {
+   "id": 60,
+   "name": "Canada Goose",
+   "color": "brown",
+   "vp": 3,
+   "nest": "ground",
+   "egg_limit": 3,
+   "wingspan": 132,
+   "habitats": [
+    1,
+    2
+   ],
+   "cost": [
+    0,
+    2,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": true,
+   "bonus": [
+    1001,
+    1004,
+    1005,
+    1007,
+    1011,
+    1018
+   ],
+   "text": "Discard 1 [seed] to tuck 2 [card] from the deck behind this bird.",
+   "rulings": [
+    "20201010b"
+   ]
+  },
+  {
+   "id": 61,
+   "name": "Canvasback",
+   "color": "brown",
+   "vp": 4,
+   "nest": "wild",
+   "egg_limit": 4,
+   "wingspan": 82,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    0,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 1,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1005,
+    1011,
+    1018,
+    1019,
+    1020,
+    1024,
+    1029,
+    1030
+   ],
+   "text": "All players draw 1 [card] from the deck.",
+   "rulings": [
+    "20201116"
+   ]
+  },
+  {
+   "id": 62,
+   "name": "Carolina Chickadee",
+   "color": "brown",
+   "vp": 2,
+   "nest": "cavity",
+   "egg_limit": 3,
+   "wingspan": 20,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1005,
+    1007,
+    1016,
+    1019,
+    1022
+   ],
+   "text": "Cache 1 [seed] from the supply on this bird.",
+   "rulings": []
+  },
+  {
+   "id": 63,
+   "name": "Carolina Wren",
+   "color": "white",
+   "vp": 1,
+   "nest": "cavity",
+   "egg_limit": 5,
+   "wingspan": 20,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1007,
+    1016,
+    1019,
+    1022,
+    1028
+   ],
+   "text": "Draw 2 [card].",
+   "rulings": []
+  },
+  {
+   "id": 65,
+   "name": "Cassin's Finch",
+   "color": "white",
+   "vp": 4,
+   "nest": "bowl",
+   "egg_limit": 3,
+   "wingspan": 30,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    0,
+    1,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1005,
+    1016,
+    1017,
+    1022,
+    1028,
+    1030
+   ],
+   "text": "Draw 2 new bonus cards and keep 1.",
+   "rulings": [
+    "20210130"
+   ]
+  },
+  {
+   "id": 66,
+   "name": "Cassin's Sparrow",
+   "color": "brown",
+   "vp": 3,
+   "nest": "ground",
+   "egg_limit": 2,
+   "wingspan": 20,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1005,
+    1011,
+    1017,
+    1022,
+    1025
+   ],
+   "text": "Lay 1 [egg] on any bird.",
+   "rulings": []
+  },
+  {
+   "id": 67,
+   "name": "Cedar Waxwing",
+   "color": "brown",
+   "vp": 3,
+   "nest": "bowl",
+   "egg_limit": 3,
+   "wingspan": 25,
+   "habitats": [
+    0,
+    1
+   ],
+   "cost": [
+    0,
+    0,
+    0,
+    2,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": true,
+   "bonus": [
+    1000,
+    1001,
+    1004,
+    1022,
+    1028,
+    1030
+   ],
+   "text": "Tuck 1 [card] from your hand behind this bird. If you do, gain 1 [fruit] from the supply.",
+   "rulings": []
+  },
+  {
+   "id": 68,
+   "name": "Cerulean Warbler",
+   "color": "white",
+   "vp": 4,
+   "nest": "bowl",
+   "egg_limit": 2,
+   "wingspan": 20,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1005,
+    1016,
+    1022,
+    1023,
+    1030
+   ],
+   "text": "Draw 2 new bonus cards and keep 1.",
+   "rulings": []
+  },
+  {
+   "id": 70,
+   "name": "Chestnut-Collared Longspur",
+   "color": "white",
+   "vp": 5,
+   "nest": "ground",
+   "egg_limit": 4,
+   "wingspan": 25,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    1,
+    2,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1005,
+    1011,
+    1022,
+    1023,
+    1025
+   ],
+   "text": "Draw 2 new bonus cards and keep 1.",
+   "rulings": []
+  },
+  {
+   "id": 71,
+   "name": "Chihuahuan Raven",
+   "color": "brown",
+   "vp": 4,
+   "nest": "platform",
+   "egg_limit": 3,
+   "wingspan": 112,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    0,
+    0,
+    0,
+    0,
+    1
+   ],
+   "wild": 2,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1007,
+    1018,
+    1020,
+    1024,
+    1025,
+    1026
+   ],
+   "text": "Discard 1 [egg] from any of your other birds to gain 2 [wild] from the supply.",
+   "rulings": [
+    "20220826",
+    "20201204a"
+   ]
+  },
+  {
+   "id": 72,
+   "name": "Chimney Swift",
+   "color": "brown",
+   "vp": 3,
+   "nest": "wild",
+   "egg_limit": 2,
+   "wingspan": 36,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    2,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1011,
+    1015,
+    1019,
+    1024,
+    1030
+   ],
+   "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat.",
+   "rulings": [
+    "02a",
+    "20201206b"
+   ]
+  },
+  {
+   "id": 73,
+   "name": "Chipping Sparrow",
+   "color": "brown",
+   "vp": 1,
+   "nest": "bowl",
+   "egg_limit": 3,
+   "wingspan": 23,
+   "habitats": [
+    0,
+    1
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1005,
+    1022,
+    1030
+   ],
+   "text": "Lay 1 [egg] on any bird.",
+   "rulings": []
+  },
+  {
+   "id": 74,
+   "name": "Clark's Grebe",
+   "color": "brown",
+   "vp": 5,
+   "nest": "wild",
+   "egg_limit": 2,
+   "wingspan": 61,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    1,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1011,
+    1014,
+    1017,
+    1019,
+    1024,
+    1029,
+    1030
+   ],
+   "text": "Draw 1 [card]. If you do, discard 1 [card] from your hand at the end of your turn.",
+   "rulings": [
+    "20200508"
+   ]
+  },
+  {
+   "id": 75,
+   "name": "Clark's Nutcracker",
+   "color": "brown",
+   "vp": 5,
+   "nest": "platform",
+   "egg_limit": 2,
+   "wingspan": 61,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    0,
+    2,
+    0,
+    0,
+    0
+   ],
+   "wild": 1,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1005,
+    1016,
+    1017,
+    1020,
+    1024
+   ],
+   "text": "Gain 1 [seed] from the birdfeeder, if available. You may cache it on this bird.",
+   "rulings": [
+    "20210902"
+   ]
+  },
+  {
+   "id": 83,
+   "name": "Common Grackle",
+   "color": "brown",
+   "vp": 3,
+   "nest": "bowl",
+   "egg_limit": 3,
+   "wingspan": 43,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    0,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 1,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": true,
+   "bonus": [
+    1001,
+    1004,
+    1005,
+    1020,
+    1030
+   ],
+   "text": "Tuck 1 [card] from your hand behind this bird. If you do, you may also lay 1 [egg] on this bird.",
+   "rulings": [
+    "20231204",
+    "20190203"
+   ]
+  },
+  {
+   "id": 86,
+   "name": "Common Loon",
+   "color": "brown",
+   "vp": 6,
+   "nest": "ground",
+   "egg_limit": 1,
+   "wingspan": 117,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    1,
+    0,
+    0
+   ],
+   "wild": 1,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1011,
+    1014,
+    1018,
+    1020,
+    1029
+   ],
+   "text": "Player(s) with the fewest birds in their [wetland] draw 1 [card].",
+   "rulings": [
+    "20220305"
+   ]
+  },
+  {
+   "id": 87,
+   "name": "Common Merganser",
+   "color": "brown",
+   "vp": 5,
+   "nest": "cavity",
+   "egg_limit": 4,
+   "wingspan": 86,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    1,
+    0,
+    0
+   ],
+   "wild": 1,
+   "either": false,
+   "total_cost": 2,
+   "predator": true,
+   "flocking": false,
+   "bonus": [
+    1013,
+    1014,
+    1018,
+    1019,
+    1020,
+    1029
+   ],
+   "text": "Roll all dice not in birdfeeder. If any are [fish], cache 1 [fish] from the supply on this bird.",
+   "rulings": []
+  },
+  {
+   "id": 89,
+   "name": "Common Nighthawk",
+   "color": "brown",
+   "vp": 3,
+   "nest": "ground",
+   "egg_limit": 2,
+   "wingspan": 56,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    2,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1011,
+    1015
+   ],
+   "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat.",
+   "rulings": [
+    "02a",
+    "20200104"
+   ]
+  },
+  {
+   "id": 91,
+   "name": "Common Raven",
+   "color": "brown",
+   "vp": 5,
+   "nest": "platform",
+   "egg_limit": 2,
+   "wingspan": 135,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    0,
+    0,
+    1
+   ],
+   "wild": 2,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1018,
+    1020,
+    1024,
+    1026
+   ],
+   "text": "Discard 1 [egg] from any of your other birds to gain 2 [wild] from the supply.",
+   "rulings": [
+    "20220826",
+    "20200623"
+   ]
+  },
+  {
+   "id": 94,
+   "name": "Common Yellowthroat",
+   "color": "brown",
+   "vp": 1,
+   "nest": "bowl",
+   "egg_limit": 4,
+   "wingspan": 18,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1001,
+    1015,
+    1022,
+    1023,
+    1029,
+    1030
+   ],
+   "text": "Draw 2 [card]. If you do, discard 1 [card] from your hand at the end of your turn.",
+   "rulings": []
+  },
+  {
+   "id": 95,
+   "name": "Cooper's Hawk",
+   "color": "brown",
+   "vp": 3,
+   "nest": "platform",
+   "egg_limit": 2,
+   "wingspan": 79,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    0,
+    0,
+    0,
+    0,
+    1
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 1,
+   "predator": true,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1013,
+    1016,
+    1017,
+    1018,
+    1024,
+    1026
+   ],
+   "text": "Look at a [card] from the deck. If less than 75cm, tuck it behind this bird. If not, discard it.",
+   "rulings": []
+  },
+  {
+   "id": 97,
+   "name": "Dark-Eyed Junco",
+   "color": "brown",
+   "vp": 3,
+   "nest": "ground",
+   "egg_limit": 3,
+   "wingspan": 23,
+   "habitats": [
+    0,
+    1
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": true,
+   "bonus": [
+    1000,
+    1001,
+    1004,
+    1005,
+    1011,
+    1022
+   ],
+   "text": "Tuck 1 [card] from your hand behind this bird. If you do, gain 1 [seed] from the supply.",
+   "rulings": []
+  },
+  {
+   "id": 98,
+   "name": "Dickcissel",
+   "color": "brown",
+   "vp": 4,
+   "nest": "ground",
+   "egg_limit": 3,
+   "wingspan": 25,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    1,
+    2,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": true,
+   "bonus": [
+    1004,
+    1005,
+    1011,
+    1022,
+    1025
+   ],
+   "text": "Tuck 1 [card] from your hand behind this bird. If you do, you may also lay 1 [egg] on this bird.",
+   "rulings": [
+    "20190203"
+   ]
+  },
+  {
+   "id": 99,
+   "name": "Double-Crested Cormorant",
+   "color": "brown",
+   "vp": 3,
+   "nest": "platform",
+   "egg_limit": 3,
+   "wingspan": 132,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    1,
+    0,
+    0
+   ],
+   "wild": 1,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": true,
+   "bonus": [
+    1000,
+    1001,
+    1004,
+    1014,
+    1018,
+    1020,
+    1024,
+    1029
+   ],
+   "text": "Discard 1 [fish] to tuck 2 [card] from the deck behind this bird.",
+   "rulings": []
+  },
+  {
+   "id": 100,
+   "name": "Downy Woodpecker",
+   "color": "white",
+   "vp": 3,
+   "nest": "cavity",
+   "egg_limit": 2,
+   "wingspan": 30,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1005,
+    1016,
+    1019,
+    1022,
+    1028
+   ],
+   "text": "Play an additional bird in your [forest]. Pay its normal cost.",
+   "rulings": [
+    "20190309"
+   ]
+  },
+  {
+   "id": 102,
+   "name": "Eastern Bluebird",
+   "color": "white",
+   "vp": 4,
+   "nest": "cavity",
+   "egg_limit": 5,
+   "wingspan": 33,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1007,
+    1019,
+    1023,
+    1025,
+    1028
+   ],
+   "text": "Play an additional bird in your [grassland]. Pay its normal cost.",
+   "rulings": [
+    "20190309"
+   ]
+  },
+  {
+   "id": 104,
+   "name": "Eastern Kingbird",
+   "color": "pink",
+   "vp": 2,
+   "nest": "bowl",
+   "egg_limit": 2,
+   "wingspan": 38,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1007,
+    1028,
+    1030
+   ],
+   "text": "When another player plays a bird in their [forest], gain 1 [invertebrate] from the supply.",
+   "rulings": [
+    "20200716a",
+    "20200710"
+   ]
+  },
+  {
+   "id": 105,
+   "name": "Eastern Phoebe",
+   "color": "brown",
+   "vp": 3,
+   "nest": "wild",
+   "egg_limit": 4,
+   "wingspan": 28,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1007,
+    1011,
+    1019,
+    1022,
+    1024,
+    1028,
+    1030
+   ],
+   "text": "All players gain 1 [invertebrate] from the supply.",
+   "rulings": []
+  },
+  {
+   "id": 106,
+   "name": "Eastern Screech-Owl",
+   "color": "brown",
+   "vp": 4,
+   "nest": "cavity",
+   "egg_limit": 2,
+   "wingspan": 51,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    0,
+    1
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": true,
+   "flocking": false,
+   "bonus": [
+    1007,
+    1013,
+    1016,
+    1019,
+    1026
+   ],
+   "text": "Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird.",
+   "rulings": [
+    "20191218",
+    "20210327"
+   ]
+  },
+  {
+   "id": 124,
+   "name": "Ferruginous Hawk",
+   "color": "brown",
+   "vp": 6,
+   "nest": "platform",
+   "egg_limit": 2,
+   "wingspan": 142,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    0,
+    0,
+    0,
+    0,
+    2
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": true,
+   "flocking": false,
+   "bonus": [
+    1013,
+    1018,
+    1023,
+    1024,
+    1025,
+    1026
+   ],
+   "text": "Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird.",
+   "rulings": []
+  },
+  {
+   "id": 125,
+   "name": "Fish Crow",
+   "color": "brown",
+   "vp": 6,
+   "nest": "platform",
+   "egg_limit": 2,
+   "wingspan": 91,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    1,
+    0,
+    0
+   ],
+   "wild": 1,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1014,
+    1018,
+    1020,
+    1024
+   ],
+   "text": "Discard 1 [egg] from any of your other birds to gain 1 [wild] from the supply.",
+   "rulings": [
+    "20191007"
+   ]
+  },
+  {
+   "id": 126,
+   "name": "Forster's Tern",
+   "color": "brown",
+   "vp": 4,
+   "nest": "wild",
+   "egg_limit": 2,
+   "wingspan": 79,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    1,
+    0,
+    1,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1011,
+    1014,
+    1017,
+    1018,
+    1019,
+    1024,
+    1029,
+    1030
+   ],
+   "text": "Draw 1 [card]. If you do, discard 1 [card] from your hand at the end of your turn.",
+   "rulings": [
+    "20240903",
+    "20210124"
+   ]
+  },
+  {
+   "id": 127,
+   "name": "Franklin's Gull",
+   "color": "brown",
+   "vp": 3,
+   "nest": "wild",
+   "egg_limit": 2,
+   "wingspan": 91,
+   "habitats": [
+    1,
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    1,
+    0,
+    0
+   ],
+   "wild": 1,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1011,
+    1014,
+    1017,
+    1018,
+    1019,
+    1020,
+    1024,
+    1030
+   ],
+   "text": "Discard 1 [egg] to draw 2 [card].",
+   "rulings": []
+  },
+  {
+   "id": 129,
+   "name": "Golden Eagle",
+   "color": "brown",
+   "vp": 8,
+   "nest": "platform",
+   "egg_limit": 1,
+   "wingspan": 201,
+   "habitats": [
+    1,
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    0,
+    0,
+    3
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": true,
+   "flocking": false,
+   "bonus": [
+    1013,
+    1018,
+    1023,
+    1024,
+    1026
+   ],
+   "text": "Look at a [card] from the deck. If less than 100cm, tuck it behind this bird. If not, discard it.",
+   "rulings": [
+    "20220307",
+    "20200907",
+    "20190729"
+   ]
+  },
+  {
+   "id": 130,
+   "name": "Grasshopper Sparrow",
+   "color": "brown",
+   "vp": 2,
+   "nest": "ground",
+   "egg_limit": 2,
+   "wingspan": 20,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1005,
+    1011,
+    1022,
+    1025
+   ],
+   "text": "Lay 1 [egg] on any bird.",
+   "rulings": []
+  },
+  {
+   "id": 131,
+   "name": "Gray Catbird",
+   "color": "brown",
+   "vp": 5,
+   "nest": "bowl",
+   "egg_limit": 3,
+   "wingspan": 28,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    2,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1022,
+    1023,
+    1028,
+    1030
+   ],
+   "text": "Repeat a brown power on another bird in this habitat.",
+   "rulings": [
+    "20210199a",
+    "20190127",
+    "20260319",
+    "20200108",
+    "20190307"
+   ]
+  },
+  {
+   "id": 132,
+   "name": "Great Blue Heron",
+   "color": "white",
+   "vp": 5,
+   "nest": "platform",
+   "egg_limit": 2,
+   "wingspan": 183,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    1,
+    0,
+    1,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1014,
+    1018,
+    1023,
+    1024,
+    1029
+   ],
+   "text": "Play an additional bird in your [wetland]. Pay its normal cost.",
+   "rulings": [
+    "20190309"
+   ]
+  },
+  {
+   "id": 133,
+   "name": "Great Crested Flycatcher",
+   "color": "brown",
+   "vp": 5,
+   "nest": "cavity",
+   "egg_limit": 3,
+   "wingspan": 33,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1016,
+    1019,
+    1028
+   ],
+   "text": "Gain 1 [invertebrate] from the birdfeeder, if available.",
+   "rulings": [
+    "20190117"
+   ]
+  },
+  {
+   "id": 135,
+   "name": "Great Egret",
+   "color": "white",
+   "vp": 7,
+   "nest": "platform",
+   "egg_limit": 3,
+   "wingspan": 130,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    2,
+    0,
+    1
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1014,
+    1018,
+    1024,
+    1026,
+    1029
+   ],
+   "text": "Play an additional bird in your [wetland]. Pay its normal cost.",
+   "rulings": [
+    "20190309"
+   ]
+  },
+  {
+   "id": 136,
+   "name": "Great Horned Owl",
+   "color": "brown",
+   "vp": 8,
+   "nest": "platform",
+   "egg_limit": 2,
+   "wingspan": 112,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    0,
+    0,
+    0,
+    0,
+    3
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": true,
+   "flocking": false,
+   "bonus": [
+    1013,
+    1016,
+    1018,
+    1024,
+    1026
+   ],
+   "text": "Look at a [card] from the deck. If less than 100cm, tuck it behind this bird. If not, discard it.",
+   "rulings": [
+    "20201006"
+   ]
+  },
+  {
+   "id": 139,
+   "name": "Greater Prairie-Chicken",
+   "color": "white",
+   "vp": 5,
+   "nest": "ground",
+   "egg_limit": 4,
+   "wingspan": 71,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    1,
+    2,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1005,
+    1007,
+    1011,
+    1018,
+    1025
+   ],
+   "text": "Draw 2 new bonus cards and keep 1.",
+   "rulings": [
+    "02d"
+   ]
+  },
+  {
+   "id": 140,
+   "name": "Greater Roadrunner",
+   "color": "brown",
+   "vp": 7,
+   "nest": "platform",
+   "egg_limit": 2,
+   "wingspan": 56,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    0,
+    1
+   ],
+   "wild": 1,
+   "either": false,
+   "total_cost": 3,
+   "predator": true,
+   "flocking": false,
+   "bonus": [
+    1013,
+    1020,
+    1024,
+    1025,
+    1026
+   ],
+   "text": "Look at a [card] from the deck. If less than 50cm, tuck it behind this bird. If not, discard it.",
+   "rulings": []
+  },
+  {
+   "id": 141,
+   "name": "Green Heron",
+   "color": "brown",
+   "vp": 4,
+   "nest": "platform",
+   "egg_limit": 3,
+   "wingspan": 66,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    1,
+    0,
+    1,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1014,
+    1018,
+    1023,
+    1024,
+    1029
+   ],
+   "text": "Trade 1 [wild] for any other type from the supply.",
+   "rulings": [
+    "20230621",
+    "20220509",
+    "20230101",
+    "20200712",
+    "20200719"
+   ]
+  },
+  {
+   "id": 146,
+   "name": "Hermit Thrush",
+   "color": "brown",
+   "vp": 7,
+   "nest": "wild",
+   "egg_limit": 2,
+   "wingspan": 30,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    2,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1011,
+    1016,
+    1019,
+    1022,
+    1024,
+    1028,
+    1030
+   ],
+   "text": "Player(s) with the fewest birds in their [forest] gain 1 [die] from birdfeeder.",
+   "rulings": [
+    "20230412",
+    "20221112"
+   ]
+  },
+  {
+   "id": 148,
+   "name": "Hooded Merganser",
+   "color": "brown",
+   "vp": 5,
+   "nest": "cavity",
+   "egg_limit": 4,
+   "wingspan": 61,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    1,
+    0,
+    1,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1014,
+    1019,
+    1029
+   ],
+   "text": "Repeat 1 [predator] power in this habitat.",
+   "rulings": [
+    "20210199a",
+    "20220307",
+    "20190127",
+    "20260111"
+   ]
+  },
+  {
+   "id": 149,
+   "name": "Hooded Warbler",
+   "color": null,
+   "vp": 7,
+   "nest": "bowl",
+   "egg_limit": 3,
+   "wingspan": 18,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    2,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1015,
+    1016,
+    1022,
+    1030
+   ],
+   "text": null,
+   "rulings": [
+    "20201010a",
+    "20200301"
+   ]
+  },
+  {
+   "id": 150,
+   "name": "Horned Lark",
+   "color": "pink",
+   "vp": 5,
+   "nest": "ground",
+   "egg_limit": 4,
+   "wingspan": 30,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": true,
+   "bonus": [
+    1004,
+    1005,
+    1011,
+    1022,
+    1025
+   ],
+   "text": "When another player plays a bird in their [grassland], tuck 1 [card] from your hand behind this bird.",
+   "rulings": [
+    "20240714a",
+    "20200528",
+    "20200405",
+    "20200204a"
+   ]
+  },
+  {
+   "id": 151,
+   "name": "House Finch",
+   "color": "brown",
+   "vp": 3,
+   "nest": "bowl",
+   "egg_limit": 6,
+   "wingspan": 25,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    0,
+    1,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": true,
+   "bonus": [
+    1001,
+    1004,
+    1005,
+    1022,
+    1028,
+    1030
+   ],
+   "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].",
+   "rulings": []
+  },
+  {
+   "id": 153,
+   "name": "House Wren",
+   "color": "white",
+   "vp": 1,
+   "nest": "cavity",
+   "egg_limit": 5,
+   "wingspan": 15,
+   "habitats": [
+    0,
+    1
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1015,
+    1019,
+    1022
+   ],
+   "text": "Play an additional bird in this bird's habitat. Pay its normal cost.",
+   "rulings": [
+    "20190309",
+    "20190128"
+   ]
+  },
+  {
+   "id": 154,
+   "name": "Inca Dove",
+   "color": "white",
+   "vp": 2,
+   "nest": "platform",
+   "egg_limit": 4,
+   "wingspan": 28,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    0,
+    2,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1005,
+    1007,
+    1022,
+    1024,
+    1025
+   ],
+   "text": "Lay 1 [egg] on each of your birds with a [platform] nest.",
+   "rulings": []
+  },
+  {
+   "id": 155,
+   "name": "Indigo Bunting",
+   "color": "brown",
+   "vp": 5,
+   "nest": "bowl",
+   "egg_limit": 3,
+   "wingspan": 20,
+   "habitats": [
+    0,
+    1
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1005,
+    1022,
+    1023,
+    1028,
+    1030
+   ],
+   "text": "Gain 1 [invertebrate] or [fruit] from the birdfeeder, if available.",
+   "rulings": [
+    "20190117"
+   ]
+  },
+  {
+   "id": 156,
+   "name": "Juniper Titmouse",
+   "color": "brown",
+   "vp": 4,
+   "nest": "cavity",
+   "egg_limit": 3,
+   "wingspan": 23,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1005,
+    1016,
+    1019,
+    1022
+   ],
+   "text": "Cache 1 [seed] from the supply on this bird.",
+   "rulings": []
+  },
+  {
+   "id": 157,
+   "name": "Killdeer",
+   "color": "brown",
+   "vp": 1,
+   "nest": "ground",
+   "egg_limit": 3,
+   "wingspan": 46,
+   "habitats": [
+    1,
+    2
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1005,
+    1011
+   ],
+   "text": "Discard 1 [egg] to draw 2 [card].",
+   "rulings": []
+  },
+  {
+   "id": 158,
+   "name": "King Rail",
+   "color": "white",
+   "vp": 4,
+   "nest": "platform",
+   "egg_limit": 6,
+   "wingspan": 51,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    1,
+    0,
+    1,
+    0,
+    0
+   ],
+   "wild": 1,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1014,
+    1020,
+    1024,
+    1029
+   ],
+   "text": "Draw 2 new bonus cards and keep 1.",
+   "rulings": []
+  },
+  {
+   "id": 159,
+   "name": "Lazuli Bunting",
+   "color": "brown",
+   "vp": 4,
+   "nest": "bowl",
+   "egg_limit": 4,
+   "wingspan": 23,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1005,
+    1022,
+    1023,
+    1025,
+    1028,
+    1030
+   ],
+   "text": "All players lay 1 [egg] on any 1 [bowl] bird. You may lay 1 [egg] on 1 additional [bowl] bird.",
+   "rulings": [
+    "20220515",
+    "20190406"
+   ]
+  },
+  {
+   "id": 161,
+   "name": "Lincoln's Sparrow",
+   "color": "brown",
+   "vp": 3,
+   "nest": "ground",
+   "egg_limit": 2,
+   "wingspan": 20,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1005,
+    1011,
+    1017,
+    1022
+   ],
+   "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat.",
+   "rulings": [
+    "02a"
+   ]
+  },
+  {
+   "id": 164,
+   "name": "Loggerhead Shrike",
+   "color": "pink",
+   "vp": 3,
+   "nest": "bowl",
+   "egg_limit": 4,
+   "wingspan": 30,
+   "habitats": [
+    1,
+    2
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    0,
+    1
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1001,
+    1022,
+    1026,
+    1030
+   ],
+   "text": "When another player takes the “gain food” action, if they gain any number of [rodent], cache 1 [rodent] from the supply on this bird.",
+   "rulings": [
+    "20190405",
+    "20191218",
+    "20260708"
+   ]
+  },
+  {
+   "id": 166,
+   "name": "Mallard",
+   "color": "brown",
+   "vp": 0,
+   "nest": "ground",
+   "egg_limit": 4,
+   "wingspan": 89,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1005,
+    1011,
+    1018,
+    1029
+   ],
+   "text": "Draw 1 [card].",
+   "rulings": []
+  },
+  {
+   "id": 167,
+   "name": "Mississippi Kite",
+   "color": "brown",
+   "vp": 4,
+   "nest": "platform",
+   "egg_limit": 1,
+   "wingspan": 79,
+   "habitats": [
+    0,
+    1
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    0,
+    1
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": true,
+   "flocking": false,
+   "bonus": [
+    1007,
+    1013,
+    1018,
+    1024,
+    1026
+   ],
+   "text": "Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird.",
+   "rulings": []
+  },
+  {
+   "id": 170,
+   "name": "Mountain Bluebird",
+   "color": "white",
+   "vp": 4,
+   "nest": "cavity",
+   "egg_limit": 5,
+   "wingspan": 36,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1007,
+    1019,
+    1023,
+    1025,
+    1028
+   ],
+   "text": "Play an additional bird in your [grassland]. Pay its normal cost.",
+   "rulings": [
+    "20190309"
+   ]
+  },
+  {
+   "id": 171,
+   "name": "Mountain Chickadee",
+   "color": "brown",
+   "vp": 2,
+   "nest": "cavity",
+   "egg_limit": 3,
+   "wingspan": 23,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1005,
+    1007,
+    1016,
+    1019,
+    1022
+   ],
+   "text": "Cache 1 [seed] from the supply on this bird.",
+   "rulings": []
+  },
+  {
+   "id": 172,
+   "name": "Mourning Dove",
+   "color": "brown",
+   "vp": 0,
+   "nest": "platform",
+   "egg_limit": 5,
+   "wingspan": 46,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    0,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1005,
+    1024
+   ],
+   "text": "Lay 1 [egg] on this bird.",
+   "rulings": [
+    "20201002"
+   ]
+  },
+  {
+   "id": 174,
+   "name": "Northern Bobwhite",
+   "color": "brown",
+   "vp": 5,
+   "nest": "ground",
+   "egg_limit": 6,
+   "wingspan": 33,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    0,
+    3,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1005,
+    1007,
+    1011,
+    1023,
+    1025
+   ],
+   "text": "Lay 1 [egg] on this bird.",
+   "rulings": [
+    "20191201"
+   ]
+  },
+  {
+   "id": 175,
+   "name": "Northern Cardinal",
+   "color": "brown",
+   "vp": 3,
+   "nest": "bowl",
+   "egg_limit": 5,
+   "wingspan": 30,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    0,
+    1,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1005,
+    1007,
+    1016,
+    1022,
+    1028,
+    1030
+   ],
+   "text": "Gain 1 [fruit] from the supply.",
+   "rulings": []
+  },
+  {
+   "id": 176,
+   "name": "Northern Flicker",
+   "color": "white",
+   "vp": 2,
+   "nest": "cavity",
+   "egg_limit": 4,
+   "wingspan": 51,
+   "habitats": [
+    0,
+    1
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1005,
+    1007,
+    1019,
+    1028
+   ],
+   "text": "Gain all [invertebrate] that are in the birdfeeder.",
+   "rulings": []
+  },
+  {
+   "id": 179,
+   "name": "Northern Harrier",
+   "color": "brown",
+   "vp": 3,
+   "nest": "platform",
+   "egg_limit": 2,
+   "wingspan": 109,
+   "habitats": [
+    1,
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    0,
+    0,
+    1
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 1,
+   "predator": true,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1007,
+    1013,
+    1018,
+    1024,
+    1026
+   ],
+   "text": "Look at a [card] from the deck. If less than 75cm, tuck it behind this bird. If not, discard it.",
+   "rulings": []
+  },
+  {
+   "id": 180,
+   "name": "Northern Mockingbird",
+   "color": "brown",
+   "vp": 2,
+   "nest": "bowl",
+   "egg_limit": 4,
+   "wingspan": 36,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1007,
+    1028,
+    1030
+   ],
+   "text": "Repeat a brown power on another bird in this habitat.",
+   "rulings": [
+    "20240110",
+    "20210199a",
+    "20190127",
+    "20260319",
+    "20200108",
+    "20190307"
+   ]
+  },
+  {
+   "id": 181,
+   "name": "Northern Shoveler",
+   "color": "brown",
+   "vp": 7,
+   "nest": "ground",
+   "egg_limit": 4,
+   "wingspan": 76,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    1,
+    2,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1005,
+    1007,
+    1011,
+    1018,
+    1029
+   ],
+   "text": "All players draw 1 [card] from the deck.",
+   "rulings": []
+  },
+  {
+   "id": 182,
+   "name": "Osprey",
+   "color": "brown",
+   "vp": 5,
+   "nest": "platform",
+   "egg_limit": 2,
+   "wingspan": 160,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    1,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1014,
+    1018,
+    1024,
+    1029
+   ],
+   "text": "All players gain 1 [fish] from the supply.",
+   "rulings": [
+    "20190416"
+   ]
+  },
+  {
+   "id": 183,
+   "name": "Painted Bunting",
+   "color": "white",
+   "vp": 5,
+   "nest": "bowl",
+   "egg_limit": 4,
+   "wingspan": 23,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    1,
+    2,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1005,
+    1022,
+    1025,
+    1030
+   ],
+   "text": "Draw 2 new bonus cards and keep 1.",
+   "rulings": []
+  },
+  {
+   "id": 184,
+   "name": "Painted Whitestart",
+   "color": "brown",
+   "vp": 1,
+   "nest": "ground",
+   "egg_limit": 3,
+   "wingspan": 22,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1011,
+    1015,
+    1016,
+    1022,
+    1023
+   ],
+   "text": "Gain 1 [invertebrate] from the supply.",
+   "rulings": [
+    "20191207"
+   ]
+  },
+  {
+   "id": 186,
+   "name": "Peregrine Falcon",
+   "color": "brown",
+   "vp": 5,
+   "nest": "platform",
+   "egg_limit": 2,
+   "wingspan": 104,
+   "habitats": [
+    1,
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    0,
+    0,
+    2
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": true,
+   "flocking": false,
+   "bonus": [
+    1013,
+    1018,
+    1024,
+    1026
+   ],
+   "text": "Look at a [card] from the deck. If less than 100cm, tuck it behind this bird. If not, discard it.",
+   "rulings": []
+  },
+  {
+   "id": 187,
+   "name": "Pied-Billed Grebe",
+   "color": "brown",
+   "vp": 0,
+   "nest": "platform",
+   "egg_limit": 4,
+   "wingspan": 41,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    1,
+    0,
+    1,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1001,
+    1014,
+    1024,
+    1029
+   ],
+   "text": "Draw 2 [card]. If you do, discard 1 [card] from your hand at the end of your turn.",
+   "rulings": []
+  },
+  {
+   "id": 188,
+   "name": "Pileated Woodpecker",
+   "color": "brown",
+   "vp": 4,
+   "nest": "cavity",
+   "egg_limit": 2,
+   "wingspan": 74,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1016,
+    1018,
+    1019,
+    1028
+   ],
+   "text": "All players lay 1 [egg] on any 1 [cavity] bird. You may lay 1 [egg] on 1 additional [cavity] bird.",
+   "rulings": [
+    "20240604",
+    "20231126",
+    "20190406"
+   ]
+  },
+  {
+   "id": 189,
+   "name": "Pine Siskin",
+   "color": "brown",
+   "vp": 3,
+   "nest": "bowl",
+   "egg_limit": 2,
+   "wingspan": 23,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    0,
+    2,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": true,
+   "bonus": [
+    1001,
+    1004,
+    1005,
+    1016,
+    1022,
+    1030
+   ],
+   "text": "Tuck 1 [card] from your hand behind this bird. If you do, gain 1 [seed] from the supply.",
+   "rulings": []
+  },
+  {
+   "id": 190,
+   "name": "Prothonotary Warbler",
+   "color": null,
+   "vp": 8,
+   "nest": "cavity",
+   "egg_limit": 4,
+   "wingspan": 23,
+   "habitats": [
+    0,
+    2
+   ],
+   "cost": [
+    2,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1005,
+    1019,
+    1022
+   ],
+   "text": null,
+   "rulings": []
+  },
+  {
+   "id": 191,
+   "name": "Purple Gallinule",
+   "color": "brown",
+   "vp": 7,
+   "nest": "platform",
+   "egg_limit": 4,
+   "wingspan": 56,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    0,
+    1,
+    0,
+    1,
+    0
+   ],
+   "wild": 1,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1005,
+    1020,
+    1023,
+    1024,
+    1028,
+    1029
+   ],
+   "text": "All players draw 1 [card] from the deck.",
+   "rulings": []
+  },
+  {
+   "id": 192,
+   "name": "Purple Martin",
+   "color": "brown",
+   "vp": 2,
+   "nest": "cavity",
+   "egg_limit": 3,
+   "wingspan": 46,
+   "habitats": [
+    1,
+    2
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": true,
+   "bonus": [
+    1001,
+    1004,
+    1015,
+    1019,
+    1023
+   ],
+   "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].",
+   "rulings": []
+  },
+  {
+   "id": 193,
+   "name": "Pygmy Nuthatch",
+   "color": "brown",
+   "vp": 2,
+   "nest": "cavity",
+   "egg_limit": 4,
+   "wingspan": 20,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": true,
+   "bonus": [
+    1001,
+    1004,
+    1005,
+    1016,
+    1019,
+    1022
+   ],
+   "text": "Tuck 1 [card] from your hand behind this bird. If you do, gain 1 [invertebrate] or [seed] from the supply.",
+   "rulings": []
+  },
+  {
+   "id": 194,
+   "name": "Red Crossbill",
+   "color": "brown",
+   "vp": 6,
+   "nest": "bowl",
+   "egg_limit": 2,
+   "wingspan": 28,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    0,
+    2,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1005,
+    1016,
+    1022,
+    1023,
+    1030
+   ],
+   "text": "All players gain 1 [seed] from the supply.",
+   "rulings": []
+  },
+  {
+   "id": 198,
+   "name": "Red-Bellied Woodpecker",
+   "color": "brown",
+   "vp": 1,
+   "nest": "cavity",
+   "egg_limit": 3,
+   "wingspan": 41,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1001,
+    1005,
+    1016,
+    1019,
+    1023
+   ],
+   "text": "Gain 1 [seed] from the birdfeeder, if available. You may cache it on this bird.",
+   "rulings": [
+    "20221224"
+   ]
+  },
+  {
+   "id": 199,
+   "name": "Red-Breasted Merganser",
+   "color": "brown",
+   "vp": 3,
+   "nest": "ground",
+   "egg_limit": 4,
+   "wingspan": 78,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    1,
+    0,
+    1,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1001,
+    1011,
+    1014,
+    1018,
+    1023,
+    1029
+   ],
+   "text": "Draw 2 [card]. If you do, discard 1 [card] from your hand at the end of your turn.",
+   "rulings": []
+  },
+  {
+   "id": 200,
+   "name": "Red-Breasted Nuthatch",
+   "color": "brown",
+   "vp": 2,
+   "nest": "cavity",
+   "egg_limit": 3,
+   "wingspan": 23,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1001,
+    1005,
+    1016,
+    1019,
+    1022,
+    1023
+   ],
+   "text": "Cache 1 [seed] from the supply on this bird.",
+   "rulings": []
+  },
+  {
+   "id": 201,
+   "name": "Red-Cockaded Woodpecker",
+   "color": "white",
+   "vp": 4,
+   "nest": "cavity",
+   "egg_limit": 2,
+   "wingspan": 36,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1016,
+    1019,
+    1023,
+    1028
+   ],
+   "text": "Draw 2 new bonus cards and keep 1.",
+   "rulings": []
+  },
+  {
+   "id": 202,
+   "name": "Red-Eyed Vireo",
+   "color": "white",
+   "vp": 3,
+   "nest": "wild",
+   "egg_limit": 2,
+   "wingspan": 25,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1001,
+    1011,
+    1016,
+    1019,
+    1022,
+    1023,
+    1024,
+    1028,
+    1030
+   ],
+   "text": "Play an additional bird in your [forest]. Pay its normal cost.",
+   "rulings": [
+    "20190309"
+   ]
+  },
+  {
+   "id": 203,
+   "name": "Red-Headed Woodpecker",
+   "color": "brown",
+   "vp": 4,
+   "nest": "cavity",
+   "egg_limit": 3,
+   "wingspan": 43,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 1,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1005,
+    1019,
+    1020,
+    1023
+   ],
+   "text": "Gain 1 [seed] from the birdfeeder, if available. You may cache it on this bird.",
+   "rulings": [
+    "20260818"
+   ]
+  },
+  {
+   "id": 205,
+   "name": "Red-Shouldered Hawk",
+   "color": "brown",
+   "vp": 3,
+   "nest": "platform",
+   "egg_limit": 2,
+   "wingspan": 102,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    0,
+    0,
+    0,
+    0,
+    1
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 1,
+   "predator": true,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1001,
+    1013,
+    1016,
+    1018,
+    1023,
+    1024,
+    1026
+   ],
+   "text": "Look at a [card] from the deck. If less than 75cm, tuck it behind this bird. If not, discard it.",
+   "rulings": []
+  },
+  {
+   "id": 206,
+   "name": "Red-Tailed Hawk",
+   "color": "brown",
+   "vp": 5,
+   "nest": "platform",
+   "egg_limit": 2,
+   "wingspan": 124,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    0,
+    0,
+    2
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": true,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1013,
+    1018,
+    1023,
+    1024,
+    1026
+   ],
+   "text": "Look at a [card] from the deck. If less than 75cm, tuck it behind this bird. If not, discard it.",
+   "rulings": [
+    "20241222"
+   ]
+  },
+  {
+   "id": 207,
+   "name": "Red-Winged Blackbird",
+   "color": "brown",
+   "vp": 2,
+   "nest": "bowl",
+   "egg_limit": 3,
+   "wingspan": 33,
+   "habitats": [
+    1,
+    2
+   ],
+   "cost": [
+    0,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": true,
+   "bonus": [
+    1000,
+    1001,
+    1004,
+    1005,
+    1023,
+    1030
+   ],
+   "text": "Tuck 1 [card] from your hand behind this bird. If you do, you may also lay 1 [egg] on this bird.",
+   "rulings": [
+    "20190203"
+   ]
+  },
+  {
+   "id": 208,
+   "name": "Ring-Billed Gull",
+   "color": "brown",
+   "vp": 4,
+   "nest": "ground",
+   "egg_limit": 2,
+   "wingspan": 122,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 2,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": true,
+   "bonus": [
+    1000,
+    1004,
+    1011,
+    1018,
+    1020,
+    1029
+   ],
+   "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].",
+   "rulings": []
+  },
+  {
+   "id": 209,
+   "name": "Rose-Breasted Grosbeak",
+   "color": "brown",
+   "vp": 6,
+   "nest": "bowl",
+   "egg_limit": 3,
+   "wingspan": 33,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1005,
+    1016,
+    1023,
+    1028,
+    1030
+   ],
+   "text": "Gain 1 [seed] or [fruit] from the birdfeeder, if available.",
+   "rulings": [
+    "20190117"
+   ]
+  },
+  {
+   "id": 210,
+   "name": "Roseate Spoonbill",
+   "color": "white",
+   "vp": 6,
+   "nest": "platform",
+   "egg_limit": 2,
+   "wingspan": 127,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    1,
+    1,
+    1,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1005,
+    1014,
+    1018,
+    1023,
+    1024,
+    1029
+   ],
+   "text": "Draw 2 new bonus cards and keep 1.",
+   "rulings": []
+  },
+  {
+   "id": 211,
+   "name": "Ruby-Crowned Kinglet",
+   "color": "white",
+   "vp": 2,
+   "nest": "bowl",
+   "egg_limit": 3,
+   "wingspan": 20,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1001,
+    1005,
+    1016,
+    1022,
+    1023,
+    1028,
+    1030
+   ],
+   "text": "Play an additional bird in your [forest]. Pay its normal cost.",
+   "rulings": [
+    "20201230",
+    "20190309"
+   ]
+  },
+  {
+   "id": 212,
+   "name": "Ruby-Throated Hummingbird",
+   "color": "brown",
+   "vp": 4,
+   "nest": "bowl",
+   "egg_limit": 2,
+   "wingspan": 10,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 1,
+   "either": false,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1020,
+    1022,
+    1023,
+    1030
+   ],
+   "text": "Each player gains 1 [die] from the birdfeeder, starting with the player of your choice.",
+   "rulings": [
+    "20201002",
+    "20200420",
+    "20230909"
+   ]
+  },
+  {
+   "id": 213,
+   "name": "Ruddy Duck",
+   "color": "brown",
+   "vp": 0,
+   "nest": "platform",
+   "egg_limit": 5,
+   "wingspan": 48,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1005,
+    1023,
+    1024,
+    1029
+   ],
+   "text": "Draw 2 [card]. If you do, discard 1 [card] from your hand at the end of your turn.",
+   "rulings": []
+  },
+  {
+   "id": 215,
+   "name": "Sandhill Crane",
+   "color": "brown",
+   "vp": 5,
+   "nest": "ground",
+   "egg_limit": 1,
+   "wingspan": 196,
+   "habitats": [
+    1,
+    2
+   ],
+   "cost": [
+    0,
+    2,
+    0,
+    0,
+    0
+   ],
+   "wild": 1,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": true,
+   "bonus": [
+    1004,
+    1005,
+    1007,
+    1011,
+    1018,
+    1020
+   ],
+   "text": "Discard 1 [seed] to tuck 2 [card] from the deck behind this bird.",
+   "rulings": [
+    "20211123",
+    "20201010b"
+   ]
+  },
+  {
+   "id": 216,
+   "name": "Savannah Sparrow",
+   "color": "white",
+   "vp": 2,
+   "nest": "ground",
+   "egg_limit": 3,
+   "wingspan": 18,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1005,
+    1007,
+    1011,
+    1022,
+    1025
+   ],
+   "text": "Play an additional bird in your [grassland]. Pay its normal cost.",
+   "rulings": [
+    "20190309"
+   ]
+  },
+  {
+   "id": 218,
+   "name": "Say's Phoebe",
+   "color": "white",
+   "vp": 5,
+   "nest": "bowl",
+   "egg_limit": 3,
+   "wingspan": 33,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    3,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1015,
+    1017,
+    1025,
+    1030
+   ],
+   "text": "Lay 1 [egg] on each of your birds with a [bowl] nest.",
+   "rulings": []
+  },
+  {
+   "id": 219,
+   "name": "Scaled Quail",
+   "color": "brown",
+   "vp": 0,
+   "nest": "ground",
+   "egg_limit": 6,
+   "wingspan": 36,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    0,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1005,
+    1011,
+    1025
+   ],
+   "text": "Lay 1 [egg] on this bird.",
+   "rulings": []
+  },
+  {
+   "id": 220,
+   "name": "Scissor-Tailed Flycatcher",
+   "color": "brown",
+   "vp": 8,
+   "nest": "bowl",
+   "egg_limit": 2,
+   "wingspan": 38,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    2,
+    0,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1025,
+    1028,
+    1030
+   ],
+   "text": "All players gain 1 [invertebrate] from the supply.",
+   "rulings": []
+  },
+  {
+   "id": 223,
+   "name": "Snowy Egret",
+   "color": "brown",
+   "vp": 4,
+   "nest": "platform",
+   "egg_limit": 2,
+   "wingspan": 104,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    1,
+    0,
+    1,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": true,
+   "flocking": false,
+   "bonus": [
+    1013,
+    1014,
+    1018,
+    1023,
+    1024,
+    1029
+   ],
+   "text": "Roll all dice not in birdfeeder. If any are [fish], cache 1 [fish] from the supply on this bird.",
+   "rulings": []
+  },
+  {
+   "id": 225,
+   "name": "Song Sparrow",
+   "color": "brown",
+   "vp": 0,
+   "nest": "bowl",
+   "egg_limit": 5,
+   "wingspan": 20,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1005,
+    1022,
+    1028,
+    1030
+   ],
+   "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat.",
+   "rulings": [
+    "20220521a",
+    "02a",
+    "20191007"
+   ]
+  },
+  {
+   "id": 226,
+   "name": "Spotted Owl",
+   "color": "white",
+   "vp": 5,
+   "nest": "cavity",
+   "egg_limit": 1,
+   "wingspan": 102,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    0,
+    0,
+    0,
+    0,
+    2
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1016,
+    1018,
+    1019,
+    1026
+   ],
+   "text": "Draw 2 new bonus cards and keep 1.",
+   "rulings": []
+  },
+  {
+   "id": 227,
+   "name": "Spotted Sandpiper",
+   "color": "brown",
+   "vp": 5,
+   "nest": "ground",
+   "egg_limit": 2,
+   "wingspan": 38,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1011,
+    1015,
+    1029
+   ],
+   "text": "All players draw 1 [card] from the deck.",
+   "rulings": [
+    "02f"
+   ]
+  },
+  {
+   "id": 228,
+   "name": "Spotted Towhee",
+   "color": "brown",
+   "vp": 0,
+   "nest": "ground",
+   "egg_limit": 4,
+   "wingspan": 28,
+   "habitats": [
+    0,
+    1
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1005,
+    1011,
+    1022,
+    1028
+   ],
+   "text": "Gain 1 [seed] from the supply.",
+   "rulings": []
+  },
+  {
+   "id": 229,
+   "name": "Sprague's Pipit",
+   "color": "white",
+   "vp": 3,
+   "nest": "ground",
+   "egg_limit": 3,
+   "wingspan": 25,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1005,
+    1011,
+    1017,
+    1022,
+    1025
+   ],
+   "text": "Draw 2 new bonus cards and keep 1.",
+   "rulings": []
+  },
+  {
+   "id": 231,
+   "name": "Steller's Jay",
+   "color": "brown",
+   "vp": 5,
+   "nest": "bowl",
+   "egg_limit": 2,
+   "wingspan": 48,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    0,
+    2,
+    0,
+    0,
+    0
+   ],
+   "wild": 1,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1005,
+    1016,
+    1017,
+    1020,
+    1030
+   ],
+   "text": "Gain 1 [seed] from the birdfeeder, if available. You may cache it on this bird.",
+   "rulings": [
+    "20200423"
+   ]
+  },
+  {
+   "id": 232,
+   "name": "Swainson's Hawk",
+   "color": "brown",
+   "vp": 5,
+   "nest": "platform",
+   "egg_limit": 2,
+   "wingspan": 130,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    0,
+    1
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": true,
+   "flocking": false,
+   "bonus": [
+    1013,
+    1017,
+    1018,
+    1024,
+    1025,
+    1026
+   ],
+   "text": "Look at a [card] from the deck. If less than 75cm, tuck it behind this bird. If not, discard it.",
+   "rulings": []
+  },
+  {
+   "id": 234,
+   "name": "Tree Swallow",
+   "color": "brown",
+   "vp": 3,
+   "nest": "cavity",
+   "egg_limit": 4,
+   "wingspan": 38,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": true,
+   "bonus": [
+    1001,
+    1004,
+    1019,
+    1028,
+    1029
+   ],
+   "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].",
+   "rulings": []
+  },
+  {
+   "id": 235,
+   "name": "Trumpeter Swan",
+   "color": null,
+   "vp": 9,
+   "nest": "ground",
+   "egg_limit": 2,
+   "wingspan": 203,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    0,
+    2,
+    0,
+    0,
+    0
+   ],
+   "wild": 1,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1005,
+    1011,
+    1018,
+    1020,
+    1029
+   ],
+   "text": null,
+   "rulings": []
+  },
+  {
+   "id": 236,
+   "name": "Tufted Titmouse",
+   "color": "white",
+   "vp": 2,
+   "nest": "cavity",
+   "egg_limit": 3,
+   "wingspan": 25,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1001,
+    1005,
+    1016,
+    1019,
+    1022,
+    1028
+   ],
+   "text": "Play an additional bird in your [forest]. Pay its normal cost.",
+   "rulings": [
+    "20260128",
+    "20190309"
+   ]
+  },
+  {
+   "id": 237,
+   "name": "Turkey Vulture",
+   "color": "pink",
+   "vp": 1,
+   "nest": "cavity",
+   "egg_limit": 1,
+   "wingspan": 170,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 0,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1018,
+    1019
+   ],
+   "text": "When another player's [predator] succeeds, gain 1 [die] from the birdfeeder.",
+   "rulings": [
+    "20211023",
+    "20200522",
+    "20210104",
+    "20200204a",
+    "20200331",
+    "20231030"
+   ]
+  },
+  {
+   "id": 238,
+   "name": "Vaux's Swift",
+   "color": "brown",
+   "vp": 2,
+   "nest": "cavity",
+   "egg_limit": 3,
+   "wingspan": 31,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": true,
+   "bonus": [
+    1001,
+    1004,
+    1015,
+    1016,
+    1017,
+    1019
+   ],
+   "text": "Tuck 1 [card] from your hand behind this bird. If you do, gain 1 [invertebrate] from the supply.",
+   "rulings": []
+  },
+  {
+   "id": 239,
+   "name": "Violet-Green Swallow",
+   "color": "brown",
+   "vp": 3,
+   "nest": "cavity",
+   "egg_limit": 3,
+   "wingspan": 36,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    2,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": true,
+   "bonus": [
+    1001,
+    1004,
+    1015,
+    1019,
+    1023
+   ],
+   "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].",
+   "rulings": [
+    "20191203c"
+   ]
+  },
+  {
+   "id": 240,
+   "name": "Western Meadowlark",
+   "color": "brown",
+   "vp": 2,
+   "nest": "ground",
+   "egg_limit": 4,
+   "wingspan": 38,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1001,
+    1005,
+    1007,
+    1011,
+    1025
+   ],
+   "text": "All players lay 1 [egg] on any 1 [ground] bird. You may lay 1 [egg] on 1 additional [ground] bird.",
+   "rulings": [
+    "20190406"
+   ]
+  },
+  {
+   "id": 241,
+   "name": "Western Tanager",
+   "color": "brown",
+   "vp": 6,
+   "nest": "bowl",
+   "egg_limit": 2,
+   "wingspan": 30,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    2,
+    0,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1007,
+    1016,
+    1022,
+    1028,
+    1030
+   ],
+   "text": "Gain 1 [invertebrate] or [fruit] from the birdfeeder, if available.",
+   "rulings": [
+    "20190117"
+   ]
+  },
+  {
+   "id": 245,
+   "name": "White-Breasted Nuthatch",
+   "color": "brown",
+   "vp": 2,
+   "nest": "cavity",
+   "egg_limit": 3,
+   "wingspan": 28,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1001,
+    1005,
+    1016,
+    1019,
+    1022,
+    1023
+   ],
+   "text": "Cache 1 [seed] from the supply on this bird.",
+   "rulings": []
+  },
+  {
+   "id": 246,
+   "name": "White-Crowned Sparrow",
+   "color": "brown",
+   "vp": 2,
+   "nest": "ground",
+   "egg_limit": 5,
+   "wingspan": 25,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1001,
+    1005,
+    1011,
+    1022,
+    1023
+   ],
+   "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat.",
+   "rulings": [
+    "02a"
+   ]
+  },
+  {
+   "id": 247,
+   "name": "White-Faced Ibis",
+   "color": "brown",
+   "vp": 8,
+   "nest": "platform",
+   "egg_limit": 2,
+   "wingspan": 91,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    2,
+    0,
+    1,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": true,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1013,
+    1014,
+    1018,
+    1023,
+    1024,
+    1029
+   ],
+   "text": "Roll all dice not in birdfeeder. If any are [fish], cache 1 [fish] from the supply on this bird.",
+   "rulings": []
+  },
+  {
+   "id": 249,
+   "name": "White-Throated Swift",
+   "color": "brown",
+   "vp": 2,
+   "nest": "cavity",
+   "egg_limit": 2,
+   "wingspan": 38,
+   "habitats": [
+    1
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": true,
+   "bonus": [
+    1000,
+    1001,
+    1004,
+    1015,
+    1019,
+    1023,
+    1025
+   ],
+   "text": "Tuck 1 [card] from your hand behind this bird. If you do, lay 1 [egg] on any bird.",
+   "rulings": []
+  },
+  {
+   "id": 250,
+   "name": "Whooping Crane",
+   "color": "white",
+   "vp": 6,
+   "nest": "ground",
+   "egg_limit": 1,
+   "wingspan": 221,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 3,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1011,
+    1018,
+    1020,
+    1029
+   ],
+   "text": "Draw 2 new bonus cards and keep 1.",
+   "rulings": []
+  },
+  {
+   "id": 251,
+   "name": "Wild Turkey",
+   "color": null,
+   "vp": 8,
+   "nest": "ground",
+   "egg_limit": 5,
+   "wingspan": 135,
+   "habitats": [
+    0,
+    1
+   ],
+   "cost": [
+    0,
+    2,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1005,
+    1011,
+    1018,
+    1028
+   ],
+   "text": null,
+   "rulings": [
+    "20200331",
+    "20201104"
+   ]
+  },
+  {
+   "id": 252,
+   "name": "Willet",
+   "color": "brown",
+   "vp": 4,
+   "nest": "ground",
+   "egg_limit": 2,
+   "wingspan": 66,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    1,
+    0,
+    1,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": true,
+   "flocking": false,
+   "bonus": [
+    1011,
+    1013,
+    1014,
+    1018,
+    1029
+   ],
+   "text": "Roll all dice not in birdfeeder. If any are [fish], cache 1 [fish] from the supply on this bird.",
+   "rulings": []
+  },
+  {
+   "id": 253,
+   "name": "Wilson's Snipe",
+   "color": "brown",
+   "vp": 5,
+   "nest": "ground",
+   "egg_limit": 2,
+   "wingspan": 41,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1011,
+    1015,
+    1017,
+    1029
+   ],
+   "text": "All players draw 1 [card] from the deck.",
+   "rulings": []
+  },
+  {
+   "id": 255,
+   "name": "Wood Duck",
+   "color": "brown",
+   "vp": 4,
+   "nest": "cavity",
+   "egg_limit": 4,
+   "wingspan": 76,
+   "habitats": [
+    0,
+    2
+   ],
+   "cost": [
+    0,
+    2,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1005,
+    1018,
+    1019,
+    1028
+   ],
+   "text": "Draw 2 [card]. If you do, discard 1 [card] from your hand at the end of your turn.",
+   "rulings": [
+    "20231204",
+    "20210130"
+   ]
+  },
+  {
+   "id": 256,
+   "name": "Wood Stork",
+   "color": "white",
+   "vp": 6,
+   "nest": "platform",
+   "egg_limit": 2,
+   "wingspan": 155,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    0,
+    0,
+    1,
+    0,
+    1
+   ],
+   "wild": 1,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1014,
+    1018,
+    1020,
+    1024,
+    1026,
+    1029
+   ],
+   "text": "Draw 2 new bonus cards and keep 1.",
+   "rulings": [
+    "20240526"
+   ]
+  },
+  {
+   "id": 257,
+   "name": "Yellow-Bellied Sapsucker",
+   "color": "brown",
+   "vp": 3,
+   "nest": "cavity",
+   "egg_limit": 3,
+   "wingspan": 41,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1001,
+    1016,
+    1019,
+    1023,
+    1028
+   ],
+   "text": "Gain 1 [invertebrate] from the supply.",
+   "rulings": []
+  },
+  {
+   "id": 258,
+   "name": "Yellow-Billed Cuckoo",
+   "color": "pink",
+   "vp": 5,
+   "nest": "platform",
+   "egg_limit": 2,
+   "wingspan": 46,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    2,
+    0,
+    0,
+    0,
+    0
+   ],
+   "wild": 1,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1016,
+    1020,
+    1023,
+    1024
+   ],
+   "text": "When another player takes the “lay eggs” action, lay 1 [egg] on a bird with a [bowl] nest.",
+   "rulings": [
+    "20200323",
+    "20200109b",
+    "20190921"
+   ]
+  },
+  {
+   "id": 259,
+   "name": "Yellow-Breasted Chat",
+   "color": "brown",
+   "vp": 5,
+   "nest": "bowl",
+   "egg_limit": 3,
+   "wingspan": 25,
+   "habitats": [
+    0,
+    1,
+    2
+   ],
+   "cost": [
+    1,
+    0,
+    0,
+    2,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 3,
+   "predator": false,
+   "flocking": false,
+   "bonus": [
+    1000,
+    1022,
+    1023,
+    1028,
+    1030
+   ],
+   "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat.",
+   "rulings": [
+    "02a"
+   ]
+  },
+  {
+   "id": 260,
+   "name": "Yellow-Headed Blackbird",
+   "color": "brown",
+   "vp": 4,
+   "nest": "bowl",
+   "egg_limit": 3,
+   "wingspan": 38,
+   "habitats": [
+    2
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   "wild": 0,
+   "either": false,
+   "total_cost": 2,
+   "predator": false,
+   "flocking": true,
+   "bonus": [
+    1000,
+    1004,
+    1005,
+    1023,
+    1029,
+    1030
+   ],
+   "text": "Tuck 1 [card] from your hand behind this bird. If you do, you may also lay 1 [egg] on this bird.",
+   "rulings": [
+    "20190203"
+   ]
+  },
+  {
+   "id": 261,
+   "name": "Yellow-Rumped Warbler",
+   "color": "brown",
+   "vp": 1,
+   "nest": "bowl",
+   "egg_limit": 4,
+   "wingspan": 23,
+   "habitats": [
+    0
+   ],
+   "cost": [
+    1,
+    1,
+    0,
+    1,
+    0
+   ],
+   "wild": 0,
+   "either": true,
+   "total_cost": 1,
+   "predator": false,
+   "flocking": true,
+   "bonus": [
+    1000,
+    1001,
+    1004,
+    1005,
+    1016,
+    1022,
+    1023,
+    1028,
+    1030
+   ],
+   "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].",
+   "rulings": []
+  }
+ ],
+ "bonus": [
+  {
+   "id": 1000,
+   "name": "Anatomist",
+   "condition": "Birds with body parts in their names",
+   "vp_text": "2 to 3 birds: 3[point]; 4+ birds: 7[point]",
+   "tiers": [
+    [
+     2,
+     3
+    ],
+    [
+     4,
+     7
+    ]
+   ],
+   "count": "column",
+   "column": "Anatomist"
+  },
+  {
+   "id": 1001,
+   "name": "Backyard Birder",
+   "condition": "Birds worth less than 4 points",
+   "vp_text": "5 to 6 birds: 3[point]; 6+ birds: 6[point]",
+   "tiers": [
+    [
+     5,
+     3
+    ],
+    [
+     7,
+     6
+    ]
+   ],
+   "count": "column",
+   "column": "Backyard Birder"
+  },
+  {
+   "id": 1004,
+   "name": "Bird Counter",
+   "condition": "Birds with a [flocking] power",
+   "vp_text": "2[point] per bird",
+   "per": 2,
+   "count": "column",
+   "column": "Bird Counter"
+  },
+  {
+   "id": 1005,
+   "name": "Bird Feeder",
+   "condition": "Birds that eat [seed]",
+   "vp_text": "5 to 7 birds: 3[point]; 8+ birds: 7[point]",
+   "tiers": [
+    [
+     5,
+     3
+    ],
+    [
+     8,
+     7
+    ]
+   ],
+   "count": "column",
+   "column": "Bird Feeder"
+  },
+  {
+   "id": 1006,
+   "name": "Breeding Manager",
+   "condition": "Birds that have at least 4 eggs laid on them",
+   "vp_text": "1[point] per bird",
+   "per": 1,
+   "count": "birds_with_4_eggs"
+  },
+  {
+   "id": 1007,
+   "name": "Cartographer",
+   "condition": "Birds with geography terms in their name",
+   "vp_text": "2 to 3 birds: 3[point]; 4+ birds: 7[point]",
+   "tiers": [
+    [
+     2,
+     3
+    ],
+    [
+     4,
+     7
+    ]
+   ],
+   "count": "column",
+   "column": "Cartographer"
+  },
+  {
+   "id": 1010,
+   "name": "Ecologist",
+   "condition": "Birds in your habitat with the fewest birds.",
+   "vp_text": "2[point] per bird",
+   "per": 2,
+   "count": "birds_in_smallest_habitat"
+  },
+  {
+   "id": 1011,
+   "name": "Enclosure Builder",
+   "condition": "Birds with [ground] nests",
+   "vp_text": "4 to 5 birds: 4[point]; 6+ birds: 7[point]",
+   "tiers": [
+    [
+     4,
+     4
+    ],
+    [
+     6,
+     7
+    ]
+   ],
+   "count": "column",
+   "column": "Enclosure Builder"
+  },
+  {
+   "id": 1013,
+   "name": "Falconer",
+   "condition": "Birds with a [predator] power",
+   "vp_text": "2[point] per bird",
+   "per": 2,
+   "count": "column",
+   "column": "Falconer"
+  },
+  {
+   "id": 1014,
+   "name": "Fishery Manager",
+   "condition": "Birds that eat [fish]",
+   "vp_text": "2 to 3 birds: 3[point]; 4+ birds: 8[point]",
+   "tiers": [
+    [
+     2,
+     3
+    ],
+    [
+     4,
+     8
+    ]
+   ],
+   "count": "column",
+   "column": "Fishery Manager"
+  },
+  {
+   "id": 1015,
+   "name": "Food Web Expert",
+   "condition": "Birds that eat only [invertebrate]",
+   "vp_text": "2[point] per bird",
+   "per": 2,
+   "count": "column",
+   "column": "Food Web Expert"
+  },
+  {
+   "id": 1016,
+   "name": "Forester",
+   "condition": "Birds that can only live in [forest]",
+   "vp_text": "3 to 4 birds: 4[point]; 5 birds: 8[point]",
+   "tiers": [
+    [
+     3,
+     4
+    ],
+    [
+     5,
+     8
+    ]
+   ],
+   "count": "column",
+   "column": "Forester"
+  },
+  {
+   "id": 1017,
+   "name": "Historian",
+   "condition": "Birds named after a person",
+   "vp_text": "2[point] per bird",
+   "per": 2,
+   "count": "column",
+   "column": "Historian"
+  },
+  {
+   "id": 1018,
+   "name": "Large Bird Specialist",
+   "condition": "Birds with wingspans over 65 cm",
+   "vp_text": "4 to 5 birds: 3[point]; 6+ birds: 6[point]",
+   "tiers": [
+    [
+     4,
+     3
+    ],
+    [
+     6,
+     6
+    ]
+   ],
+   "count": "column",
+   "column": "Large Bird Specialist"
+  },
+  {
+   "id": 1019,
+   "name": "Nest Box Builder",
+   "condition": "Birds with [cavity] nests",
+   "vp_text": "4 to 5 birds: 4[point]; 6+ birds: 7[point]",
+   "tiers": [
+    [
+     4,
+     4
+    ],
+    [
+     6,
+     7
+    ]
+   ],
+   "count": "column",
+   "column": "Nest Box Builder"
+  },
+  {
+   "id": 1020,
+   "name": "Omnivore Specialist",
+   "condition": "Birds that eat [wild]",
+   "vp_text": "2[point] per bird",
+   "per": 2,
+   "count": "column",
+   "column": "Omnivore Expert"
+  },
+  {
+   "id": 1021,
+   "name": "Oologist",
+   "condition": "Birds that have at least 1 egg laid on them",
+   "vp_text": "7 to 8 birds: 3[point]; 9+ birds: 6[point]",
+   "tiers": [
+    [
+     7,
+     3
+    ],
+    [
+     9,
+     6
+    ]
+   ],
+   "count": "birds_with_egg"
+  },
+  {
+   "id": 1022,
+   "name": "Passerine Specialist",
+   "condition": "Birds with wingspans 30 cm or less",
+   "vp_text": "4 to 5 birds: 3[point]; 6+ birds: 6[point]",
+   "tiers": [
+    [
+     4,
+     3
+    ],
+    [
+     6,
+     6
+    ]
+   ],
+   "count": "column",
+   "column": "Passerine Specialist"
+  },
+  {
+   "id": 1023,
+   "name": "Photographer",
+   "condition": "Birds with colors in their names",
+   "vp_text": "4 to 5 birds: 3[point]; 6+ birds: 7[point]",
+   "tiers": [
+    [
+     4,
+     3
+    ],
+    [
+     6,
+     7
+    ]
+   ],
+   "count": "column",
+   "column": "Photographer"
+  },
+  {
+   "id": 1024,
+   "name": "Platform Builder",
+   "condition": "Birds with [platform] nests",
+   "vp_text": "4 to 5 birds: 4[point]; 6+ birds: 7[point]",
+   "tiers": [
+    [
+     4,
+     4
+    ],
+    [
+     6,
+     7
+    ]
+   ],
+   "count": "column",
+   "column": "Platform Builder"
+  },
+  {
+   "id": 1025,
+   "name": "Prairie Manager",
+   "condition": "Birds that can only live in [grassland]",
+   "vp_text": "2 to 3 birds: 3[point]; 4+ birds: 8[point]",
+   "tiers": [
+    [
+     2,
+     3
+    ],
+    [
+     4,
+     8
+    ]
+   ],
+   "count": "column",
+   "column": "Prairie Manager"
+  },
+  {
+   "id": 1026,
+   "name": "Rodentologist",
+   "condition": "Birds that eat [rodent]",
+   "vp_text": "2[point] per bird",
+   "per": 2,
+   "count": "column",
+   "column": "Rodentologist"
+  },
+  {
+   "id": 1027,
+   "name": "Visionary Leader",
+   "condition": "Bird cards in hand at end of game",
+   "vp_text": "5 to 7 birds: 4[point]; 8+ birds: 7[point]",
+   "tiers": [
+    [
+     5,
+     4
+    ],
+    [
+     8,
+     7
+    ]
+   ],
+   "count": "cards_in_hand"
+  },
+  {
+   "id": 1028,
+   "name": "Viticulturalist",
+   "condition": "Birds that eat [fruit]",
+   "vp_text": "2 to 3 birds: 3[point]; 4+ birds: 7[point]",
+   "tiers": [
+    [
+     2,
+     3
+    ],
+    [
+     4,
+     7
+    ]
+   ],
+   "count": "column",
+   "column": "Viticulturalist"
+  },
+  {
+   "id": 1029,
+   "name": "Wetland Scientist",
+   "condition": "Birds that can only live in [wetland]",
+   "vp_text": "3 to 4 birds: 3[point]; 5 birds: 7[point]",
+   "tiers": [
+    [
+     3,
+     3
+    ],
+    [
+     5,
+     7
+    ]
+   ],
+   "count": "column",
+   "column": "Wetland Scientist"
+  },
+  {
+   "id": 1030,
+   "name": "Wildlife Gardener",
+   "condition": "Birds with [bowl] nests",
+   "vp_text": "4 to 5 birds: 4[point]; 6+ birds: 7[point]",
+   "tiers": [
+    [
+     4,
+     4
+    ],
+    [
+     6,
+     7
+    ]
+   ],
+   "count": "column",
+   "column": "Wildlife Gardener"
+  }
+ ],
+ "goals": [
+  {
+   "id": 2000,
+   "text": "[bird] in [forest]",
+   "kind": "birds_in_habitat",
+   "param": "forest",
+   "tile": 0
+  },
+  {
+   "id": 2001,
+   "text": "[bird] in [grassland]",
+   "kind": "birds_in_habitat",
+   "param": "grassland",
+   "tile": 1
+  },
+  {
+   "id": 2002,
+   "text": "[bird] in [wetland]",
+   "kind": "birds_in_habitat",
+   "param": "wetland",
+   "tile": 2
+  },
+  {
+   "id": 2007,
+   "text": "[bowl] [bird] with [egg]",
+   "kind": "nest_birds_with_egg",
+   "param": "bowl",
+   "tile": 3
+  },
+  {
+   "id": 2009,
+   "text": "[cavity] [bird] with [egg]",
+   "kind": "nest_birds_with_egg",
+   "param": "cavity",
+   "tile": 4
+  },
+  {
+   "id": 2010,
+   "text": "[egg] in [bowl]",
+   "kind": "eggs_in_nest",
+   "param": "bowl",
+   "tile": 3
+  },
+  {
+   "id": 2011,
+   "text": "[egg] in [cavity]",
+   "kind": "eggs_in_nest",
+   "param": "cavity",
+   "tile": 4
+  },
+  {
+   "id": 2012,
+   "text": "[egg] in [forest]",
+   "kind": "eggs_in_habitat",
+   "param": "forest",
+   "tile": 0
+  },
+  {
+   "id": 2013,
+   "text": "[egg] in [grassland]",
+   "kind": "eggs_in_habitat",
+   "param": "grassland",
+   "tile": 1
+  },
+  {
+   "id": 2014,
+   "text": "[egg] in [ground]",
+   "kind": "eggs_in_nest",
+   "param": "ground",
+   "tile": 5
+  },
+  {
+   "id": 2015,
+   "text": "[egg] in [platform]",
+   "kind": "eggs_in_nest",
+   "param": "platform",
+   "tile": 6
+  },
+  {
+   "id": 2016,
+   "text": "[egg] in [wetland]",
+   "kind": "eggs_in_habitat",
+   "param": "wetland",
+   "tile": 2
+  },
+  {
+   "id": 2017,
+   "text": "[ground] [bird] with [egg]",
+   "kind": "nest_birds_with_egg",
+   "param": "ground",
+   "tile": 5
+  },
+  {
+   "id": 2018,
+   "text": "[platform] [bird] with [egg]",
+   "kind": "nest_birds_with_egg",
+   "param": "platform",
+   "tile": 6
+  },
+  {
+   "id": 2023,
+   "text": "sets of [egg][egg][egg] in [wetland][grassland][forest]",
+   "kind": "egg_sets",
+   "param": null,
+   "tile": 7
+  },
+  {
+   "id": 2024,
+   "text": "total [bird]",
+   "kind": "total_birds",
+   "param": null,
+   "tile": 7
+  }
+ ],
+ "tiles": [
+  [
+   2000,
+   2012
+  ],
+  [
+   2001,
+   2013
+  ],
+  [
+   2002,
+   2016
+  ],
+  [
+   2007,
+   2010
+  ],
+  [
+   2009,
+   2011
+  ],
+  [
+   2014,
+   2017
+  ],
+  [
+   2015,
+   2018
+  ],
+  [
+   2023,
+   2024
+  ]
+ ],
+ "excluded_bonus": [
+  "[Fan Made] Caprimulgiform Specialist"
+ ]
+}
