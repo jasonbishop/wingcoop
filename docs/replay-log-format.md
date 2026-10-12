@@ -284,3 +284,23 @@ The card text belongs to Stonemaier Games and the data comes from wingsearch (GP
 If exactness inside a turn matters, ask for `snapshots: decision` logs instead; they are about twice as large (about 75 KB gzipped for a 3-player game against about 40 KB) and remove the need to apply events.
 
 **Useful views for comparing agents:** a turn list with each player's action (`action` events); a per-seat panel showing the agent type and motivation weight from the header; the chosen option against the agent's own ranking in `info`; round summaries from `round_end` (counts, difficulty, success, group score change); and the final table from `final_scoring`.
+
+## 9. Keeping the viewer ready for live play
+
+The simulator does not support interactive play yet, and this file format will not change for it: a finished game will still be saved exactly as described above. Two choices in the viewer keep the door open for humans playing live alongside the bots.
+
+**Build the display around one step.** A step is: the board before the decision, who is deciding, the labelled options, the option chosen, and what happened next (the events). A replay shows all five. Live play is the same screen with no option chosen yet and the labels clickable; the events arrive after the click.
+
+**Draw the board from a state-shaped object, and tolerate hidden cards.** In a live game each player would be sent their own view instead of a full snapshot. That view has the same shape as `state` in section 5, with what the player may not see blanked out:
+
+| In a player's view | Value |
+| --- | --- |
+| `deck`, `tucked`, `bonus_deck`, `bonus_discard` | the right length, but every entry is `-1` |
+| another player's `hand` and `bonus`, when hands are closed | the right length, every entry `-1` |
+| `pending[2]` (the options), when it is another player's decision that lists their hidden cards | `null` |
+| `rng` | `0` |
+| everything else (mats, food, tray, birdfeeder, discard pile, goals, scores) | as in a snapshot |
+
+So a board renderer that draws card id `-1` as a face-down card, and copes with `pending` options being `null`, works for replays and for a live player's view alike. With open hands (the default) only the deck, tucked cards and bonus decks are hidden.
+
+The events in section 4.6 are written for observers and can name cards a player should not see (a card drawn from the deck, for example). A live mode would need them filtered per player; that is work for the simulator, not the viewer.
