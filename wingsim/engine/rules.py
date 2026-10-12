@@ -376,7 +376,7 @@ def r_pay_food(s, f, ch):
     v = ch[1]
     for i in ALL_FOODS:
         food[i] -= v[i]
-    emit(s, "food_spent", p=f[1], food=list(v), bird=f[2])
+    emit(s, "food_spent", p=f[1], food=list(v), bird=f[2], why="bird_cost")
     s.stack.pop()
 
 
@@ -669,7 +669,7 @@ def r_cache_choice(s, f, ch):
         pl = s.players[p]
         pl.food[food] -= 1
         find(pl, c)[2][2] += 1
-        emit(s, "food_cached", p=p, bird=c, food=food, n=1)
+        emit(s, "food_cached", p=p, bird=c, food=food, n=1, source="player")
 
 
 def h_each_feeder(s, f):

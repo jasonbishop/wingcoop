@@ -33,7 +33,8 @@
    "text": "Gain 1 [seed] from the birdfeeder, if available. You may cache it on this bird.",
    "rulings": [
     "20200423"
-   ]
+   ],
+   "caches": "seed"
   },
   {
    "id": 3,
@@ -69,7 +70,8 @@
    "rulings": [
     "20200109b",
     "20190921"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 4,
@@ -105,7 +107,8 @@
    "text": "Player(s) with the fewest birds in their [wetland] draw 1 [card].",
    "rulings": [
     "20200322"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 5,
@@ -140,7 +143,8 @@
     1029
    ],
    "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 6,
@@ -176,7 +180,8 @@
    "text": "Discard 1 [egg] from any of your other birds to gain 1 [wild] from the supply.",
    "rulings": [
     "20200703"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 7,
@@ -211,7 +216,8 @@
     1030
    ],
    "text": "Gain 3 [seed] from the supply.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 8,
@@ -244,7 +250,8 @@
     1026
    ],
    "text": "Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird.",
-   "rulings": []
+   "rulings": [],
+   "caches": "rodent"
   },
   {
    "id": 9,
@@ -283,7 +290,8 @@
     "20250603",
     "20221123",
     "20190311"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 10,
@@ -320,7 +328,8 @@
    "rulings": [
     "20191126b",
     "20191207"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 11,
@@ -354,7 +363,8 @@
     1030
    ],
    "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 12,
@@ -391,7 +401,8 @@
    "text": "Discard 1 [fish] to tuck 2 [card] from the deck behind this bird.",
    "rulings": [
     "20220213a"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 13,
@@ -425,7 +436,8 @@
    "text": null,
    "rulings": [
     "20201104"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 14,
@@ -458,7 +470,8 @@
     1029
    ],
    "text": "Roll all dice not in birdfeeder. If any are [fish], cache 1 [fish] from the supply on this bird.",
-   "rulings": []
+   "rulings": [],
+   "caches": "fish"
   },
   {
    "id": 15,
@@ -495,7 +508,8 @@
    "rulings": [
     "20200420",
     "20200405a"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 16,
@@ -529,7 +543,8 @@
     1028
    ],
    "text": "Lay 1 [egg] on each of your birds with a [cavity] nest.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 17,
@@ -564,7 +579,8 @@
     1030
    ],
    "text": "Draw 2 new bonus cards and keep 1.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 19,
@@ -598,7 +614,8 @@
     1025
    ],
    "text": "Lay 1 [egg] on any bird.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 20,
@@ -631,7 +648,8 @@
     1029
    ],
    "text": "Gain all [fish] that are in the birdfeeder.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 21,
@@ -667,7 +685,8 @@
     1030
    ],
    "text": "All players gain 1 [fruit] from the supply.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 22,
@@ -701,7 +720,8 @@
     1026
    ],
    "text": "Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird.",
-   "rulings": []
+   "rulings": [],
+   "caches": "rodent"
   },
   {
    "id": 23,
@@ -737,7 +757,8 @@
     1030
    ],
    "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 24,
@@ -773,7 +794,8 @@
    "text": "Look at a [card] from the deck. If less than 75cm, tuck it behind this bird. If not, discard it.",
    "rulings": [
     "20190724"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 25,
@@ -813,7 +835,8 @@
     "20200109b",
     "20190921",
     "20190729"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 26,
@@ -849,7 +872,8 @@
     1030
    ],
    "text": "Draw 2 new bonus cards and keep 1.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 27,
@@ -886,7 +910,8 @@
    "text": "When another player plays a bird in their [wetland], gain 1 [fish] from the supply.",
    "rulings": [
     "20200716a"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 28,
@@ -922,7 +947,8 @@
    "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat.",
    "rulings": [
     "02a"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 30,
@@ -956,7 +982,8 @@
     1029
    ],
    "text": "Roll all dice not in birdfeeder. If any are [fish], cache 1 [fish] from the supply on this bird.",
-   "rulings": []
+   "rulings": [],
+   "caches": "fish"
   },
   {
    "id": 31,
@@ -991,7 +1018,8 @@
     1030
    ],
    "text": "Draw 1 [card]. If you do, discard 1 [card] from your hand at the end of your turn.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 32,
@@ -1028,7 +1056,8 @@
     "20231229",
     "20220209",
     "20231030"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 34,
@@ -1066,7 +1095,8 @@
    "text": "Discard 1 [seed] to tuck 2 [card] from the deck behind this bird.",
    "rulings": [
     "20201010b"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 35,
@@ -1108,7 +1138,8 @@
     "20210321",
     "20231030",
     "20240115"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 36,
@@ -1143,7 +1174,8 @@
     1030
    ],
    "text": "All players gain 1 [fruit] from the supply.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 37,
@@ -1178,7 +1210,8 @@
     1029
    ],
    "text": "Discard 1 [egg] from any of your other birds to gain 1 [wild] from the supply.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 39,
@@ -1212,7 +1245,8 @@
     1029
    ],
    "text": "Draw 2 [card].",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 42,
@@ -1252,7 +1286,8 @@
     "02a",
     "20200528",
     "20221228"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 43,
@@ -1291,7 +1326,8 @@
     "20231126",
     "20190901",
     "20200113"
-   ]
+   ],
+   "caches": "seed"
   },
   {
    "id": 44,
@@ -1325,7 +1361,8 @@
     1030
    ],
    "text": "Gain 1 [invertebrate] from the supply.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 45,
@@ -1361,7 +1398,8 @@
    "text": null,
    "rulings": [
     "20240105"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 47,
@@ -1393,7 +1431,8 @@
     1025
    ],
    "text": "Lay 1 [egg] on each of your birds with a [ground] nest.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 49,
@@ -1427,7 +1466,8 @@
     1029
    ],
    "text": "Draw the 3 face-up [card] in the bird tray.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 50,
@@ -1465,7 +1505,8 @@
    "text": "Tuck 1 [card] from your hand behind this bird. If you do, you may also lay 1 [egg] on this bird.",
    "rulings": [
     "20190203"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 51,
@@ -1499,7 +1540,8 @@
     1026
    ],
    "text": "Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird.",
-   "rulings": []
+   "rulings": [],
+   "caches": "rodent"
   },
   {
    "id": 52,
@@ -1534,7 +1576,8 @@
     "20190718",
     "20200109b",
     "20190921"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 53,
@@ -1567,7 +1610,8 @@
     1029
    ],
    "text": "Gain 3 [fish] from the supply.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 54,
@@ -1607,7 +1651,8 @@
     "20200109b",
     "20200323",
     "20190921"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 56,
@@ -1644,7 +1689,8 @@
    "text": "Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird.",
    "rulings": [
     "20190522"
-   ]
+   ],
+   "caches": "rodent"
   },
   {
    "id": 57,
@@ -1685,7 +1731,8 @@
    "rulings": [
     "20190203",
     "20201020b"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 58,
@@ -1719,7 +1766,8 @@
     1018
    ],
    "text": "Draw 2 new bonus cards and keep 1.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 59,
@@ -1754,7 +1802,8 @@
    "text": "Lay 1 [egg] on this bird.",
    "rulings": [
     "20210130"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 60,
@@ -1791,7 +1840,8 @@
    "text": "Discard 1 [seed] to tuck 2 [card] from the deck behind this bird.",
    "rulings": [
     "20201010b"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 61,
@@ -1830,7 +1880,8 @@
    "text": "All players draw 1 [card] from the deck.",
    "rulings": [
     "20201116"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 62,
@@ -1864,7 +1915,8 @@
     1022
    ],
    "text": "Cache 1 [seed] from the supply on this bird.",
-   "rulings": []
+   "rulings": [],
+   "caches": "seed"
   },
   {
    "id": 63,
@@ -1898,7 +1950,8 @@
     1028
    ],
    "text": "Draw 2 [card].",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 65,
@@ -1934,7 +1987,8 @@
    "text": "Draw 2 new bonus cards and keep 1.",
    "rulings": [
     "20210130"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 66,
@@ -1968,7 +2022,8 @@
     1025
    ],
    "text": "Lay 1 [egg] on any bird.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 67,
@@ -2003,7 +2058,8 @@
     1030
    ],
    "text": "Tuck 1 [card] from your hand behind this bird. If you do, gain 1 [fruit] from the supply.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 68,
@@ -2036,7 +2092,8 @@
     1030
    ],
    "text": "Draw 2 new bonus cards and keep 1.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 70,
@@ -2070,7 +2127,8 @@
     1025
    ],
    "text": "Draw 2 new bonus cards and keep 1.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 71,
@@ -2107,7 +2165,8 @@
    "rulings": [
     "20220826",
     "20201204a"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 72,
@@ -2146,7 +2205,8 @@
    "rulings": [
     "02a",
     "20201206b"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 73,
@@ -2179,7 +2239,8 @@
     1030
    ],
    "text": "Lay 1 [egg] on any bird.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 74,
@@ -2216,7 +2277,8 @@
    "text": "Draw 1 [card]. If you do, discard 1 [card] from your hand at the end of your turn.",
    "rulings": [
     "20200508"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 75,
@@ -2251,7 +2313,8 @@
    "text": "Gain 1 [seed] from the birdfeeder, if available. You may cache it on this bird.",
    "rulings": [
     "20210902"
-   ]
+   ],
+   "caches": "seed"
   },
   {
    "id": 83,
@@ -2289,7 +2352,8 @@
    "rulings": [
     "20231204",
     "20190203"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 86,
@@ -2324,7 +2388,8 @@
    "text": "Player(s) with the fewest birds in their [wetland] draw 1 [card].",
    "rulings": [
     "20220305"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 87,
@@ -2358,7 +2423,8 @@
     1029
    ],
    "text": "Roll all dice not in birdfeeder. If any are [fish], cache 1 [fish] from the supply on this bird.",
-   "rulings": []
+   "rulings": [],
+   "caches": "fish"
   },
   {
    "id": 89,
@@ -2394,7 +2460,8 @@
    "rulings": [
     "02a",
     "20200104"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 91,
@@ -2431,7 +2498,8 @@
    "rulings": [
     "20220826",
     "20200623"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 94,
@@ -2466,7 +2534,8 @@
     1030
    ],
    "text": "Draw 2 [card]. If you do, discard 1 [card] from your hand at the end of your turn.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 95,
@@ -2501,7 +2570,8 @@
     1026
    ],
    "text": "Look at a [card] from the deck. If less than 75cm, tuck it behind this bird. If not, discard it.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 97,
@@ -2536,7 +2606,8 @@
     1022
    ],
    "text": "Tuck 1 [card] from your hand behind this bird. If you do, gain 1 [seed] from the supply.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 98,
@@ -2571,7 +2642,8 @@
    "text": "Tuck 1 [card] from your hand behind this bird. If you do, you may also lay 1 [egg] on this bird.",
    "rulings": [
     "20190203"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 99,
@@ -2607,7 +2679,8 @@
     1029
    ],
    "text": "Discard 1 [fish] to tuck 2 [card] from the deck behind this bird.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 100,
@@ -2643,7 +2716,8 @@
    "text": "Play an additional bird in your [forest]. Pay its normal cost.",
    "rulings": [
     "20190309"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 102,
@@ -2678,7 +2752,8 @@
    "text": "Play an additional bird in your [grassland]. Pay its normal cost.",
    "rulings": [
     "20190309"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 104,
@@ -2715,7 +2790,8 @@
    "rulings": [
     "20200716a",
     "20200710"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 105,
@@ -2753,7 +2829,8 @@
     1030
    ],
    "text": "All players gain 1 [invertebrate] from the supply.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 106,
@@ -2789,7 +2866,8 @@
    "rulings": [
     "20191218",
     "20210327"
-   ]
+   ],
+   "caches": "rodent"
   },
   {
    "id": 124,
@@ -2823,7 +2901,8 @@
     1026
    ],
    "text": "Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird.",
-   "rulings": []
+   "rulings": [],
+   "caches": "rodent"
   },
   {
    "id": 125,
@@ -2859,7 +2938,8 @@
    "text": "Discard 1 [egg] from any of your other birds to gain 1 [wild] from the supply.",
    "rulings": [
     "20191007"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 126,
@@ -2898,7 +2978,8 @@
    "rulings": [
     "20240903",
     "20210124"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 127,
@@ -2936,7 +3017,8 @@
     1030
    ],
    "text": "Discard 1 [egg] to draw 2 [card].",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 129,
@@ -2974,7 +3056,8 @@
     "20220307",
     "20200907",
     "20190729"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 130,
@@ -3007,7 +3090,8 @@
     1025
    ],
    "text": "Lay 1 [egg] on any bird.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 131,
@@ -3047,7 +3131,8 @@
     "20260319",
     "20200108",
     "20190307"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 132,
@@ -3082,7 +3167,8 @@
    "text": "Play an additional bird in your [wetland]. Pay its normal cost.",
    "rulings": [
     "20190309"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 133,
@@ -3116,7 +3202,8 @@
    "text": "Gain 1 [invertebrate] from the birdfeeder, if available.",
    "rulings": [
     "20190117"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 135,
@@ -3151,7 +3238,8 @@
    "text": "Play an additional bird in your [wetland]. Pay its normal cost.",
    "rulings": [
     "20190309"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 136,
@@ -3186,7 +3274,8 @@
    "text": "Look at a [card] from the deck. If less than 100cm, tuck it behind this bird. If not, discard it.",
    "rulings": [
     "20201006"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 139,
@@ -3221,7 +3310,8 @@
    "text": "Draw 2 new bonus cards and keep 1.",
    "rulings": [
     "02d"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 140,
@@ -3254,7 +3344,8 @@
     1026
    ],
    "text": "Look at a [card] from the deck. If less than 50cm, tuck it behind this bird. If not, discard it.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 141,
@@ -3293,7 +3384,8 @@
     "20230101",
     "20200712",
     "20200719"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 146,
@@ -3331,7 +3423,8 @@
    "rulings": [
     "20230412",
     "20221112"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 148,
@@ -3367,7 +3460,8 @@
     "20220307",
     "20190127",
     "20260111"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 149,
@@ -3402,7 +3496,8 @@
    "rulings": [
     "20201010a",
     "20200301"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 150,
@@ -3440,7 +3535,8 @@
     "20200528",
     "20200405",
     "20200204a"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 151,
@@ -3476,7 +3572,8 @@
     1030
    ],
    "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 153,
@@ -3512,7 +3609,8 @@
    "rulings": [
     "20190309",
     "20190128"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 154,
@@ -3546,7 +3644,8 @@
     1025
    ],
    "text": "Lay 1 [egg] on each of your birds with a [platform] nest.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 155,
@@ -3582,7 +3681,8 @@
    "text": "Gain 1 [invertebrate] or [fruit] from the birdfeeder, if available.",
    "rulings": [
     "20190117"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 156,
@@ -3614,7 +3714,8 @@
     1022
    ],
    "text": "Cache 1 [seed] from the supply on this bird.",
-   "rulings": []
+   "rulings": [],
+   "caches": "seed"
   },
   {
    "id": 157,
@@ -3646,7 +3747,8 @@
     1011
    ],
    "text": "Discard 1 [egg] to draw 2 [card].",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 158,
@@ -3678,7 +3780,8 @@
     1029
    ],
    "text": "Draw 2 new bonus cards and keep 1.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 159,
@@ -3715,7 +3818,8 @@
    "rulings": [
     "20220515",
     "20190406"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 161,
@@ -3752,7 +3856,8 @@
    "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat.",
    "rulings": [
     "02a"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 164,
@@ -3790,7 +3895,8 @@
     "20190405",
     "20191218",
     "20260708"
-   ]
+   ],
+   "caches": "rodent"
   },
   {
    "id": 166,
@@ -3823,7 +3929,8 @@
     1029
    ],
    "text": "Draw 1 [card].",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 167,
@@ -3857,7 +3964,8 @@
     1026
    ],
    "text": "Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird.",
-   "rulings": []
+   "rulings": [],
+   "caches": "rodent"
   },
   {
    "id": 170,
@@ -3892,7 +4000,8 @@
    "text": "Play an additional bird in your [grassland]. Pay its normal cost.",
    "rulings": [
     "20190309"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 171,
@@ -3926,7 +4035,8 @@
     1022
    ],
    "text": "Cache 1 [seed] from the supply on this bird.",
-   "rulings": []
+   "rulings": [],
+   "caches": "seed"
   },
   {
    "id": 172,
@@ -3961,7 +4071,8 @@
    "text": "Lay 1 [egg] on this bird.",
    "rulings": [
     "20201002"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 174,
@@ -3996,7 +4107,8 @@
    "text": "Lay 1 [egg] on this bird.",
    "rulings": [
     "20191201"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 175,
@@ -4031,7 +4143,8 @@
     1030
    ],
    "text": "Gain 1 [fruit] from the supply.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 176,
@@ -4065,7 +4178,8 @@
     1028
    ],
    "text": "Gain all [invertebrate] that are in the birdfeeder.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 179,
@@ -4100,7 +4214,8 @@
     1026
    ],
    "text": "Look at a [card] from the deck. If less than 75cm, tuck it behind this bird. If not, discard it.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 180,
@@ -4141,7 +4256,8 @@
     "20260319",
     "20200108",
     "20190307"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 181,
@@ -4174,7 +4290,8 @@
     1029
    ],
    "text": "All players draw 1 [card] from the deck.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 182,
@@ -4208,7 +4325,8 @@
    "text": "All players gain 1 [fish] from the supply.",
    "rulings": [
     "20190416"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 183,
@@ -4240,7 +4358,8 @@
     1030
    ],
    "text": "Draw 2 new bonus cards and keep 1.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 184,
@@ -4276,7 +4395,8 @@
    "text": "Gain 1 [invertebrate] from the supply.",
    "rulings": [
     "20191207"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 186,
@@ -4309,7 +4429,8 @@
     1026
    ],
    "text": "Look at a [card] from the deck. If less than 100cm, tuck it behind this bird. If not, discard it.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 187,
@@ -4342,7 +4463,8 @@
     1029
    ],
    "text": "Draw 2 [card]. If you do, discard 1 [card] from your hand at the end of your turn.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 188,
@@ -4378,7 +4500,8 @@
     "20240604",
     "20231126",
     "20190406"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 189,
@@ -4412,7 +4535,8 @@
     1030
    ],
    "text": "Tuck 1 [card] from your hand behind this bird. If you do, gain 1 [seed] from the supply.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 190,
@@ -4444,7 +4568,8 @@
     1022
    ],
    "text": null,
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 191,
@@ -4478,7 +4603,8 @@
     1029
    ],
    "text": "All players draw 1 [card] from the deck.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 192,
@@ -4512,7 +4638,8 @@
     1023
    ],
    "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 193,
@@ -4546,7 +4673,8 @@
     1022
    ],
    "text": "Tuck 1 [card] from your hand behind this bird. If you do, gain 1 [invertebrate] or [seed] from the supply.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 194,
@@ -4580,7 +4708,8 @@
     1030
    ],
    "text": "All players gain 1 [seed] from the supply.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 198,
@@ -4616,7 +4745,8 @@
    "text": "Gain 1 [seed] from the birdfeeder, if available. You may cache it on this bird.",
    "rulings": [
     "20221224"
-   ]
+   ],
+   "caches": "seed"
   },
   {
    "id": 199,
@@ -4651,7 +4781,8 @@
     1029
    ],
    "text": "Draw 2 [card]. If you do, discard 1 [card] from your hand at the end of your turn.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 200,
@@ -4686,7 +4817,8 @@
     1023
    ],
    "text": "Cache 1 [seed] from the supply on this bird.",
-   "rulings": []
+   "rulings": [],
+   "caches": "seed"
   },
   {
    "id": 201,
@@ -4718,7 +4850,8 @@
     1028
    ],
    "text": "Draw 2 new bonus cards and keep 1.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 202,
@@ -4758,7 +4891,8 @@
    "text": "Play an additional bird in your [forest]. Pay its normal cost.",
    "rulings": [
     "20190309"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 203,
@@ -4795,7 +4929,8 @@
    "text": "Gain 1 [seed] from the birdfeeder, if available. You may cache it on this bird.",
    "rulings": [
     "20260818"
-   ]
+   ],
+   "caches": "seed"
   },
   {
    "id": 205,
@@ -4831,7 +4966,8 @@
     1026
    ],
    "text": "Look at a [card] from the deck. If less than 75cm, tuck it behind this bird. If not, discard it.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 206,
@@ -4869,7 +5005,8 @@
    "text": "Look at a [card] from the deck. If less than 75cm, tuck it behind this bird. If not, discard it.",
    "rulings": [
     "20241222"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 207,
@@ -4906,7 +5043,8 @@
    "text": "Tuck 1 [card] from your hand behind this bird. If you do, you may also lay 1 [egg] on this bird.",
    "rulings": [
     "20190203"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 208,
@@ -4940,7 +5078,8 @@
     1029
    ],
    "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 209,
@@ -4976,7 +5115,8 @@
    "text": "Gain 1 [seed] or [fruit] from the birdfeeder, if available.",
    "rulings": [
     "20190117"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 210,
@@ -5011,7 +5151,8 @@
     1029
    ],
    "text": "Draw 2 new bonus cards and keep 1.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 211,
@@ -5050,7 +5191,8 @@
    "rulings": [
     "20201230",
     "20190309"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 212,
@@ -5089,7 +5231,8 @@
     "20201002",
     "20200420",
     "20230909"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 213,
@@ -5122,7 +5265,8 @@
     1029
    ],
    "text": "Draw 2 [card]. If you do, discard 1 [card] from your hand at the end of your turn.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 215,
@@ -5160,7 +5304,8 @@
    "rulings": [
     "20211123",
     "20201010b"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 216,
@@ -5196,7 +5341,8 @@
    "text": "Play an additional bird in your [grassland]. Pay its normal cost.",
    "rulings": [
     "20190309"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 218,
@@ -5228,7 +5374,8 @@
     1030
    ],
    "text": "Lay 1 [egg] on each of your birds with a [bowl] nest.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 219,
@@ -5260,7 +5407,8 @@
     1025
    ],
    "text": "Lay 1 [egg] on this bird.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 220,
@@ -5292,7 +5440,8 @@
     1030
    ],
    "text": "All players gain 1 [invertebrate] from the supply.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 223,
@@ -5326,7 +5475,8 @@
     1029
    ],
    "text": "Roll all dice not in birdfeeder. If any are [fish], cache 1 [fish] from the supply on this bird.",
-   "rulings": []
+   "rulings": [],
+   "caches": "fish"
   },
   {
    "id": 225,
@@ -5365,7 +5515,8 @@
     "20220521a",
     "02a",
     "20191007"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 226,
@@ -5397,7 +5548,8 @@
     1026
    ],
    "text": "Draw 2 new bonus cards and keep 1.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 227,
@@ -5430,7 +5582,8 @@
    "text": "All players draw 1 [card] from the deck.",
    "rulings": [
     "02f"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 228,
@@ -5464,7 +5617,8 @@
     1028
    ],
    "text": "Gain 1 [seed] from the supply.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 229,
@@ -5498,7 +5652,8 @@
     1025
    ],
    "text": "Draw 2 new bonus cards and keep 1.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 231,
@@ -5533,7 +5688,8 @@
    "text": "Gain 1 [seed] from the birdfeeder, if available. You may cache it on this bird.",
    "rulings": [
     "20200423"
-   ]
+   ],
+   "caches": "seed"
   },
   {
    "id": 232,
@@ -5567,7 +5723,8 @@
     1026
    ],
    "text": "Look at a [card] from the deck. If less than 75cm, tuck it behind this bird. If not, discard it.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 234,
@@ -5600,7 +5757,8 @@
     1029
    ],
    "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 235,
@@ -5633,7 +5791,8 @@
     1029
    ],
    "text": null,
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 236,
@@ -5671,7 +5830,8 @@
    "rulings": [
     "20260128",
     "20190309"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 237,
@@ -5711,7 +5871,8 @@
     "20200204a",
     "20200331",
     "20231030"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 238,
@@ -5745,7 +5906,8 @@
     1019
    ],
    "text": "Tuck 1 [card] from your hand behind this bird. If you do, gain 1 [invertebrate] from the supply.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 239,
@@ -5782,7 +5944,8 @@
    "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].",
    "rulings": [
     "20191203c"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 240,
@@ -5817,7 +5980,8 @@
    "text": "All players lay 1 [egg] on any 1 [ground] bird. You may lay 1 [egg] on 1 additional [ground] bird.",
    "rulings": [
     "20190406"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 241,
@@ -5852,7 +6016,8 @@
    "text": "Gain 1 [invertebrate] or [fruit] from the birdfeeder, if available.",
    "rulings": [
     "20190117"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 245,
@@ -5887,7 +6052,8 @@
     1023
    ],
    "text": "Cache 1 [seed] from the supply on this bird.",
-   "rulings": []
+   "rulings": [],
+   "caches": "seed"
   },
   {
    "id": 246,
@@ -5925,7 +6091,8 @@
    "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat.",
    "rulings": [
     "02a"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 247,
@@ -5960,7 +6127,8 @@
     1029
    ],
    "text": "Roll all dice not in birdfeeder. If any are [fish], cache 1 [fish] from the supply on this bird.",
-   "rulings": []
+   "rulings": [],
+   "caches": "fish"
   },
   {
    "id": 249,
@@ -5995,7 +6163,8 @@
     1025
    ],
    "text": "Tuck 1 [card] from your hand behind this bird. If you do, lay 1 [egg] on any bird.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 250,
@@ -6027,7 +6196,8 @@
     1029
    ],
    "text": "Draw 2 new bonus cards and keep 1.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 251,
@@ -6063,7 +6233,8 @@
    "rulings": [
     "20200331",
     "20201104"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 252,
@@ -6096,7 +6267,8 @@
     1029
    ],
    "text": "Roll all dice not in birdfeeder. If any are [fish], cache 1 [fish] from the supply on this bird.",
-   "rulings": []
+   "rulings": [],
+   "caches": "fish"
   },
   {
    "id": 253,
@@ -6128,7 +6300,8 @@
     1029
    ],
    "text": "All players draw 1 [card] from the deck.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 255,
@@ -6164,7 +6337,8 @@
    "rulings": [
     "20231204",
     "20210130"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 256,
@@ -6200,7 +6374,8 @@
    "text": "Draw 2 new bonus cards and keep 1.",
    "rulings": [
     "20240526"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 257,
@@ -6234,7 +6409,8 @@
     1028
    ],
    "text": "Gain 1 [invertebrate] from the supply.",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   },
   {
    "id": 258,
@@ -6271,7 +6447,8 @@
     "20200323",
     "20200109b",
     "20190921"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 259,
@@ -6308,7 +6485,8 @@
    "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat.",
    "rulings": [
     "02a"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 260,
@@ -6344,7 +6522,8 @@
    "text": "Tuck 1 [card] from your hand behind this bird. If you do, you may also lay 1 [egg] on this bird.",
    "rulings": [
     "20190203"
-   ]
+   ],
+   "caches": null
   },
   {
    "id": 261,
@@ -6381,7 +6560,8 @@
     1030
    ],
    "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card].",
-   "rulings": []
+   "rulings": [],
+   "caches": null
   }
  ],
  "bonus": [

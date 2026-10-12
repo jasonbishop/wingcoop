@@ -102,7 +102,7 @@ def x_lay_eggs(s, p, c, step, chain):
 def x_cache_food(s, p, c, step, chain):
     R.find(s.players[p], c)[2][2] += step["n"]
     s.did = True
-    R.emit(s, "food_cached", p=p, bird=c, food=step["food"], n=step["n"])
+    R.emit(s, "food_cached", p=p, bird=c, food=step["food"], n=step["n"], source="supply")
 
 
 def x_tuck(s, p, c, step, chain):

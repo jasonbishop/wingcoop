@@ -45,14 +45,17 @@ def expand(exp, base_dir="."):
                                                                      if k == "open_hands"}})
         plugins.pop("open_hands", None)
         has_group = "coop_goals" in plugins
-        agent = dict(cond.get("agents") or exp.get("agents") or {"type": "greedy"})
+        agent = cond.get("agents") or exp.get("agents") or {"type": "greedy"}
+        # A list gives one agent per seat (repeating if shorter than the table), e.g. [llm, greedy].
+        agent = [dict(a) for a in agent] if isinstance(agent, list) else dict(agent)
         weights = None
-        if agent.get("weights"):
-            path = pathlib.Path(base_dir) / str(agent["weights"]).format(condition=cname)
-            if path.exists():
-                weights = json.loads(path.read_text())
-                weights = weights.get("weights", weights)
-            agent["weights_file"] = str(path) if path.exists() else None
+        for spec in (agent if isinstance(agent, list) else [agent]):
+            if spec.get("weights"):       # greedy value-function weights, shared by the greedy seats
+                path = pathlib.Path(base_dir) / str(spec["weights"]).format(condition=cname)
+                if path.exists():
+                    weights = json.loads(path.read_text())
+                    weights = weights.get("weights", weights)
+                spec["weights_file"] = str(path) if path.exists() else None
         for n in as_list(exp["players"]):
             for w in as_list(exp.get("motivation", 0.0)):
                 for policy in (policies if has_group else [None]):
@@ -62,6 +65,7 @@ def expand(exp, base_dir="."):
                             "policy": policy, "group_share": bool(share), "plugins": plugins,
                             "open_hands": open_hands, "win_condition": cond.get("win_condition", "individual"),
                             "team_target": cond.get("team_target"), "agent": agent, "weights": weights,
+                            "snapshots": (exp.get("logging") or {}).get("snapshots", "turn"),
                         })
     return cells
 
@@ -86,21 +90,30 @@ class Table:
         if len(self.ws) != cfg.n:
             raise ValueError("a per-player motivation list must have one entry per player")
 
+    def seat_specs(self):
+        """One agent spec per seat. A list in the experiment file is dealt out in seat order (and repeats)."""
+        spec = self.cell["agent"]
+        specs = spec if isinstance(spec, list) else [spec]
+        return [specs[i % len(specs)] for i in range(self.cfg.n)]
+
     def make_agents(self, seed):
         cfg = self.cfg
-        kind = self.cell["agent"].get("type", "greedy")
         agents = []
-        for i in range(cfg.n):
+        for i, spec in enumerate(self.seat_specs()):
+            kind = spec.get("type", "greedy")
             if kind == "greedy":
                 a = GreedyAgent(self.cell["weights"], seed)
             elif kind == "mcts":
-                opts = {k: self.cell["agent"][k] for k in ("iterations", "ms", "minor_iterations", "c", "rollout")
-                        if k in self.cell["agent"]}
+                opts = {k: spec[k] for k in ("iterations", "ms", "minor_iterations", "c", "rollout") if k in spec}
                 a = MCTSAgent(seed=seed, greedy_weights=self.cell["weights"], **opts)
+            elif kind == "llm":
+                from .agents.llm import LLMAgent
+                opts = {k: v for k, v in spec.items() if k not in ("type", "weights", "weights_file")}
+                a = LLMAgent(seed=seed, **opts)
             elif kind == "random":
                 a = RandomAgent(seed * 131 + i)
             else:
-                raise ValueError(f"agent type {kind!r} is not available yet")
+                raise ValueError(f"unknown agent type {kind!r}")
             a.start(cfg, i, Objective(self.ws[i], cfg.n, self.cell["group_share"]))
             agents.append(a)
         return agents
@@ -120,18 +133,25 @@ def play_cell_game(cell, seed, full_log=False):
     if full_log:
         seats = [{"type": a.type, "settings": a.settings(), "w": a.objective.w,
                   "group_share": a.objective.group_share} for a in agents]
-        log = GameLog(cfg, seed, seats, cell["policy"], cell["experiment"], cell["condition"])
+        log = GameLog(cfg, seed, seats, cell["policy"], cell["experiment"], cell["condition"],
+                      snapshots=cell.get("snapshots", "turn"))
     tally = DecisionTally(cfg.db)
+    tally.agents = agents
     s = play_game(cfg, seed, agents, policy, log=log, tally=tally)
     return s, tally, log
 
 
-def game_row(cell, seed, s, tally, seconds):
+def agent_label(spec):
+    specs = spec if isinstance(spec, list) else [spec]
+    return "+".join(a.get("type", "greedy") + (":" + a["model"] if a.get("model") else "") for a in specs)
+
+
+def game_row(cell, seed, s, tally, seconds, agents=()):
     n = cell["players"]
     fs = api.final_scores(s)
     row = {
         "experiment": cell["experiment"], "condition": cell["condition"], "players": n, "seed": seed,
-        "agent": cell["agent"].get("type", "greedy"),
+        "agent": agent_label(cell["agent"]),
         "w": cell["w"] if not isinstance(cell["w"], (list, tuple)) else -1.0,
         "w_list": json.dumps(cell["w"]) if isinstance(cell["w"], (list, tuple)) else None,
         "policy": cell["policy"] or "none", "group_share": cell["group_share"],
@@ -169,6 +189,12 @@ def game_row(cell, seed, s, tally, seconds):
     row["rounds_failed"] = fails if cell["policy"] else None
     for k, v in tally.counts.items():
         row[k] = v
+    llm = [a.stats for a in agents if getattr(a, "type", "") == "llm"]
+    if llm:
+        for key in ("calls", "retries", "fallbacks", "prompt_tokens", "completion_tokens", "cost_usd"):
+            row["llm_" + key] = sum(st[key] for st in llm)
+    for j, a in enumerate(agents):
+        row[f"p{j}_agent"] = a.type
     return row
 
 
@@ -196,8 +222,11 @@ def run_task(task):
     t0 = time.time()
     full = wants_full_log(cell, seed, logging)
     s, tally, log = play_cell_game(cell, seed, full)
-    row = game_row(cell, seed, s, tally, time.time() - t0)
+    row = game_row(cell, seed, s, tally, time.time() - t0, tally.agents)
     reason = "sample" if full else flagged(row, logging.get("full_if"))
+    paid = any(a.type == "llm" for a in tally.agents)
+    if reason and log is None and paid:
+        reason = None      # never replay a game that costs money just to log it; use `level: full` instead
     if reason and log is None:
         # Re-run the same game with full logging; it must come out identical.
         s2, _, log = play_cell_game(cell, seed, True)

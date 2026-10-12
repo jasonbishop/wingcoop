@@ -108,11 +108,28 @@ def test_replay_rebuilds_every_snapshot(tmp_path, n, plugins):
     kinds = {ln["t"] for ln in lines}
     assert kinds == {"header", "snapshot", "decision", "event"}
     snapshots = [ln for ln in lines if ln["t"] == "snapshot"]
-    assert len(snapshots) == n * 26 + 1                   # the start of every turn, plus the final state
+    # The start of the game, the start of every turn, and the final state.
+    assert len(snapshots) == 1 + n * 26 + 1
+    assert snapshots[0]["before_seq"] == 1 and snapshots[-1]["before_seq"] is None
+    assert sum(sn["turn_start"] for sn in snapshots) == n * 26
     assert snapshots[0]["state"]["deck"] and snapshots[0]["state"]["players"][0]["hand"] is not None
     final = replay(path)
     assert state_hash(final) == state_hash(s)
     assert state_to_dict(final) == snapshots[-1]["state"]
+
+
+def test_snapshot_before_every_decision(tmp_path):
+    cfg = api.GameConfig(2, COOP, record_events=True)
+    agents = [RandomAgent(i) for i in range(2)]
+    log = GameLog(cfg, 3, [{"type": "random"}] * 2, snapshots="decision")
+    s = play_game(cfg, 3, agents, RandomGroupPolicy(1), log=log)
+    lines = log.lines
+    decisions = [ln for ln in lines if ln["t"] == "decision"]
+    snapshots = [ln for ln in lines if ln["t"] == "snapshot"]
+    assert [sn["before_seq"] for sn in snapshots] == [d["seq"] for d in decisions] + [None]
+    for sn, d in zip(snapshots, decisions):       # each snapshot shows the decision that comes next
+        assert sn["state"]["pending"][1] == d["kind"] and sn["state"]["pending"][2] == d["options"]
+    assert state_hash(replay(lines)) == state_hash(s)
 
 
 def test_replay_detects_a_changed_choice(tmp_path):

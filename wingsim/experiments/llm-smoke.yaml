@@ -1,0 +1,15 @@
+# One small game to see a language model play: seat 0 is the model, seat 1 the greedy bot.
+# Run with --workers 1. `budget_usd` stops the run if this process has spent that much.
+name: llm-smoke
+seeds: {start: 1, count: 1}
+players: [2]
+conditions:
+  coop:      {plugins: {coop_goals: {penalty: avg_x_d, allowed_changes: [0, 1]}, open_hands: true},
+              win_condition: team_total}
+agents:
+  - {type: llm, model: anthropic/claude-haiku-5.5, reasoning: true, budget_usd: 0.50}
+  - {type: greedy, weights: "tuned/{condition}.json"}
+motivation:  [1.0]
+group_policy: ["fixed(2)"]
+group_share: [false]
+logging:     {level: full, snapshots: decision}

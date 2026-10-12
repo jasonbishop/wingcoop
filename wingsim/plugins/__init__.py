@@ -38,6 +38,18 @@ class Plugin:
     def final_scoring(self, s, result):
         """Adjust result["players"][i] entries or result["group"] at scoring time."""
 
+    def rules_text(self):
+        """This plugin's rules in plain words, for the language-model agent's rules summary."""
+        return ""
+
+    def status_text(self, s):
+        """One line describing this plugin's current state, for observations shown as text."""
+        return ""
+
+    def option_label(self, s, option):
+        """A short description of one of this plugin's options, or "" if it is not this plugin's."""
+        return ""
+
 
 def _overrides(plugin, method):
     return getattr(type(plugin), method) is not getattr(Plugin, method)

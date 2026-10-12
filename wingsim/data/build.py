@@ -185,6 +185,20 @@ def convert(text, color, overrides):
     return None, None
 
 
+def cached_food(steps):
+    """The food a bird's power caches on it, if any (for viewers: the state stores only a count)."""
+    for step in steps:
+        if step["op"] == "cache_food":
+            return step["food"]
+        if step.get("may_cache"):
+            return step["food"][0]
+        for nested in (step.get("then") or []), ([step["if"]] if isinstance(step.get("if"), dict) else []):
+            found = cached_food(nested)
+            if found:
+                return found
+    return None
+
+
 def parse_vp(text):
     m = re.fullmatch(r"(\d+)\[point\] per bird", text)
     if m:
@@ -286,9 +300,12 @@ def build():
             "rulings": [r["id"] for r in (b.get("rulings") or [])],
         }
         birds.append(bird)
+        bird["caches"] = None
         if not text:
             continue
         name, spec = convert(text, b["Color"], overrides)
+        if spec is not None:
+            bird["caches"] = cached_food(spec["steps"])
         if spec is None:
             missing.append((b["Common name"], text))
             continue

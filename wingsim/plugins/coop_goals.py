@@ -57,3 +57,29 @@ class CoopGoals(Plugin):
         else:
             delta = -self.flat
         return [0.0] * n, delta, ("coop", d, success)
+
+    def rules_text(self):
+        if self.penalty == "avg_x_d":
+            fail = "it falls by (average count) x d"
+        elif self.penalty == "d_x_d":
+            fail = "it falls by d x d"
+        else:
+            fail = f"it falls by {self.flat:g}"
+        changes = ", ".join(f"{c:+d}" if c else "no change" for c in self.allowed_changes)
+        return ("HOUSE RULE - cooperative round goals. Round goals score no individual points. Instead the "
+                f"table shares a group score. Before round 1 the group sets a difficulty d from {self.lo} to "
+                f"{self.hi}. At the end of each round, every player's count for the round goal is capped at 5. "
+                "If EVERY player's count is at least d, the group score rises by (average count) x d; "
+                f"otherwise {fail}. After each of rounds 1 to 3 the group may change d by: {changes}. "
+                "The team total is the sum of all players' scores plus the group score.")
+
+    def status_text(self, s):
+        d = s.variant.get("coop.d")
+        if d is None:
+            return "Co-op goals: the difficulty has not been set yet. Group score 0."
+        return f"Co-op goals: difficulty d = {d} this round. Group score so far: {s.group_score:g}."
+
+    def option_label(self, s, option):
+        if option[0] == "difficulty":
+            return f"Set the difficulty to {option[1]}"
+        return ""

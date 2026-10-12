@@ -16,7 +16,8 @@ from .state import GROUP, OVER, SETUP, TURNS, PRE_ROUND
 
 __all__ = ["GameConfig", "Decision", "GROUP", "HIDDEN", "IllegalChoice", "Observation", "new_game",
            "pending_decision", "apply", "apply_in_place", "observe", "is_over", "final_scores", "scores",
-           "totals", "goal_counts", "score_goal_counts", "simulate_turn", "play_random", "turns_left", "round_turns_left"]
+           "totals", "goal_counts", "score_goal_counts", "simulate_turn", "play_random", "turns_left", "round_turns_left",
+           "rules_summary", "describe_observation", "describe_decision"]
 
 Decision = namedtuple("Decision", "player kind options context")
 
@@ -121,3 +122,24 @@ def simulate_turn(state, player, habitat, chooser):
 def play_random(state, rng):
     """Finish the game in place with uniformly random choices by every player (a fast rollout)."""
     rules.play_random(state, rng)
+
+
+def rules_summary(config):
+    """The rules in plain words, including any house rules in play (text supplied by the plugins)."""
+    from ..prompts import rules_text
+    extra = [pg.rules_text() for pg in config.plugins if pg.rules_text()]
+    hands = ("All hands and bonus cards are open: every player can see them." if config.open_hands
+             else "Other players' hands and bonus cards are hidden.")
+    return rules_text() + "\n\n" + "\n\n".join(extra + [hands])
+
+
+def describe_observation(observation):
+    """The observation as text."""
+    from . import describe
+    return describe.observation_text(observation)
+
+
+def describe_decision(observation):
+    """(what is being decided, a label for each legal option) for the pending decision."""
+    from . import describe
+    return describe.decision_text(observation.state), describe.option_labels(observation.state)

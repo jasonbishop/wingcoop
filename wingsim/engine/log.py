@@ -10,10 +10,10 @@ import json
 import pathlib
 import subprocess
 
-from . import api
+from . import api, describe
 from .state import GROUP, TURNS, state_hash, state_to_dict
 
-LOG_VERSION = 1
+LOG_VERSION = 2
 _GIT = None
 
 
@@ -41,16 +41,25 @@ def _jsonable(x):
 
 
 class GameLog:
-    """Collects log lines in memory; `write()` saves them."""
+    """Collects log lines in memory; `write()` saves them.
 
-    def __init__(self, cfg, seed, seats, group_policy=None, experiment=None, condition=None):
+    `snapshots` is "turn" (a snapshot at the start of the game, at the start of
+    every turn and at the end) or "decision" (also one before every decision).
+    """
+
+    def __init__(self, cfg, seed, seats, group_policy=None, experiment=None, condition=None, snapshots="turn"):
+        if snapshots not in ("turn", "decision"):
+            raise ValueError("snapshots must be 'turn' or 'decision'")
+        self.snapshots = snapshots
         self.lines = [{
             "t": "header", "version": LOG_VERSION, "engine_git": engine_git_hash(),
             "card_commit": cfg.db.commit, "config": cfg.resolved, "seed": seed, "seats": seats,
             "group_policy": group_policy, "experiment": experiment, "condition": condition,
+            "snapshots": snapshots,
         }]
         self.seq = 0
         self.last_turn = None
+        self.started = False
 
     def events(self, state):
         if state.events:
@@ -60,27 +69,27 @@ class GameLog:
                 self.lines.append(line)
 
     def maybe_snapshot(self, state):
-        """Snapshot at the first decision of each turn, and once the game is over."""
+        """Snapshot the state as it is just before the next decision (or at the end of the game)."""
         over = api.is_over(state)
-        if over:
-            key = "end"
-        elif state.phase == TURNS and state.pend is not None and state.pend[1] == "action":
-            key = state.turn_no
-        else:
+        new_turn = (not over and state.phase == TURNS and state.pend is not None and state.pend[1] == "action"
+                    and state.turn_no != self.last_turn)
+        if new_turn:
+            self.last_turn = state.turn_no
+        if not (over or new_turn or not self.started or self.snapshots == "decision"):
             return
-        if key == self.last_turn:
-            return
-        self.last_turn = key
-        self.lines.append({"t": "snapshot", "turn_no": state.turn_no, "round": state.round,
-                           "player": None if over else state.turn, "hash": state_hash(state),
-                           "state": state_to_dict(state)})
+        self.started = True
+        self.lines.append({"t": "snapshot", "before_seq": None if over else self.seq + 1,
+                           "turn_no": state.turn_no, "round": state.round,
+                           "player": None if over else state.turn, "turn_start": bool(new_turn),
+                           "hash": state_hash(state), "state": state_to_dict(state)})
 
     def decision(self, state, decision, choice, info):
         self.seq += 1
         self.lines.append({
             "t": "decision", "seq": self.seq, "round": state.round, "turn_no": state.turn_no,
             "player": "group" if decision.player == GROUP else decision.player, "kind": decision.kind,
-            "options": _jsonable(decision.options), "choice": decision.options.index(choice),
+            "options": _jsonable(decision.options), "labels": describe.option_labels(state),
+            "choice": decision.options.index(choice),
             "info": _jsonable(info) if info else None,
         })
 
@@ -116,44 +125,72 @@ def replay(path_or_lines):
     c = header["config"]
     cfg = api.GameConfig(c["players"], c["plugins"], c["open_hands"], c["win_condition"], c.get("team_target"))
     s = api.new_game(cfg, header["seed"])
-    snapshots = [ln for ln in lines if ln["t"] == "snapshot"]
+    expected = {ln["before_seq"]: ln["hash"] for ln in lines if ln["t"] == "snapshot"}
     decisions = [ln for ln in lines if ln["t"] == "decision"]
-    si = 0
-    last = None
-
-    def check():
-        nonlocal si, last
-        over = api.is_over(s)
-        if over:
-            key = "end"
-        elif s.phase == TURNS and s.pend is not None and s.pend[1] == "action":
-            key = s.turn_no
-        else:
-            return
-        if key == last:
-            return
-        last = key
-        if si >= len(snapshots):
-            raise ReplayMismatch(f"no logged snapshot for turn {key}")
-        if snapshots[si]["hash"] != state_hash(s):
-            raise ReplayMismatch(f"snapshot {si} (turn {key}) differs from the log")
-        si += 1
-
-    check()
+    checked = 0
     for ln in decisions:
         d = api.pending_decision(s)
         if d is None:
             raise ReplayMismatch("log has more decisions than the game")
+        if ln["seq"] in expected:
+            if expected[ln["seq"]] != state_hash(s):
+                raise ReplayMismatch(f"snapshot before decision {ln['seq']} differs from the log")
+            checked += 1
         if api_options(d.options) != ln["options"]:
             raise ReplayMismatch(f"decision {ln['seq']}: options differ from the log")
         api.apply_in_place(s, d.options[ln["choice"]])
-        check()
     if not api.is_over(s):
         raise ReplayMismatch("the logged choices do not finish the game")
-    if si != len(snapshots):
-        raise ReplayMismatch("log has more snapshots than the game")
+    if None in expected:
+        if expected[None] != state_hash(s):
+            raise ReplayMismatch("the final snapshot differs from the log")
+        checked += 1
+    if checked != len(expected):
+        raise ReplayMismatch("the log has snapshots that match no decision")
     return s
 
 
 def api_options(options):
     return _jsonable(options)
+
+
+def card_reference(db):
+    """Names and printed attributes of every card, for viewers (so one file is enough to render a game)."""
+    cards = json.loads((pathlib.Path(__file__).parent.parent / "data" / "cards.json").read_text())
+    return {"birds": {str(b["id"]): {k: b[k] for k in ("name", "color", "vp", "nest", "egg_limit", "wingspan",
+                                                         "habitats", "cost", "wild", "either", "predator",
+                                                         "flocking", "text", "caches")}
+                      for b in cards["birds"]},
+            "bonus": {str(b["id"]): {"name": b["name"], "condition": b["condition"], "vp_text": b["vp_text"]}
+                      for b in cards["bonus"]},
+            "goals": {str(g["id"]): {"text": g["text"], "kind": g["kind"], "param": g["param"]}
+                      for g in cards["goals"]}}
+
+
+def export(path, out):
+    """Write a log as one plain JSON file: {"cards": ..., "lines": [...]}. Easier to load in a browser."""
+    lines = read_log(path)
+    pathlib.Path(out).write_text(json.dumps({"cards": card_reference(api.GameConfig(2).db), "lines": lines},
+                                            separators=(",", ":")))
+    return out
+
+
+def main(argv=None):
+    import argparse
+    ap = argparse.ArgumentParser(description="Check or export a replay log")
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    c = sub.add_parser("check", help="rebuild the game from the log and verify every snapshot")
+    c.add_argument("log")
+    e = sub.add_parser("export", help="write the log plus card names as one plain JSON file")
+    e.add_argument("log")
+    e.add_argument("out")
+    args = ap.parse_args(argv)
+    if args.cmd == "check":
+        s = replay(args.log)
+        print("ok:", json.dumps(api.final_scores(s)["team_total"]))
+    else:
+        print(export(args.log, args.out))
+
+
+if __name__ == "__main__":
+    main()
