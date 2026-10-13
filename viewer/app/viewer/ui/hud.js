@@ -215,6 +215,7 @@ export class Hud {
   }
 
   render() {
+    this._renderViews();
     this._renderTopbar();
     this._renderTransport();
     this._renderStep();
@@ -356,7 +357,7 @@ export class Hud {
   }
 
   _finalView() {
-    const fs = this.replay.finalScores, n = this.replay.players, out = [];
+    const fs = this.replay.finalScores, out = [];
     out.push(el('h2', {}, 'Game over'));
     if (!fs) { out.push(el('p.hint', {}, 'This log has no final scoring.')); return out; }
     out.push(this._scoreTable(fs));
@@ -367,7 +368,6 @@ export class Hud {
       const winners = fs.players.map((p, i) => (p.total === best ? playerName(i) : null)).filter(Boolean);
       out.push(el('p.total', { html: `${esc(winners.join(' and '))} ${winners.length > 1 ? 'tie' : 'wins'} with <b>${fmt(best)}</b>` }));
     }
-    void n;
     return out;
   }
 

@@ -489,8 +489,7 @@ export class GameTable extends EventTarget {
     await seat.mat.tuck(at.habitat, at.slot, 1, { from: card ? [card] : [] });
   }
 
-  async _on_predator(e, state) {
-    const seat = this.seats[e.p];
+  async _on_predator(e) {
     if (e.kind !== 'look') { await tweens.wait(0.5); return; }
     // hold the deck's top card up beside the deck, then tuck it (the next event) or discard it
     const card = this.deck.lift(this.book.bird(e.card));
@@ -498,7 +497,6 @@ export class GameTable extends EventTarget {
     await tweens.wait(0.45);
     if (e.success) this._looked = { id: e.card, card };
     else await this.discard.add(card);
-    void seat;
   }
 
   async _on_eggs_laid(e, state) {
@@ -525,7 +523,13 @@ export class GameTable extends EventTarget {
     const at = this._where(state, e.p, e.bird);
     if (!at) return;
     const card = seat.mat.removeBird(at.habitat, at.slot);
-    await seat.mat.playBird(HABITATS[e.to], state.players[e.p].board[e.to].length, card, { duration: 0.75 });
+    const to = HABITATS[e.to], slot = state.players[e.p].board[e.to].length;
+    await seat.mat.playBird(to, slot, card, { duration: 0.75 });
+    // what was on the bird travels with it
+    const { eggs, cached, tucked } = at.entry;
+    if (tucked) await seat.mat.tuck(to, slot, tucked, { animate: false });
+    if (eggs) seat.mat.layEggs(to, slot, eggs, eggKinds(e.bird, eggs), { animate: false });
+    for (let k = 0; k < cached; k++) seat.mat.cacheFood(to, slot, card.bird?.caches || 'seed', { animate: false });
   }
 
   async _on_tray_refill(e, state) {

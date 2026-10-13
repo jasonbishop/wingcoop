@@ -21,9 +21,9 @@ function normal(field, v) {
 // Places where the log is known not to say enough (see FORMAT-REQUESTS.md). The reducer is
 // allowed to be behind here, and must have caught up by the next snapshot outside them.
 function knownGap(field, decision, events, nextDecision) {
-  // G1: bonus cards leave the bonus deck when the power is used, with no event.
+  // R1: bonus cards leave the bonus deck when the power is used, with no event.
   if ((field === 'bonus_deck' || field === 'bonus_discard') && nextDecision?.kind === 'keep_bonus') return true;
-  // G2: cards taken for the American Oystercatcher draft produce no event until cards_revealed.
+  // R2: cards taken for the American Oystercatcher draft produce no event until cards_revealed.
   if ((field === 'tray' || field === 'deck') && decision.kind === 'draw_card'
     && !events.some(e => e.e === 'cards_drawn' || e.e === 'cards_revealed')) return true;
   return false;

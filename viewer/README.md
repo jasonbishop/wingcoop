@@ -1,122 +1,154 @@
-# Birdtable
+# Wingspan co-op replay viewer
 
-3D tabletop components for a Wingspan-style **game replay viewer**, built with Three.js and cannon-es and textured entirely from the Gemini concept art in `art/source/`.
+Plays back games logged by the simulator in `../wingsim` on a 3D table: every player's mat around a round table, the shared pieces on a turntable in the middle, and a panel showing each decision, the options, what was chosen and why.
+
+It reads the log format described in `../docs/replay-log-format.md` (version 2) and nothing else from the simulator: no engine code runs here. Places where that format falls short for a viewer are written up in `FORMAT-REQUESTS.md`.
+
+Built on the birdtable components (Three.js and cannon-es), textured from the concept art in `art/source/`.
 
 ```bash
 npm install
-npm run dev            # opens app/index.html: the whole table + a scripted replay
-                       # app/feeder.html: the birdfeeder on its own
+npm run dev        # http://<this machine>:5273/  (listens on all interfaces)
+npm test           # log reader and event reducer, checked against the sample games
 ```
+
+## Opening a game
+
+- **From the list.** With `npm run dev` the opening screen lists every log under `../logs/` and `../docs/samples/`. Add other folders with `WINGSIM_LOGS=/some/dir:/another npm run dev`.
+- **Drop a file** anywhere on the page: an exported `.json`, or a native `.jsonl.gz` / `.jsonl` (native logs need the dev server, which supplies the card reference from `../wingsim/data/cards.json`).
+- **By address:** `/?log=docs/samples/coop-3p-greedy-every-decision.jsonl.gz&at=120` opens that log at position 120. The address bar follows you as you move, so a reload or a shared link comes back to the same spot. `&quality=low` halves shadow and card texture sizes.
+
+Logs with a snapshot before every decision (`logging: {snapshots: decision}` in the experiment file) are shown exactly. Logs with per-turn snapshots work too: positions inside a turn are worked out from the events and marked "Board derived from events".
+
+## What is on the screen
+
+**The table.** Seats are clockwise in seat order. Each has the mat (the art has 7 columns; the game uses the first 5), food tokens, cubes for the turns left this round, a name plate, bonus cards and the hand. The middle is a lazy susan with the goal board, birdfeeder, deck, bird tray, discard pile and bonus deck; it turns to face whichever seat you are watching, so those always read the right way up.
+
+**The goal board.** After a round is scored each player's cube sits on the square for their count, 0 to 5 from the left. With co-op goals a ring sits on the medallion for the difficulty: gold while the round is being played, green if every player reached it, red if not. The current round's goal tile is raised.
+
+**Step tab.** One decision: who is deciding and with which agent, the options (the chosen one marked, with the agent's own value for the options it ranked), a language model's reply and the prompt it saw, and the events the choice caused. During playback the events light up as they happen on the table.
+
+**Turns tab.** Every turn with its action; click to jump. **Game tab.** Settings, seats, round-goal results, final scores.
+
+**Controls.** Play / pause, one decision forward or back, previous / next turn or round, a scrubber, speed. `Space` plays, `←` `→` step, `Shift`+arrows jump by turn. "Watch" chooses whose seat the camera sits behind (it follows the turn by default); Seat / Mat / Middle / Table are camera distances. Drag to orbit, scroll to zoom. Click a card to read it, a score chip or name plate to sit at that seat.
 
 ## Layout
 
 ```
-art/
-  source/            the concept sheets (inputs)
-  manifest.json      every generated image: sheet, pixel box, processing, output path
-  tools/extract.py   regenerates all component art from the manifest
-  tools/find_boxes.py  finds element boxes on a new sheet
-components/
-  tabletop/          shared scene: renderer, camera views, lights, table cloth, picking, tweens, asset loading
-  birdfeeder/        dice tower + physics food dice (has its own README)
-  player-mat/        habitat mat: bird cards, eggs, cached food, tucked cards, food supply
-  goal-board/        round-end goal grid, goal tiles, player cubes
-  cards/             bird card (face drawn at runtime), face-down deck, card row, tuck tab, sample birds
-  pieces/            food tokens, eggs, player cubes
-app/
-  index.html, table/ the table demo: setup, snapshot/restore, replay steps (replay.js)
-  feeder.html, feeder/ standalone feeder demo
+index.html                 the viewer page
+app/viewer/
+  main.js                  opens a log, builds the table, wires the controls
+  replay/log.js            log -> positions (board before a decision, the decision, its events)
+  replay/reduce.js         applies events to a state (for per-turn logs and for mid-step states)
+  replay/load.js           files, the dev server's log list
+  data.js                  log conventions and card reference -> what components draw
+  describe.js              sentences for events and decisions
+  player.js                ReplayPlayer: step, scrub, autoplay, camera following
+  scene/GameTable.js       the whole table: setState(state), animate(event), reconcile(state)
+  scene/layout.js          where seats, shared pieces and cameras go
+  ui/                      top bar, tabs, transport, inspector, opening screen, styles
+  birdArt.js               finds bird illustrations by id or name
+app/feeder.html, feeder/   the birdfeeder on its own (physics tuning)
+components/                table pieces: no game rules, no HTML (see below)
+server/api.js              dev-server routes: /api/runs, /api/log, /api/cards (read-only)
+art/                       concept sheets, manifest.json, extract.py, find_boxes.py
+tests/                     node tests for the log reader and reducer
+tools/                     headless screenshots and whole-game playthrough checks
+FORMAT-REQUESTS.md         what the simulator's log should add or document
 ```
 
-Each component lives in `components/<name>/src` with an `index.js` of public exports, and its generated art in `components/<name>/assets`. Components import each other by relative path; there is no build step except for the demo pages.
+## How playback works
 
-## How the pieces fit
+`buildReplay()` turns a log into **positions**. Position *i* is the state before decision *i + 1*, the decision line, and the events that choice caused; the last position is the final state. That is the "one step" of section 9 of the format document, so a live game could feed the same screen with the choice not yet made.
 
-Every component has an `object3d` (add it to the scene) and, if animated, `update(dt)`. `Tabletop` does both for you:
+Moving around uses two paths, the same split the components have:
 
-```js
-import { Tabletop } from './components/tabletop/src/index.js';
-import { PlayerMat } from './components/player-mat/src/index.js';
-
-const table = new Tabletop({ container: document.getElementById('table') });
-const mat = table.add(new PlayerMat({ name: 'alice' }), { position: [0, 0, 5.4] });
-```
-
-Units are card-sized: a bird card is 1.5 × 2.17, the mat 18 × 10, the goal board 12 × 4.9, the feeder is scaled 0.55 on the table. The table top is y = 0; +z points toward the default camera.
-
-Every game action has two forms:
-
-| | Use for | Example |
+| | Used for | How |
 | --- | --- | --- |
-| **Animated** methods returning promises | playing a replay forward | `await mat.layEggs('forest', 0, 2, 'speckled')` |
-| **`setState(data)`** (instant) + **`getState()`** | jumping / scrubbing to any point | `mat.setState(snapshot.mat)` |
+| Instant | scrubbing, jumping, stepping back | `game.setState(position.state, { decision })`: every component is set from the state; only what differs is rebuilt |
+| Animated | Play and Step | for each event: `await game.animate(event, stateBefore)`, apply the event to a copy of the state, `game.reconcile(state)`; then `setState()` of the next position |
 
-`app/table/table.js` shows the full pattern: take a `snapshot()` (every component's `getState()`) before each step; going back is `restore(snapshot)`. Skipping animations is `tweens.finishAll()` + `feeder.skip()`; `tweens.speed = 4` fast-forwards everything.
+`reconcile()` after every event means an animation never has to be exactly right for the table to be right; `tools/playthrough.mjs` reports every event where it had to correct something. A card id of `-1` is drawn face down everywhere, as section 9 asks.
 
-Moving pieces between components (feeder → supply, deck → tray → mat, supply → card) uses `fly(object, toParent, localPosition, localQuaternion)` from `tabletop/src/tween.js`, which animates in world space and reparents at the end. Most methods accept a `from` world point to start the flight at, e.g. `mat.addFood('fish', { from: feeder.dieWorldPosition(i) })`.
+Stopping mid-step (scrubbing while it plays, or pressing Step again to skip) flushes the running animations until the chain of awaits has unwound, so every wait inside an animation must be a tween, a feeder roll or a camera move, never a bare `setTimeout`.
 
-## Component APIs
+## Components
+
+Each lives in `components/<name>/src` with an `index.js` of public exports and its generated art in `components/<name>/assets`. A component has an `object3d` and, if animated, `update(dt)`. Units are card-sized: a bird card is 1.5 × 2.17, the mat 18 × 10, the goal board 12 × 4.9. The table top is y = 0.
+
+Every action has two forms: an animated method returning a promise, and `setState(data)` / `getState()` for the instant form.
 
 ### Tabletop (`components/tabletop`)
-- `new Tabletop({ container, views?, size?, shadows? })`; `table.add(component, { position, rotationY, scale })`
-- `table.views.name = { position, target }`; `table.setView(name, { animate })`
-- `table.addEventListener('pick', e => e.detail)`: clicking any object whose `userData.pick` is set. Cards on the mat report `{ type: 'slot', habitat, slot, bird }`, tray/deck cards `{ type: 'card', bird }`, goal tiles `{ type: 'goal', round, goal, label }`.
+- `new Tabletop({ container, size, shape: 'rect' | 'round', shadows, shadowMapSize, views })`; `table.add(component, { position, rotationY, scale, parent })`
+- `table.setView(nameOrView, { animate, duration, orbit })` returns a promise; `orbit: true` swings round the table's centre instead of cutting across it. `table.finishCamera()`, `table.cameraSpeed`
+- `table.addEventListener('pick', e => e.detail)`: clicking anything whose `userData.pick` is set
+- `LazySusan({ radius })`: put things on `susan.top`, `await susan.turnTo(angle)`
+- `Plaque({ width, height })`: a name plate, `plaque.setText({ title, subtitle, color, highlight })`
 - `tweens` (`to`, `wait`, `finishAll`, `speed`), `fly`, `worldPoint`, `loadTexture`, `loadImage`, `assetsReady()`
 
 ### PlayerMat (`components/player-mat`)
 Habitats `'wetland' | 'forest' | 'grassland'`, slots `0..6` left to right.
-- `playBird(habitat, i, birdCardOrBirdData)`: an existing `BirdCard` flies in; bird data drops a new card in
+- `playBird(habitat, i, birdCardOrBirdData)`, `removeBird(habitat, i)`
 - `layEggs(habitat, i, count, kind | kinds[])`, `removeEggs(habitat, i, count)`
-- `cacheFood(habitat, i, food, { fromSupply })`, `tuck(habitat, i, count)` (cards peek out above with a count tab)
-- `addFood(food, { from })`, `spendFood(food, { to })`: the food supply in front of the mat
-- `setState(state)`, `getState()`, `firstEmpty(habitat)`, `slotPosition(habitat, i)`, `slotGroup(habitat, i)`
+- `cacheFood(habitat, i, food, { fromSupply })`, `tuck(habitat, i, count, { from: [cards] })`
+- `addFood(food, { from })`, `spendFood(food, { to })`; `mat.supply` is the group of food piles (move it where you like)
+- `setState(state)` rebuilds only the slots and piles that differ; `getState()`
 
-State shape:
 ```js
 { wetland: [{ bird, eggs: ['blue', 'cream'], cached: ['fish'], tucked: 2 }, null, …],
   forest: […], grassland: […], supply: { fish: 2, seed: 1 } }
 ```
 
 ### GoalBoard (`components/goal-board`)
-- `setGoal(round, key)`: goal tile beside round 1–4; keys in `goals.js` (`wetland_total`, `cave_dwellers`)
+- `setGoal(round, key | { key, label, tint, image })`: without an image the tile is drawn from the label (symbols allowed: `'[egg] in bowl nests'`)
 - `placeCube(round, { square: 0..5 } | { medallion: 1..5 }, color, { from })`, `removeCubes(filter)`
-- `setState({ goals: [k1, k2, k3, k4], cubes: [{ round, medallion | square, color }] })`, `getState()`
+- `setMarker(round, medallion | null, { color })`: a ring round a medallion, one per round
+- `setActiveRound(round | null)`: raises that round's tile
+- `setState({ goals, cubes, markers, active })`, `getState()`
 
-The board only knows positions; what squares vs medallions mean is your rules' call.
+The board only knows positions; what squares and medallions mean is the app's call (`GameTable._boardState`).
 
 ### Cards (`components/cards`)
-- `new BirdCard(bird, { faceUp })`, `card.setBird(bird)`, `card.flip()`, `card.moveTo(parent, position, { faceUp })`
-- `new CardDeck({ count })`, `deck.count`, `await deck.draw(bird, toParent, position)`
-- `new CardRow({ slots: 3 })`, `row.place(i, card)`, `row.take(i)`, `row.slotPosition(i)`, `row.firstEmpty()`
-- `new TuckTab(count)`, `tab.setCount(n)`
-- Bird data (`Bird` typedef in `cardFace.js`): `{ name, scientific, points, habitats, food, foodOr, nest, eggLimit, wingspan, power, powerColor, image }`. The face is drawn onto the blank card art at runtime, so any bird works with real, readable text. `SAMPLE_BIRDS` has five examples.
+- `BirdCard(bird, { faceUp })`, `BonusCard(bonus, { faceUp })`: `setData`, `flip()`, `moveTo(parent, position, { faceUp })`. Faces are drawn at runtime and shared: cards with the same `id` use one texture. `setCardDetail(scale)` sets texture size.
+- `CardDeck({ count, kind: 'bird' | 'bonus' })`: `count`, `await deck.draw(data, parent, position)`, `deck.lift(data)` (take the top card, move it yourself)
+- `CardPile({ kind })`: a face-up pile; `setState({ count, top })`, `await pile.add(card)`
+- `CardRow({ slots })`: `place(i, card)`, `take(i)`, `slotPosition(i)`
+- `CardFan({ maxWidth, faceUp })`: a hand that overlaps when full; `add(key, card)`, `take(key)`, `setState(keys, create)`
+- `TuckTab(count)`
+- Bird data (`Bird` typedef in `cardFace.js`): `{ id, name, points, habitats, food, foodOr, nest, eggLimit, wingspan, power, powerColor, tags, image }`. `food` entries may be `'wild'`. Power text may contain symbols in brackets (`[fish]`, `[egg]`, `[card]`), drawn by `symbols.js`.
+- Bonus data: `{ id, name, condition, points }`
 
 ### Pieces (`components/pieces`)
-- `createFoodToken(food)`, `createEgg(kind)`, `createCube(color)` → meshes resting on y = 0
-- `FOODS`, `EGG_KINDS` (`blue`, `speckled`, `cream`), `PLAYER_COLORS`
-- `FOOD_ICONS`, `EGG_ICONS`: 2D images for HTML UI
+- `createFoodToken(food)`, `createEgg(kind)`, `createCube(color)`, `createMarker(color)`, `createFirstPlayerToken()`
+- `FOODS`, `EGG_KINDS`, `PLAYER_COLORS`, `FOOD_ICONS`, `EGG_ICONS`
 
 ### BirdFeeder (`components/birdfeeder`)
-See `components/birdfeeder/README.md`. On the table it runs embedded: `new BirdFeeder({ scene, camera, domElement, clickToTake: false })`. Rigged rolls (`roll({ faces, random })`), `setDice`, `take`, `skip`, `dieWorldPosition`.
+See `components/birdfeeder/README.md`. Rigged rolls (`roll({ faces, random })`), `setDice`, `take`, `skip`, `dieWorldPosition`.
 
-## Art pipeline
+## Art
 
-All component images are generated; don't edit them by hand.
+All component images are generated from the sheets in `art/source/` by `art/manifest.json`; don't edit them by hand.
 
 ```bash
-pip install pillow numpy scipy
-python3 art/tools/find_boxes.py art/source/NEW.jpg --annotate   # list element boxes (+ an annotated copy)
-# add entries to art/manifest.json → outputs
-python3 art/tools/extract.py --preview                          # regenerate everything, write a contact sheet
+uv venv .venv && uv pip install --python .venv/bin/python pillow numpy scipy
+.venv/bin/python art/tools/find_boxes.py art/source/NEW.jpg --annotate   # list element boxes
+# add entries to art/manifest.json -> outputs
+.venv/bin/python art/tools/extract.py --preview                          # regenerate, write a contact sheet
 ```
 
-Ops available in `extract.py`: `upscale`, `extend_down`, `patch`, `circle_mask`, `outline_cutout` (cut out an object with a dark outline, e.g. eggs). Positions *inside* images (mat card slots, goal grid squares and medallions, card-face text regions) live in each component's `layout.js` / `cardFace.js REGIONS` as fractions of the image, so re-measure them if you replace that art.
+**Bird illustrations.** Only two exist (song sparrow, osprey). Any image in `components/cards/assets/birds/` named after a bird's id (`136.jpg`) or its name (`great-horned-owl.jpg`) is used on that bird's card; the rest show a silhouette. Parchment backgrounds are fine: the art is multiplied onto the card.
 
-Generated text in the concept art is unreliable (the sample cards are gibberish), so text is always rendered at runtime; the art supplies frames, textures and illustrations.
+**Text is never taken from the art**; names, numbers and rules text are drawn at runtime.
 
-## What's not here yet
-- Hands of cards, bonus cards, the round tracker, multiple players' mats (create more `PlayerMat`s and place them around the table).
-- Only two bird illustrations (sparrow, osprey) and two goal tiles exist; crop more art via the manifest.
-- Eggs on cards are capped visually at 6 per layer (extras stack a second layer).
+## Checking changes without a desktop browser
 
-Three.js 0.160 and cannon-es 0.20. Browser needs WebGL.
+`tools/shot.mjs` takes screenshots and `tools/playthrough.mjs` runs whole games through the animation code, both in headless Chromium. The header of each file has the container command (`mcr.microsoft.com/playwright`). WebGL runs in software there, so allow a few seconds a frame.
+
+## Not here yet
+
+- Live goal counts during a round, and bonus points in the running scores: both wait on the log (`FORMAT-REQUESTS.md`, N1 and N2).
+- Dice a predator rolls outside the feeder are reported in the panel and a banner, not rolled on the table.
+- Live play. The screen is built for it (one step; a state-shaped board; face-down `-1` cards) but options are not clickable and there is nothing to connect to.
+- A static build (`npm run build`) opens exported `.json` files by drag and drop only; the run list and native logs need the dev server.
+
+Three.js 0.160 and cannon-es 0.20. Browser needs WebGL. Card text belongs to Stonemaier Games and the card data comes from wingsearch (GPL-3.0); keep logs and builds that include it private.
