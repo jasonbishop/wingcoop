@@ -1,13 +1,14 @@
 {
-  "name": "birdtable",
-  "version": "0.2.0",
+  "name": "wingcoop-viewer",
+  "version": "0.1.0",
   "private": true,
-  "description": "3D tabletop components for a Wingspan-style game replay viewer (Three.js + cannon-es), textured from concept art",
+  "description": "3D replay viewer for Wingspan co-op simulator logs (Three.js + cannon-es), built on the birdtable components",
   "type": "module",
   "scripts": {
-    "dev": "vite --open /app/index.html",
+    "dev": "vite --host",
     "build": "vite build",
-    "preview": "vite preview --open /app/index.html",
+    "preview": "vite preview --host",
+    "test": "node --test tests/",
     "art": "python3 art/tools/extract.py --preview"
   },
   "dependencies": {

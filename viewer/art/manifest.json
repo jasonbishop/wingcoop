@@ -40,6 +40,22 @@
     1696
    ],
    "about": "Blank bird card template, three eggs, tucked-card tab"
+  },
+  "bonus-card-blank": {
+   "path": "art/source/bonus-card-blank.jpg",
+   "size": [
+    2400,
+    1792
+   ],
+   "about": "Blank bonus card front (left); the card on the right is partly covered, use bonus-card-sample for the back"
+  },
+  "bonus-card-sample": {
+   "path": "art/source/bonus-card-sample.jpg",
+   "size": [
+    2400,
+    1792
+   ],
+   "about": "Sample bonus card front with gibberish-free reference layout (left) and the bonus card back (right)"
   }
  },
  "outputs": [
@@ -415,6 +431,32 @@
    "quality": 90,
    "out": "components/cards/assets/card_face.jpg",
    "use": "Blank bird card; name, stats, art and power text are drawn on it at runtime (src/cardFace.js)"
+  },
+  {
+   "id": "bonus_face",
+   "sheet": "bonus-card-blank",
+   "box": [
+    120,
+    237,
+    1114,
+    1684
+   ],
+   "inset": 14,
+   "out": "components/cards/assets/bonus_face.jpg",
+   "use": "Blank bonus card front. Name, condition and points are drawn at runtime (components/cards/src/bonusFace.js REGIONS)."
+  },
+  {
+   "id": "bonus_back",
+   "sheet": "bonus-card-sample",
+   "box": [
+    1286,
+    237,
+    2281,
+    1686
+   ],
+   "inset": 14,
+   "out": "components/cards/assets/bonus_back.jpg",
+   "use": "Bonus card back (bonus deck, face-down bonus cards)"
   },
   {
    "id": "tuck_tab",
