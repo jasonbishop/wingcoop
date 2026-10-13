@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Birdfeeder Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+SC:wght@500;700&family=Alegreya+Sans:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="./feeder/demo.css">
+</head>
+<body>
+  <!-- The feeder renders into this element and fills it. -->
+  <div id="feeder"></div>
+  <div class="loading" id="loading">Setting out the feeder…</div>
+
+  <header class="plate">
+    <h1>Birdfeeder</h1>
+    <p>Demo of the birdfeeder component on its own. Drag to look around; click a die in the tray to take it.</p>
+  </header>
+
+  <aside class="plate replay" aria-label="Replay controls">
+    <h2>Replay API</h2>
+    <button id="rigged">Replay a recorded roll</button>
+    <p class="hint" id="rigged-faces"></p>
+    <button id="place">Jump to a saved state</button>
+    <p class="hint">Calls <code>setDice()</code>: no animation, for scrubbing.</p>
+    <ol class="log" id="log" aria-live="polite"></ol>
+  </aside>
+
+  <div class="bar">
+    <div class="tally" id="tally"></div>
+    <div class="controls">
+      <button class="primary" id="roll">Roll dice</button>
+      <button id="skip" hidden>Skip</button>
+      <button id="xray" aria-pressed="false">See inside</button>
+    </div>
+  </div>
+
+  <script type="module" src="./feeder/demo.js"></script>
+</body>
+</html>

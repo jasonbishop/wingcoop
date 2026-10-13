@@ -1,0 +1,4 @@
+node_modules/
+dist/
+art/tools/preview.jpg
+art/source/*.boxes.jpg

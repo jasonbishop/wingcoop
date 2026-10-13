@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Birdtable Replay Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+SC:wght@500;700&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+  <link rel="stylesheet" href="./table/table.css">
+</head>
+<body>
+  <div id="table"></div>
+  <div class="loading" id="loading">Setting the table…</div>
+
+  <header class="plate">
+    <h1>Birdtable</h1>
+    <p>Replay demo. Drag to orbit, right-drag to pan, scroll to zoom. Click a card to inspect it.</p>
+    <div class="views" role="group" aria-label="Camera">
+      <button data-view="overview">Table</button>
+      <button data-view="mat">Mat</button>
+      <button data-view="feeder">Feeder</button>
+      <button data-view="goals">Goals</button>
+    </div>
+  </header>
+
+  <aside class="plate replay" aria-label="Replay">
+    <h2>Turn log</h2>
+    <ol class="steps" id="steps"></ol>
+    <div class="transport">
+      <button id="prev" title="Back one step (instant)">◀</button>
+      <button id="next" class="primary" title="Play the next step">Next ▶</button>
+      <button id="all" title="Play every remaining step">Play all</button>
+    </div>
+    <label class="speed">Speed
+      <select id="speed">
+        <option value="1">1×</option>
+        <option value="2">2×</option>
+        <option value="4">4×</option>
+      </select>
+    </label>
+  </aside>
+
+  <div class="inspect plate" id="inspect" hidden></div>
+
+  <script type="module" src="./table/table.js"></script>
+</body>
+</html>

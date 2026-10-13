@@ -1,0 +1,20 @@
+{
+  "name": "birdtable",
+  "version": "0.2.0",
+  "private": true,
+  "description": "3D tabletop components for a Wingspan-style game replay viewer (Three.js + cannon-es), textured from concept art",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --open /app/index.html",
+    "build": "vite build",
+    "preview": "vite preview --open /app/index.html",
+    "art": "python3 art/tools/extract.py --preview"
+  },
+  "dependencies": {
+    "cannon-es": "0.20.0",
+    "three": "0.160.0"
+  },
+  "devDependencies": {
+    "vite": "5.4.10"
+  }
+}
