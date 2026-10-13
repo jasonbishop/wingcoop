@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wingspan co-op replay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+SC:wght@500;700&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+  <link rel="stylesheet" href="./app/viewer/ui/viewer.css">
+</head>
+<body>
+  <div id="app" hidden>
+    <header id="topbar">
+      <div class="brand">
+        <button id="open" class="quiet" title="Open another game">☰ Games</button>
+        <div class="game">
+          <strong id="game-title">Replay</strong>
+          <span id="game-sub"></span>
+        </div>
+      </div>
+      <div id="clock" aria-live="polite"></div>
+      <div id="scores"></div>
+    </header>
+
+    <main>
+      <section id="stage">
+        <div id="table"></div>
+        <div class="loading" id="loading">Setting the table…</div>
+        <div id="banner" hidden></div>
+        <div class="camera" role="group" aria-label="Camera">
+          <label>Watch
+            <select id="follow" title="Whose seat the camera sits behind"></select>
+          </label>
+          <div class="views" id="views">
+            <button data-view="seat" title="A seat and the middle of the table">Seat</button>
+            <button data-view="mat" title="Close on the player's mat and hand">Mat</button>
+            <button data-view="centre" title="The goal board, birdfeeder and bird tray">Middle</button>
+            <button data-view="table" title="The whole table">Table</button>
+          </div>
+        </div>
+        <div class="inspect" id="inspect" hidden></div>
+      </section>
+
+      <aside id="side">
+        <nav class="tabs" role="tablist">
+          <button role="tab" data-tab="step" aria-selected="true">Step</button>
+          <button role="tab" data-tab="turns" aria-selected="false">Turns</button>
+          <button role="tab" data-tab="game" aria-selected="false">Game</button>
+        </nav>
+        <div class="tab" id="tab-step"></div>
+        <div class="tab" id="tab-turns" hidden></div>
+        <div class="tab" id="tab-game" hidden></div>
+      </aside>
+    </main>
+
+    <footer id="transport">
+      <div class="buttons">
+        <button id="round-back" title="Previous round">⏮</button>
+        <button id="turn-back" title="Previous turn (Shift ←)">⏪</button>
+        <button id="back" title="Back one decision (←)">◀</button>
+        <button id="play" class="primary" title="Play / pause (Space)">▶ Play</button>
+        <button id="step" title="Play one decision (→)">Step ▶</button>
+        <button id="turn-next" title="Next turn (Shift →)">⏩</button>
+        <button id="round-next" title="Next round">⏭</button>
+      </div>
+      <div class="scrub">
+        <div id="ticks" aria-hidden="true"></div>
+        <input type="range" id="scrub" min="0" max="1" value="0" step="1" aria-label="Position in the game">
+      </div>
+      <output id="where"></output>
+      <label class="speed">Speed
+        <select id="speed">
+          <option value="0.5">½×</option>
+          <option value="1" selected>1×</option>
+          <option value="2">2×</option>
+          <option value="4">4×</option>
+          <option value="8">8×</option>
+        </select>
+      </label>
+    </footer>
+  </div>
+
+  <div id="home">
+    <div class="home-inner">
+      <h1>Wingspan co-op replay</h1>
+      <p class="lead">Open a game the simulator logged and watch it play out on the table.</p>
+      <div id="drop" tabindex="0">
+        <p><strong>Drop a log here</strong> or <label class="link">choose a file<input type="file" id="file" accept=".json,.jsonl,.gz" hidden></label></p>
+        <p class="hint">An exported <code>.json</code>, or a native <code>.jsonl.gz</code>.</p>
+      </div>
+      <p id="home-error" class="error" hidden></p>
+      <div id="runs"></div>
+      <button id="home-close" class="quiet" hidden>Back to the game</button>
+    </div>
+  </div>
+
+  <script type="module" src="./app/viewer/main.js"></script>
+</body>
+</html>

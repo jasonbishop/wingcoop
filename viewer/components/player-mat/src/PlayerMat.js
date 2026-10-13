@@ -95,6 +95,7 @@ export class PlayerMat {
       s.group.add(card.object3d);
       card.object3d.position.set(0, opts.animate === false ? 0 : 3, 0);
     }
+    card.object3d.visible = true;
     s.card = card;
     card.object3d.userData.pick = { type: 'slot', habitat, slot: i, bird: card.bird, mat: this.name };
     await card.moveTo(s.group, new THREE.Vector3(0, s.tucked.length * CARD_T, 0), { faceUp: true, ...opts });
@@ -211,31 +212,45 @@ export class PlayerMat {
   // ------------------------------------------------------------------ state
 
   /**
-   * Replace everything on the mat instantly. Shape (all keys optional):
+   * Make the mat show this, instantly. Shape (all keys optional):
    * {
    *   wetland:   [ { bird, eggs: ['cream','blue'] | 2, cached: ['fish'], tucked: 3 }, null, … ],
    *   forest:    [ … ],
    *   grassland: [ … ],
    *   supply:    { fish: 2, seed: 1 }
    * }
+   * `bird` is bird data or an existing BirdCard. Only what differs from the current mat
+   * is rebuilt, so calling this after an animated action that already produced the same
+   * result changes nothing.
    */
   setState(state = {}) {
     for (const h of HABITATS) {
       (this._slots[h]).forEach((s, i) => {
-        this._clearSlot(s);
         const d = state[h]?.[i];
-        if (!d || !d.bird) return;
-        if (d.tucked) this.tuck(h, i, d.tucked, { animate: false });
-        this.playBird(h, i, d.bird, { animate: false });
+        if (!d || !d.bird) { this._clearSlot(s); return; }
+        const bird = d.bird instanceof BirdCard ? d.bird.bird : d.bird;
         const eggs = typeof d.eggs === 'number' ? new Array(d.eggs).fill('cream') : (d.eggs || []);
+        const cached = d.cached || [];
+        const tucked = d.tucked || 0;
+        const sameBird = s.card && (s.card === d.bird || s.card.bird === bird
+          || (bird.id != null && s.card.bird?.id === bird.id));
+        if (sameBird && tucked === s.tucked.length
+          && sameList(eggs, s.eggs.map(e => e.userData.piece.kind))
+          && sameList(cached, s.cached.map(t => t.userData.piece.food))) return;
+        // keep the card when only what sits on it changed
+        const card = sameBird ? s.card : d.bird;
+        this._clearSlot(s, { keepCard: sameBird });
+        if (tucked) this.tuck(h, i, tucked, { animate: false });
+        this.playBird(h, i, card, { animate: false });
         if (eggs.length) this.layEggs(h, i, eggs.length, eggs, { animate: false });
-        for (const f of d.cached || []) this.cacheFood(h, i, f, { animate: false });
+        for (const f of cached) this.cacheFood(h, i, f, { animate: false });
       });
     }
     for (const f of FOODS) {
-      for (const t of this._piles[f]) t.parent?.remove(t);
-      this._piles[f] = [];
-      for (let k = 0; k < (state.supply?.[f] || 0); k++) this.addFood(f, { animate: false });
+      const want = state.supply?.[f] || 0;
+      const pile = this._piles[f];
+      while (pile.length > want) { const t = pile.pop(); t.parent?.remove(t); }
+      while (pile.length < want) this.addFood(f, { animate: false });
     }
   }
 
@@ -310,6 +325,8 @@ export class PlayerMat {
 
   _root() { let r = this.object3d; while (r.parent) r = r.parent; return r; }
 }
+
+const sameList = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
 
 export { HABITATS, SLOTS_PER_ROW };
 export { FACE_UP };

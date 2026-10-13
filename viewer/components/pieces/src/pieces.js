@@ -126,3 +126,57 @@ export function createCube(color = 'blue') {
   m.userData.piece = { type: 'cube', color };
   return m;
 }
+
+// ---------------------------------------------------------------- ring marker
+
+export const MARKER_RADIUS = 0.37;
+const markerGeo = new THREE.TorusGeometry(MARKER_RADIUS, 0.055, 12, 40);
+markerGeo.rotateX(Math.PI / 2);
+markerGeo.translate(0, 0.055, 0);
+const MARKER_COLORS = { gold: 0xd2a63c, green: 0x5f9a4d, red: 0xb5483f, grey: 0x8a8578 };
+const markerMats = {};
+
+/** A flat ring that sits around a spot on a board (e.g. a goal-board medallion). */
+export function createMarker(color = 'gold') {
+  const key = String(color);
+  markerMats[key] ||= new THREE.MeshStandardMaterial({ color: MARKER_COLORS[color] ?? color, roughness: 0.35, metalness: 0.35 });
+  const m = new THREE.Mesh(markerGeo, markerMats[key]);
+  m.castShadow = m.receiveShadow = true;
+  m.name = `marker-${key}`;
+  m.userData.piece = { type: 'marker', color };
+  return m;
+}
+
+// ---------------------------------------------------------------- first-player token
+
+export const FIRST_TOKEN_RADIUS = 0.55;
+let firstTokenMats = null;
+
+/** The first-player token: a wooden disc with a "1". */
+export function createFirstPlayerToken() {
+  if (!firstTokenMats) {
+    const c = document.createElement('canvas');
+    c.width = c.height = 128;
+    const g = c.getContext('2d');
+    g.fillStyle = '#c9a36a'; g.fillRect(0, 0, 128, 128);
+    g.strokeStyle = '#6b4f2a'; g.lineWidth = 6;
+    g.beginPath(); g.arc(64, 64, 52, 0, Math.PI * 2); g.stroke();
+    g.fillStyle = '#3b2c18'; g.font = '700 78px Georgia, serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText('1', 64, 70);
+    const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    const edge = new THREE.MeshStandardMaterial({ color: 0x8a6a3c, roughness: 0.8 });
+    const face = new THREE.MeshStandardMaterial({ map: tex, roughness: 0.7 });
+    firstTokenMats = [edge, face, edge];
+  }
+  const geo = (createFirstPlayerToken.geo ||= (() => {
+    const g = new THREE.CylinderGeometry(FIRST_TOKEN_RADIUS, FIRST_TOKEN_RADIUS, 0.14, 40);
+    g.translate(0, 0.07, 0);
+    return g;
+  })());
+  const m = new THREE.Mesh(geo, firstTokenMats);
+  m.castShadow = m.receiveShadow = true;
+  m.name = 'first-player-token';
+  m.userData.piece = { type: 'first-player' };
+  return m;
+}

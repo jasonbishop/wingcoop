@@ -10,6 +10,7 @@
 //     events,                // the event lines that choice caused (what happened next)
 //     round, turn_no, turn,  // when
 //     turnStart,             // true if this is the first decision of a turn
+//     quiet,                 // per event: true if it changed nothing (an unchanged tray refill)
 //   }
 //
 // positions[0] is the state before decision 1 and positions[N] is the final state, so
@@ -101,11 +102,15 @@ export function buildReplay(input, cards = null) {
       turn: turnOwner,
       turnStart: snap ? !!snap.turn_start : false,
       pending: snap?.state.pending ?? null,
+      quiet: [],             // per event: true if it changed nothing worth reporting
     });
 
     if (decision) {
       live = cloneState(state);
+      const quiet = positions[positions.length - 1].quiet;
       for (const e of events) {
+        // a tray refill that changed nothing is bookkeeping, not news
+        quiet.push(e.e === 'tray_refill' && sameList(e.tray, live.tray));
         if (!applyEvent(live, e, { decision })) unknown.add(e.e);
         if (e.e === 'turn_start') turnOwner = e.p;
         if (e.e === 'round_end') turnOwner = null;
@@ -132,6 +137,8 @@ export function buildReplay(input, cards = null) {
     warnings,
   };
 }
+
+const sameList = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
 
 function lastEvent(lines, name) {
   for (let i = lines.length - 1; i >= 0; i--) if (lines[i].t === 'event' && lines[i].e === name) return lines[i];

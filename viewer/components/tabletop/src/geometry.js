@@ -1,6 +1,14 @@
 // Shared geometry helpers.
 import * as THREE from 'three';
 
+// Geometries are shared: every card, tile and tab of one size uses the same buffers,
+// so never dispose a geometry that came from this file.
+const cache = new Map();
+function shared(key, make) {
+  if (!cache.has(key)) cache.set(key, make());
+  return cache.get(key);
+}
+
 /** A rounded-rectangle Shape centred on the origin. */
 export function roundedRectShape(w, h, r) {
   const s = new THREE.Shape();
@@ -19,6 +27,10 @@ export function roundedRectShape(w, h, r) {
  * Image "up" points toward -Z (away from a camera looking from +Z).
  */
 export function roundedFaceGeometry(w, h, r, { down = false } = {}) {
+  return shared(`face:${w}:${h}:${r}:${down}`, () => buildFace(w, h, r, down));
+}
+
+function buildFace(w, h, r, down) {
   const g = new THREE.ShapeGeometry(roundedRectShape(w, h, r), 6);
   const pos = g.attributes.position, uv = g.attributes.uv;
   for (let i = 0; i < pos.count; i++) {
@@ -41,7 +53,7 @@ export function roundedFaceGeometry(w, h, r, { down = false } = {}) {
 export function roundedSlab(w, h, r, t, topMat, bottomMat, edgeMat) {
   const group = new THREE.Group();
   const body = new THREE.Mesh(
-    new THREE.ExtrudeGeometry(roundedRectShape(w, h, r), { depth: t, bevelEnabled: false, curveSegments: 6 }),
+    shared(`body:${w}:${h}:${r}:${t}`, () => new THREE.ExtrudeGeometry(roundedRectShape(w, h, r), { depth: t, bevelEnabled: false, curveSegments: 6 })),
     edgeMat,
   );
   body.rotation.x = -Math.PI / 2;

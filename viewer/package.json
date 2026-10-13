@@ -5,9 +5,9 @@
   "description": "3D replay viewer for Wingspan co-op simulator logs (Three.js + cannon-es), built on the birdtable components",
   "type": "module",
   "scripts": {
-    "dev": "vite --host",
+    "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview --host",
+    "preview": "vite preview",
     "test": "node --test tests/",
     "art": "python3 art/tools/extract.py --preview"
   },

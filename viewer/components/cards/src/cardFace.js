@@ -5,6 +5,7 @@
 
 import { loadImage } from '../../tabletop/src/assets.js';
 import { FOOD_ICONS } from '../../pieces/src/pieces.js';
+import { loadSymbols, layoutRich, drawRich, drawSymbol, drawFeather } from './symbols.js';
 
 export const FACE_URL = new URL('../assets/card_face.jpg', import.meta.url).href;
 export const FACE_SIZE = [910, 1320];
@@ -26,7 +27,7 @@ const FONT_DISPLAY = '"Alegreya SC", "Palatino Linotype", Palatino, Georgia, ser
 const FONT_BODY = '"Alegreya Sans", "Gill Sans", "Trebuchet MS", sans-serif';
 
 let fontsReady = null;
-function waitForFonts() {
+export function waitForFonts() {
   if (!fontsReady) {
     fontsReady = document.fonts
       ? Promise.race([
@@ -55,29 +56,39 @@ function waitForFonts() {
  * @property {number} [wingspan]         cm
  * @property {string} [power]            power text
  * @property {'brown'|'pink'|'white'|'none'} [powerColor]
- * @property {string} [image]            URL of the illustration (parchment background is fine; it's multiplied in)
+ * @property {string} [image]            URL of the illustration (parchment background is fine; it's multiplied in).
+ *                                       Without one a quiet silhouette is drawn in its place.
+ * @property {string|number} [id]        stable identity; cards with the same id share one face texture
+ * @property {string[]} [tags]           small notes under the wingspan, e.g. ['predator', 'flocking']
  */
 
-/** Render a bird card face. Resolves with a canvas sized FACE_SIZE. */
-export async function drawCardFace(bird) {
-  const [face, art, ...foods] = await Promise.all([
+/**
+ * Render a bird card face. Resolves with a canvas sized FACE_SIZE x scale.
+ * @param {Bird} bird
+ * @param {{scale?: number}} [opts]  scale < 1 draws a smaller texture (same layout)
+ */
+export async function drawCardFace(bird, { scale = 1 } = {}) {
+  const [face, art, symbols, ...foods] = await Promise.all([
     loadImage(FACE_URL),
     bird.image ? loadImage(bird.image) : null,
+    loadSymbols(),
     ...(bird.food || []).map(f => (FOOD_ICONS[f] ? loadImage(FOOD_ICONS[f]) : null)),
     waitForFonts(),
   ]);
   const [W, H] = FACE_SIZE;
   const c = document.createElement('canvas');
-  c.width = W; c.height = H;
+  c.width = Math.round(W * scale); c.height = Math.round(H * scale);
   const g = c.getContext('2d');
+  g.scale(c.width / W, c.height / H);
   if (face) g.drawImage(face, 0, 0, W, H);
   else { g.fillStyle = '#efe4cf'; g.fillRect(0, 0, W, H); }
 
   drawTitle(g, bird.name || '');
-  drawIconBox(g, bird, foods.slice(0, (bird.food || []).length));
+  drawIconBox(g, bird, foods.slice(0, (bird.food || []).length), symbols);
   drawStats(g, bird);
   if (art) drawArt(g, art);
-  drawPower(g, bird);
+  else drawSilhouette(g, bird);
+  drawPower(g, bird, symbols);
   if (bird.scientific) {
     const [x0, y0, x1, y1] = REGIONS.footer;
     g.fillStyle = 'rgba(43,38,32,0.75)';
@@ -99,7 +110,7 @@ function drawTitle(g, name) {
   g.fillText(name, (x0 + x1) / 2, (y0 + y1) / 2 + 4);
 }
 
-function drawIconBox(g, bird, foodImgs) {
+function drawIconBox(g, bird, foodImgs, symbols) {
   const [x0, y0, x1] = REGIONS.iconBox;
   const habitats = bird.habitats || [];
   // habitats: watercolour dots across the top
@@ -123,9 +134,12 @@ function drawIconBox(g, bird, foodImgs) {
     const rowW = perRow * size + (perRow - 1) * gap;
     const x = (x0 + x1) / 2 - rowW / 2 + col * (size + gap), y = y0 + 92 + row * (size + 10);
     g.save();
-    g.beginPath(); g.arc(x + size / 2, y + size / 2, size / 2 - 1, 0, Math.PI * 2); g.clip();
-    if (img) g.drawImage(img, x, y, size, size);
-    else { g.fillStyle = '#bbb'; g.fill(); }
+    if (bird.food[i] === 'wild') drawSymbol(g, 'wild', x + size / 2, y + size / 2, size, symbols, INK);
+    else {
+      g.beginPath(); g.arc(x + size / 2, y + size / 2, size / 2 - 1, 0, Math.PI * 2); g.clip();
+      if (img) g.drawImage(img, x, y, size, size);
+      else { g.fillStyle = '#bbb'; g.fill(); }
+    }
     g.restore();
     if (bird.foodOr && col === 0 && perRow === 2) {
       g.fillStyle = INK; g.font = `700 30px ${FONT_BODY}`; g.textAlign = 'center'; g.textBaseline = 'middle';
@@ -142,7 +156,7 @@ function drawStats(g, bird) {
   if (bird.points != null) {
     g.font = `700 92px ${FONT_DISPLAY}`;
     g.fillText(String(bird.points), cx - 18, y0 + 70);
-    drawFeather(g, cx + 38, y0 + 72);
+    drawFeather(g, cx + 38, y0 + 72, 34, INK);
   }
   // nest + egg limit
   if (bird.nest) drawNest(g, bird.nest, cx, y0 + 220);
@@ -162,18 +176,40 @@ function drawStats(g, bird) {
     g.lineWidth = 3;
     g.beginPath(); g.moveTo(cx - 52, y0 + 430); g.quadraticCurveTo(cx, y0 + 410, cx + 52, y0 + 430); g.stroke();
   }
+  // small notes: predator, flocking
+  (bird.tags || []).forEach((tag, i) => {
+    g.font = `italic 27px ${FONT_BODY}`;
+    g.fillStyle = 'rgba(43,38,32,0.8)';
+    g.fillText(tag, cx, y0 + 530 + i * 34, x1 - x0 - 8);
+  });
 }
 
-function drawFeather(g, x, y) {
+// No illustration yet: a perched-bird silhouette in a soft wash, so the card still reads as a bird.
+function drawSilhouette(g, bird) {
+  const [x0, y0, x1, y1] = REGIONS.art;
+  const cx = (x0 + x1) / 2 + 10, cy = (y0 + y1) / 2 + 10;
+  // size follows wingspan a little, so an eagle looks bigger than a wren
+  const k = 2.1 + Math.min(1.5, Math.log10(Math.max(10, bird.wingspan || 30)) - 1) * 0.9;
+  const tint = HABITAT_COLORS[(bird.habitats || [])[0]] || '#8a8172';
   g.save();
-  g.translate(x, y); g.rotate(-0.5);
+  g.translate(cx, cy); g.scale(k, k);
+  g.globalAlpha = 0.16; g.fillStyle = tint;
+  g.beginPath(); g.ellipse(0, 6, 118, 96, -0.2, 0, Math.PI * 2); g.fill();
+  g.globalAlpha = 0.5; g.fillStyle = '#5b5348'; g.strokeStyle = '#5b5348'; g.lineCap = 'round';
+  // branch
+  g.lineWidth = 5; g.beginPath(); g.moveTo(-105, 62); g.quadraticCurveTo(-10, 50, 105, 66); g.stroke();
+  // tail, body, head, beak
+  g.beginPath(); g.moveTo(-28, 12); g.lineTo(-98, 46); g.lineTo(-88, 58); g.lineTo(-18, 34); g.closePath(); g.fill();
+  g.beginPath(); g.ellipse(2, 8, 50, 34, -0.42, 0, Math.PI * 2); g.fill();
+  g.beginPath(); g.arc(40, -30, 22, 0, Math.PI * 2); g.fill();
+  g.beginPath(); g.moveTo(58, -36); g.lineTo(84, -27); g.lineTo(58, -21); g.closePath(); g.fill();
+  // legs
   g.lineWidth = 3;
-  g.beginPath(); g.moveTo(0, 34); g.lineTo(0, -34); g.stroke();
-  g.beginPath(); g.moveTo(0, -34); g.quadraticCurveTo(20, -8, 0, 22); g.quadraticCurveTo(-20, -8, 0, -34); g.stroke();
+  g.beginPath(); g.moveTo(6, 38); g.lineTo(4, 56); g.moveTo(20, 34); g.lineTo(22, 56); g.stroke();
   g.restore();
 }
 
-function drawNest(g, nest, x, y) {
+export function drawNest(g, nest, x, y) {
   g.save();
   g.lineWidth = 5; g.lineCap = 'round';
   g.beginPath();
@@ -210,7 +246,7 @@ function drawArt(g, img) {
   g.restore();
 }
 
-function drawPower(g, bird) {
+function drawPower(g, bird, symbols) {
   const [x0, y0, x1, y1] = REGIONS.power;
   const tint = POWER_TINTS[bird.powerColor || 'brown'];
   if (tint && bird.power) {
@@ -225,22 +261,10 @@ function drawPower(g, bird) {
   let size = 36, lines;
   for (;;) {
     g.font = `500 ${size}px ${FONT_BODY}`;
-    lines = wrap(g, bird.power, maxW);
-    if (lines.length * size * 1.15 <= y1 - y0 - 14 || size <= 20) break;
+    lines = layoutRich(g, bird.power, maxW, size);
+    if (lines.length * size * 1.15 <= y1 - y0 - 14 || size <= 18) break;
     size -= 2;
   }
-  g.fillStyle = INK; g.textAlign = 'center'; g.textBaseline = 'middle';
   const lh = size * 1.15, top = (y0 + y1) / 2 - ((lines.length - 1) * lh) / 2;
-  lines.forEach((l, i) => g.fillText(l, (x0 + x1) / 2, top + i * lh));
-}
-
-function wrap(g, text, maxW) {
-  const words = text.split(/\s+/), lines = [];
-  let line = '';
-  for (const w of words) {
-    const t = line ? `${line} ${w}` : w;
-    if (g.measureText(t).width > maxW && line) { lines.push(line); line = w; } else line = t;
-  }
-  if (line) lines.push(line);
-  return lines;
+  drawRich(g, lines, (x0 + x1) / 2, top, lh, size, symbols, INK);
 }
