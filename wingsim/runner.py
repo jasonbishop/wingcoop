@@ -232,6 +232,7 @@ def run_task(task):
         s2, _, log = play_cell_game(cell, seed, True)
         if api.final_scores(s2) != api.final_scores(s):
             raise RuntimeError(f"re-run of seed {seed} differs: the game is not deterministic")
+    row["task_key"] = task_key(cell, seed)
     row["log"] = None
     row["log_reason"] = reason
     if log is not None:
@@ -246,8 +247,14 @@ def run_task(task):
     return row, offers
 
 
+def task_key(cell, seed):
+    return f"{cell['condition']}|{cell['players']}|{cell['w']}|{cell['policy']}|{cell['group_share']}|{seed}"
+
+
 def run_experiment(exp, base_dir=".", workers=4, out_root="results", log_root="logs", seeds=None,
-                   progress=True):
+                   progress=True, resume=False):
+    """Play every game of an experiment. Each finished game is also appended to `rows.jsonl` in the output
+    folder as it finishes; with `resume`, games already there are not played again."""
     import pandas as pd
 
     cells = expand(exp, base_dir)
@@ -255,15 +262,29 @@ def run_experiment(exp, base_dir=".", workers=4, out_root="results", log_root="l
     count = seeds if seeds is not None else exp["seeds"]["count"]
     logging = exp.get("logging") or {"level": "summary"}
     tasks = []
-    for cell in cells:
-        limit = count
-        per_policy = (exp.get("seed_limits") or {}).get(str(cell["policy"]))
-        if per_policy is not None:
-            limit = min(count, per_policy)
-        tasks.extend((cell, start + i, logging, log_root) for i in range(limit))
+    # Seed by seed, so that a run stopped part way has the same seeds in every cell.
+    for i in range(count):
+        for cell in cells:
+            per_policy = (exp.get("seed_limits") or {}).get(str(cell["policy"]))
+            if per_policy is None or i < per_policy:
+                tasks.append((cell, start + i, logging, log_root))
+    out = pathlib.Path(out_root) / exp["name"]
+    out.mkdir(parents=True, exist_ok=True)
+    partial = out / "rows.jsonl"
+    rows, offers = [], []
+    if resume and partial.exists():
+        for line in partial.read_text().splitlines():
+            done = json.loads(line)
+            rows.append(done["row"])
+            offers.extend(done["offers"])
+        finished = {r["task_key"] for r in rows}
+        tasks = [tk for tk in tasks if task_key(tk[0], tk[1]) not in finished]
+        if progress:
+            print(f"  resuming: {len(rows)} games already played, {len(tasks)} to go", flush=True)
+    elif partial.exists():
+        partial.unlink()
     # Longest games first so the pool stays busy; the result order does not matter.
     tasks.sort(key=lambda t: (str(t[0]["policy"]).startswith("estimate"), t[0]["players"]), reverse=True)
-    rows, offers = [], []
     t0 = time.time()
     if workers <= 1:
         results = map(run_task, tasks)
@@ -273,13 +294,18 @@ def run_experiment(exp, base_dir=".", workers=4, out_root="results", log_root="l
     for i, (row, off) in enumerate(results, 1):
         rows.append(row)
         offers.extend(off)
-        if progress and (i % 200 == 0 or i == len(tasks)):
+        with open(partial, "a") as f:
+            f.write(json.dumps({"row": row, "offers": off}, default=str) + "\n")
+        if progress and len(tasks) <= 50:        # small (language-model) runs: report every game
+            scores = " ".join(f"{row[f'p{j}_total']:g}" for j in range(row["players"]))
+            extra = f", {row['llm_calls']} model calls" if "llm_calls" in row else ""
+            print(f"  {i}/{len(tasks)} {row['condition']} seed {row['seed']}: scores {scores} "
+                  f"({row['seconds']:.0f}s{extra}), {time.time() - t0:.0f}s so far", flush=True)
+        elif progress and (i % 200 == 0 or i == len(tasks)):
             print(f"  {i}/{len(tasks)} games, {time.time() - t0:.0f}s", flush=True)
     if workers > 1:
         pool.close()
         pool.join()
-    out = pathlib.Path(out_root) / exp["name"]
-    out.mkdir(parents=True, exist_ok=True)
     games = pd.DataFrame(rows).sort_values(["condition", "players", "w", "policy", "group_share", "seed"])
     games.to_parquet(out / "games.parquet", index=False)
     off = pd.DataFrame(offers)
@@ -306,12 +332,14 @@ def main(argv=None):
     ap.add_argument("--out", default="results")
     ap.add_argument("--logs", default="logs")
     ap.add_argument("--no-report", action="store_true")
+    ap.add_argument("--resume", action="store_true", help="keep the games already in rows.jsonl and play the rest")
     args = ap.parse_args(argv)
     path = pathlib.Path(args.experiment)
     exp = load_experiment(path)
     cells = expand(exp, path.parent)
     print(f"{exp['name']}: {len(cells)} cells")
-    games, offers, out = run_experiment(exp, path.parent, args.workers, args.out, args.logs, args.seeds)
+    games, offers, out = run_experiment(exp, path.parent, args.workers, args.out, args.logs, args.seeds,
+                                        resume=args.resume)
     print(f"wrote {len(games)} games to {out / 'games.parquet'}")
     if not args.no_report:
         from .analysis.report import write_report

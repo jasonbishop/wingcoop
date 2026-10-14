@@ -1,0 +1,33 @@
+# Which prompt features help a language model play? Seat 0 is the model, seat 1 the tuned greedy bot,
+# normal (individual) scoring, open hands. The three conditions differ only in the model's prompt:
+#   default     the current prompt (reasons briefly, then answers)
+#   plan        + a written plan carried between turns, notes within the turn, compact payment labels,
+#               starting birds chosen by naming them
+#   plan_after  + a line per action option saying what it changes right away
+# Compare seat 0's score (p0_total) and its margin over the bot (p0_total - p1_total), paired by seed.
+# Run with --workers 1 (the local server answers one request at a time) and --resume after a stop.
+name: llm-prompts-local
+seeds: {start: 101, count: 10}
+players: [2]
+conditions:
+  default:
+    plugins: {}
+    open_hands: true
+    agents:
+      - &qwen {type: llm, model: qwen-27b, base_url: "http://10.20.0.71:8000/v1", reasoning: true, timeout: 900,
+               extra_body: {chat_template_kwargs: {enable_thinking: false}}}
+      - {type: greedy, weights: "tuned/baseline.json"}
+  plan:
+    plugins: {}
+    open_hands: true
+    agents:
+      - {<<: *qwen, prompt: plan, plan: true, compact: true}
+      - {type: greedy, weights: "tuned/baseline.json"}
+  plan_after:
+    plugins: {}
+    open_hands: true
+    agents:
+      - {<<: *qwen, prompt: plan, plan: true, compact: true, outcomes: true}
+      - {type: greedy, weights: "tuned/baseline.json"}
+motivation:  [0.0]
+logging:     {level: full, snapshots: decision}

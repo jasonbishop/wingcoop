@@ -17,7 +17,8 @@ from .state import GROUP, OVER, SETUP, TURNS, PRE_ROUND
 __all__ = ["GameConfig", "Decision", "GROUP", "HIDDEN", "IllegalChoice", "Observation", "new_game",
            "pending_decision", "apply", "apply_in_place", "observe", "is_over", "final_scores", "scores",
            "totals", "goal_counts", "score_goal_counts", "simulate_turn", "play_random", "turns_left", "round_turns_left",
-           "rules_summary", "describe_observation", "describe_decision"]
+           "rules_summary", "describe_observation", "describe_decision",
+           "describe_decision_compact", "describe_outcomes", "describe_keep_birds"]
 
 Decision = namedtuple("Decision", "player kind options context")
 
@@ -143,3 +144,23 @@ def describe_decision(observation):
     """(what is being decided, a label for each legal option) for the pending decision."""
     from . import describe
     return describe.decision_text(observation.state), describe.option_labels(observation.state)
+
+
+def describe_decision_compact(observation):
+    """Like describe_decision, but food payments are labelled by the part that differs between options."""
+    from . import describe
+    s = observation.state
+    return describe.compact_payments(s, describe.decision_text(s), describe.option_labels(s))
+
+
+def describe_outcomes(observation):
+    """For an action decision, one line per option saying what it changes right away (None for options
+    without one); None for other decisions."""
+    from . import describe
+    return describe.action_outcomes(observation.state)
+
+
+def describe_keep_birds(observation):
+    """For the setup choice of starting birds: [(bird id, description)] of the dealt birds; else None."""
+    from . import describe
+    return describe.keep_birds_items(observation.state)

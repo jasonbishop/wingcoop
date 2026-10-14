@@ -68,9 +68,18 @@ only implied, and a few nice-to-haves such as live goal counts) is written up in
 
 `agents: [{type: llm, model: ...}, {type: greedy}]` in an experiment file seats one agent per
 seat. It calls any OpenAI-compatible endpoint (OpenRouter by default; the key is read from
-`OPENROUTER_API_KEY`, or from `.env`). Settings: `prompt` (template name), `reasoning` (a few
-visible sentences before the answer), `thinking` (hidden model-side reasoning: off unless set to
-`low`, `medium` or `high`), `budget_usd`, `max_calls`, `base_url`, `api_key_env`.
+`OPENROUTER_API_KEY`, or from `.env`, and sent only to OpenRouter). Settings: `prompt` (template
+name), `reasoning` (a few visible sentences before the answer), `thinking` (hidden model-side reasoning:
+off unless set to `low`, `medium` or `high`), `budget_usd`, `max_calls`, `base_url`, `api_key_env` (a
+key to send to another endpoint), `extra_body` (extra request fields, e.g.
+`{chat_template_kwargs: {enable_thinking: false}}` for a local Qwen server).
+
+Prompt features, each a setting so variants can be compared (`wingsim/agents/llm.py` describes them):
+`plan` (a short written plan carried between turns, with the `plan` template), `outcomes` (a line per
+action option saying what it changes right away), `compact` (shorter payment choices; starting birds
+chosen by naming them). `experiments/llm-prompts-local.yaml` compares them against a local model; run
+it with `--workers 1`, and `--resume` to continue after a stop (every finished game is saved in
+`results/<experiment>/rows.jsonl`).
 
 The prompt text lives in `wingsim/prompts/`: `rules.md` is the rules summary and `default.md` the
 system prompt template. Copy `default.md` to a new name and set `prompt: <name>` to try a variant.

@@ -131,3 +131,17 @@ def test_decision_tally_pick_rate_and_denial(db):
     assert tally.counts["die_took_needed"] == 1 and tally.counts["die_took_needed_avoidable"] == 1
     tally.record(s, d, ("die", F["fruit"], F["fruit"]))
     assert tally.counts["die_choices"] == 2 and tally.counts["die_took_needed"] == 1
+
+
+def test_a_stopped_run_resumes_where_it_left_off(tmp_path):
+    exp = dict(EXP, name="resume", players=[2], conditions={"baseline": {"plugins": {}}}, motivation=[0.0],
+               seeds={"start": 3, "count": 3}, logging={"level": "summary"})
+    kw = dict(workers=1, out_root=tmp_path / "results", log_root=tmp_path / "logs", progress=False)
+    games, _, out = runner.run_experiment(exp, ".", **kw)
+    lines = (out / "rows.jsonl").read_text().splitlines()
+    assert len(lines) == 3 and list(games["seed"]) == [3, 4, 5]
+    (out / "rows.jsonl").write_text("\n".join(lines[:2]) + "\n")     # as if stopped after two games
+    again, _, _ = runner.run_experiment(exp, ".", resume=True, **kw)
+    assert list(again["seed"]) == [3, 4, 5]
+    assert list(again["p0_total"]) == list(games["p0_total"])
+    assert len((out / "rows.jsonl").read_text().splitlines()) == 3

@@ -288,3 +288,124 @@ def observation_text(obs):
                 L.append(f"    - {card_line(db, c)}")
         L.extend(_board_lines(db, pl))
     return "\n".join(L)
+
+
+# ---------------------------------------------------------------- prompt helpers for the language-model agent
+
+def compact_payments(s, what, labels):
+    """For a food payment with several options: name the part every option pays, and label each
+    option by the rest only, so the options differ visibly."""
+    pend = s.pend
+    if pend is None or pend[1] != "pay_food" or pend[2] is None or len(pend[2]) < 2:
+        return what, labels
+    vectors = [o[1] for o in pend[2]]
+    common = [min(v[i] for v in vectors) for i in range(5)]
+    have = s.players[pend[0]].food
+    what += f" You have {food_list(have)}."
+    if any(common):
+        what += f" Every option pays {food_list(common)}; they differ only in the rest."
+        labels = [f"Pay {food_list(common)}, plus {food_list([v[i] - common[i] for i in range(5)])}"
+                  for v in vectors]
+    return what, labels
+
+
+def keep_birds_items(s):
+    """For the setup choice of starting birds: the dealt birds as (id, card line), in hand order."""
+    pend = s.pend
+    if pend is None or pend[1] != "setup_keep_birds":
+        return None
+    ids = max((o[1] for o in pend[2]), key=len)
+    db = s.cfg.db
+    return [(c, card_line(db, c)) for c in ids]
+
+
+def _bonus_progress(s, p, before, after):
+    from .scoring import bonus_count
+    db = s.cfg.db
+    out = []
+    for b in s.players[p].bonus:
+        if b == HIDDEN:
+            continue
+        card = db.bonus[b]
+        n0, n1 = bonus_count(before, p, card), bonus_count(after, p, card)
+        if n1 != n0:
+            pts0, pts1 = card.points(n0), card.points(n1)
+            out.append(f"bonus card {card.name}: {n0} -> {n1} birds"
+                       + (f" ({pts0} -> {pts1} points)" if pts1 != pts0 else f" (still {pts0} points)"))
+    return out
+
+
+def _goal_progress(before, after, p):
+    c0, c1 = current_goal_counts(before), current_goal_counts(after)
+    if c0 is None or c1 is None or c0[p] == c1[p]:
+        return []
+    return [f"round goal count {c0[p]} -> {c1[p]}"]
+
+
+def _row_powers(db, row):
+    """The brown powers a row's action would offer, in the order they are offered (right to left)."""
+    names = [db.birds[x[0]].name for x in reversed(row) if db.birds[x[0]].timing == "brown"]
+    return f"then you may use these brown powers, right to left: {', '.join(names)}" if names else \
+        "no brown powers in this row"
+
+
+def action_outcomes(s):
+    """One line per option of a pending action decision: what it changes right away, worked out from
+    what the deciding player can see. Later choices (which die, where the eggs go) are left open."""
+    pend = s.pend
+    if pend is None or pend[1] != "action" or pend[2] is None:
+        return None
+    from .rules import payments
+    db = s.cfg.db
+    p = pend[0]
+    pl = s.players[p]
+    eggs_total = sum(x[1] for row in pl.board for x in row)
+    room = sum(db.birds[x[0]].egg_limit - x[1] for row in pl.board for x in row)
+    out = []
+    for o in pend[2]:
+        tag = o[0]
+        if tag == "play":
+            c, h = o[1], o[2]
+            b = db.birds[c]
+            k = len(pl.board[h])
+            egg_cost = EGG_COST[k]
+            after = s.copy()
+            ap = after.players[p]
+            ap.hand.remove(c)
+            ap.board[h].append([c, 0, 0, 0])
+            parts = [f"+{b.vp} points for the bird"]
+            if egg_cost:
+                parts.append(f"-{egg_cost} egg{'s' if egg_cost > 1 else ''} from your birds (-{egg_cost} points; "
+                             f"you have {eggs_total})")
+            pays = payments(pl.food, b)
+            if len(pays) == 1:
+                left = [pl.food[i] - pays[0][i] for i in range(5)]
+                parts.append(f"food left: {food_list(left)}")
+            else:
+                spent = sum(pays[0])
+                swap = " (any 2 food stand in for each food you lack)" if spent > b.total_cost else ""
+                parts.append(f"spends {spent} food{swap}; {len(pays)} ways to pay, you choose next")
+            gain = BASE_GAIN[h][k + 1]
+            if gain != BASE_GAIN[h][k]:
+                what = ("food", "eggs", "cards")[h]
+                parts.append(f"your {HABITATS[h]} action then gives {gain} {what} (was {BASE_GAIN[h][k]})")
+            parts += _goal_progress(s, after, p) + _bonus_progress(s, p, s, after)
+            if b.timing == "white":
+                parts.append("its power happens now")
+            out.append("; ".join(parts))
+        elif tag in ("food", "eggs", "cards"):
+            h = ("food", "eggs", "cards").index(tag)
+            row = pl.board[h]
+            n = BASE_GAIN[h][len(row)]
+            if h == 0:
+                first = f"+{n} food (your choice of dice); food {sum(pl.food)} -> {sum(pl.food) + n}"
+            elif h == 1:
+                lay = min(n, room)
+                first = (f"+{lay} egg{'s' if lay != 1 else ''} = +{lay} points (room for {room} more eggs on your birds)"
+                         if lay else "no room for eggs on your birds")
+            else:
+                first = f"+{n} card{'s' if n > 1 else ''} (tray or deck); hand {len(pl.hand)} -> {len(pl.hand) + n}"
+            out.append(f"{first}; {_row_powers(db, row)}")
+        else:
+            out.append(None)
+    return out

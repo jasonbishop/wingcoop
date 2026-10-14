@@ -207,3 +207,73 @@ def test_mixed_table_in_the_runner_logs_prompts_and_replays(endpoint, monkeypatc
     assert all(ln["info"]["replies"] == ["1"] and ln["choice"] == 0 and ln["labels"] for ln in mine)
     assert mine[0]["info"]["prompt"].startswith("Setup, before round 1.")
     assert api.is_over(replay(row.log))
+
+
+PLANNED = ("<think>scratch work 7</think>The plan holds. ANSWER: 1\n"
+           "PLAN:\nEngine: forest\nBonus target: none yet\nRound goal: most birds\nNeed next: seed\n"
+           "Pivot if: no seed for 2 turns\nEND PLAN")
+
+
+def test_openrouter_key_is_sent_only_to_openrouter(endpoint, monkeypatch):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "router-secret")
+    e = endpoint(["ANSWER: 1"])
+    cfg = api.GameConfig(2)
+    s = api.new_game(cfg, 1)
+    d = api.pending_decision(s)
+    a = LLMAgent("local-model", base_url=e.url)
+    a.start(cfg, d.player, Objective(0.0, 2))
+    a.choose(api.observe(s, d.player), d)
+    assert e.requests[0]["auth"] is None
+    assert LLMAgent("m").api_key_env == "OPENROUTER_API_KEY"
+
+
+def test_replies_are_read_past_thinking_tags_and_plan_blocks():
+    assert parse_choice("<think>maybe 9</think>ANSWER: 2", 3) == 2
+    assert parse_choice("ANSWER: 3\nPLAN:\nNeed next: 2 fish\nEND PLAN", 4) == 3
+    assert llm.parse_plan(PLANNED).startswith("Engine: forest")
+    assert llm.parse_numbers("I keep two. ANSWER: 1, 4", 5) == [1, 4]
+    assert llm.parse_numbers("ANSWER: none", 5) == []
+    assert llm.parse_numbers("ANSWER: 1, 6", 5) is None
+
+
+def test_compact_starting_hand_is_chosen_by_bird_number(endpoint, monkeypatch):
+    e = endpoint(["Two birds. ANSWER: 1, 3"])
+    s, d, a = agent_at_first_decision(e.url, monkeypatch, compact=True)
+    assert d.kind == "setup_keep_birds"
+    choice = a.choose(api.observe(s, d.player), d)
+    dealt = max((o[1] for o in d.options), key=len)
+    assert set(choice[1]) == {dealt[0], dealt[2]}
+    prompt = e.requests[0]["body"]["messages"][1]["content"]
+    assert "Your dealt birds:" in prompt and "Keep 2:" not in prompt
+
+
+def test_plan_is_kept_shown_and_logged_through_a_game(endpoint, monkeypatch):
+    e = endpoint([PLANNED])
+    monkeypatch.setenv("TEST_KEY", "k")
+    cfg = api.GameConfig(2, record_events=True)
+    from wingsim.agents.greedy import GreedyAgent
+    from wingsim.game import play_game
+    from wingsim.engine.log import GameLog
+    a = LLMAgent("test/model", base_url=e.url, api_key_env="TEST_KEY", prompt="plan", plan=True, outcomes=True,
+                 compact=True)
+    g = GreedyAgent(seed=1)
+    a.start(cfg, 0, Objective(0.0, 2))
+    g.start(cfg, 1, Objective(0.0, 2))
+    log = GameLog(cfg, 2, [a.settings(), g.settings()])
+    play_game(cfg, 2, [a, g], log=log)
+    mine = [ln for ln in log.lines if ln["t"] == "decision" and ln["player"] == 0]
+    actions = [d for d in mine if d["kind"] == "action"]
+    assert len(actions) == 26 and all(d["info"]["plan_updated"] for d in actions)
+    assert actions[0]["info"]["plan"] is None and actions[1]["info"]["plan"].startswith("Engine: forest")
+    assert "PLAN:" in actions[0]["info"]["prompt"] and "After: " in actions[0]["info"]["prompt"]
+    later = [d for d in mine if d["kind"] != "action" and d["round"] >= 1 and "THIS TURN SO FAR" in d["info"]["prompt"]]
+    assert later and "Your reasoning: The plan holds." in later[0]["info"]["prompt"]
+    assert all(d["info"]["fallback"] is None for d in mine)
+    body = e.requests[0]["body"]
+    assert "YOUR PLAN" in body["messages"][0]["content"]
+
+
+def test_reasoned_replies_need_an_answer_line():
+    assert parse_choice("Option 1 is weak; I keep 2 eggs in mind", 3) == 2
+    assert parse_choice("Option 1 is weak; I keep 2 eggs in mind", 3, strict=True) is None
+    assert parse_choice("so ANSWER: 3", 3, strict=True) == 3
