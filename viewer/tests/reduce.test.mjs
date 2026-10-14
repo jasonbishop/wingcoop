@@ -18,9 +18,11 @@ function normal(field, v) {
   }
 }
 
-// Places where the log is known not to say enough (see FORMAT-REQUESTS.md). The reducer is
-// allowed to be behind here, and must have caught up by the next snapshot outside them.
-function knownGap(field, decision, events, nextDecision) {
+// Places where logs written before 13 October 2026 do not say enough (FORMAT-REQUESTS.md,
+// R1 and R2; newer logs have the events, and their snapshots a `set_aside` field). The
+// reducer is allowed to be behind here, and must have caught up by the next snapshot outside them.
+function knownGap(field, decision, events, nextDecision, state) {
+  if (state.set_aside !== undefined) return false;
   // R1: bonus cards leave the bonus deck when the power is used, with no event.
   if ((field === 'bonus_deck' || field === 'bonus_discard') && nextDecision?.kind === 'keep_bonus') return true;
   // R2: cards taken for the American Oystercatcher draft produce no event until cards_revealed.
@@ -49,7 +51,7 @@ for (const file of logFiles()) {
       compared++;
       const target = cloneState(want.state);
       for (const f of VIEW_FIELDS) {
-        if (f === 'looked' || knownGap(f, d, es, next)) continue;
+        if (f === 'looked' || knownGap(f, d, es, next, target)) continue;
         assert.deepEqual(normal(f, state[f]), normal(f, target[f]), `${f} after decision ${d.seq} (${d.kind})`);
       }
     });

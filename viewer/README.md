@@ -146,7 +146,8 @@ uv venv .venv && uv pip install --python .venv/bin/python pillow numpy scipy
 
 ## Not here yet
 
-- Live goal counts during a round, and bonus points in the running scores: both wait on the log (`FORMAT-REQUESTS.md`, N1 and N2).
+- Live goal counts during a round, and bonus points in the running scores. The log now has both (each snapshot's `goal_counts` and `scores`, `FORMAT-REQUESTS.md` N1 and N2); the goal board and score panel don't use them yet.
+- Scientific names on the card footer: now in the card reference as `scientific` (N3), not yet drawn.
 - Dice a predator rolls outside the feeder are reported in the panel and a banner, not rolled on the table.
 - Live play. The screen is built for it (one step; a state-shaped board; face-down `-1` cards) but options are not clickable and there is nothing to connect to.
 - Painted wooden bird meeples for the first-player marker and the action cubes (the way it's played at our table); `createFirstPlayerToken()` and `createCube()` in `components/pieces` are where they'd go.

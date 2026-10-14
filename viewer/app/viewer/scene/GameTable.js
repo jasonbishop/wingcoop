@@ -196,7 +196,7 @@ export class GameTable extends EventTarget {
     this.flush();
     if (this._looked) { this._looked.card.dispose(); this._looked = null; }
     this.reconcile(state);
-    this._syncOffer(decision);
+    this._syncOffer(decision, state);
     this.board.setState(this._boardState(state, decision));
   }
 
@@ -285,11 +285,16 @@ export class GameTable extends EventTarget {
     return Promise.all(jobs);
   }
 
-  // Cards held up for the pending choice. They are not in the state (they have left the
-  // deck and are not yet anywhere else); the decision's options name them.
-  _syncOffer(decision) {
+  // Cards held up for the pending choice: `set_aside` in the state, or in older logs (which
+  // lack it) the options of the pending decision. Bonus cards are keyed "b<id>".
+  _syncOffer(decision, state) {
     let keys = [], make = () => null;
-    if (decision?.kind === 'draft_pick') {
+    if (state?.set_aside) {
+      keys = [...state.set_aside.birds, ...state.set_aside.bonus.map(b => `b${b}`)];
+      make = key => (typeof key === 'string'
+        ? new BonusCard(this.book.bonus(Number(key.slice(1))), { faceUp: true })
+        : new BirdCard(this.book.bird(key), { faceUp: true }));
+    } else if (decision?.kind === 'draft_pick') {
       keys = decision.options.filter(o => o[0] === 'card').map(o => o[1]);
       make = id => new BirdCard(this.book.bird(id), { faceUp: true });
     } else if (decision?.kind === 'keep_bonus') {
@@ -368,6 +373,20 @@ export class GameTable extends EventTarget {
     await Promise.all(e.food.map(f => this.seats[e.p].mat.spendFood(FOODS[f])));
   }
 
+  async _on_bonus_drawn(e) {
+    for (const b of e.cards) {
+      const card = this.bonusDeck.lift(this.book.bonus(b));
+      await this.offer.add(`b${b}`, card, { faceUp: true, duration: 0.5 });
+    }
+  }
+
+  async _on_bonus_reshuffled(e) {
+    // the discard pile becomes the new bonus deck
+    await tweens.wait(0.3);
+    this.bonusDiscard.setState({ count: 0, top: null });
+    this.bonusDeck.count = e.cards;
+  }
+
   async _on_bonus_kept(e, state) {
     const seat = this.seats[e.p];
     if (state.phase === 'setup') {
@@ -416,8 +435,12 @@ export class GameTable extends EventTarget {
   }
 
   async _on_card_discarded(e) {
-    const seat = this.seats[e.p];
-    const card = seat.hand.take(e.bird);
+    let card;
+    if (e.why === 'predator_miss') {
+      // the card a predator looked at, held up beside the deck
+      card = this._looked?.id === e.bird ? this._looked.card : this.deck.lift(this.book.bird(e.bird));
+      this._looked = null;
+    } else card = this.seats[e.p].hand.take(e.bird);
     if (card) await this.discard.add(card);
   }
 
@@ -461,8 +484,20 @@ export class GameTable extends EventTarget {
     if (e.source === 'tray') await this._syncTray(this.tray.slots.filter(Boolean).map(c => c.bird?.id), { animate: true });
   }
 
+  async _on_card_set_aside(e) {
+    let card = null;
+    if (e.source === 'tray') {
+      const i = this.tray.slots.findIndex(c => c?.bird?.id === e.bird);
+      if (i >= 0) card = this.tray.take(i);
+    }
+    if (!card) card = this.deck.lift(this.book.bird(e.bird));
+    await this.offer.add(e.bird, card, { faceUp: true, duration: 0.5 });
+    if (e.source === 'tray') await this._syncTray(this.tray.slots.filter(Boolean).map(c => c.bird?.id), { animate: true });
+  }
+
   async _on_cards_revealed(e, state) {
     for (const b of e.birds) {
+      if (this.offer.keys.includes(b)) continue;   // already held up by card_set_aside
       const i = this.tray.slots.findIndex(c => c?.bird?.id === b);
       let card;
       if (i >= 0) card = this.tray.take(i);
@@ -489,13 +524,14 @@ export class GameTable extends EventTarget {
     await seat.mat.tuck(at.habitat, at.slot, 1, { from: card ? [card] : [] });
   }
 
-  async _on_predator(e) {
+  async _on_predator(e, state) {
     if (e.kind !== 'look') { await tweens.wait(0.5); return; }
     // hold the deck's top card up beside the deck, then tuck it (the next event) or discard it
     const card = this.deck.lift(this.book.bird(e.card));
     await card.moveTo(this.susan.top, v3(CENTRE.deck[0], 1.1, CENTRE.deck[1] - 2.3), { faceUp: true, duration: 0.55, arc: 0.6 });
     await tweens.wait(0.45);
-    if (e.success) this._looked = { id: e.card, card };
+    // older logs have no event for a miss, so the card is discarded here
+    if (e.success || state.set_aside) this._looked = { id: e.card, card };
     else await this.discard.add(card);
   }
 
@@ -532,13 +568,26 @@ export class GameTable extends EventTarget {
     for (let k = 0; k < cached; k++) seat.mat.cacheFood(to, slot, card.bird?.caches || 'seed', { animate: false });
   }
 
-  async _on_tray_refill(e, state) {
-    await this._syncTray(e.tray, { animate: true });
-    // during a round this is also the end of the turn: that player has one turn fewer left
-    if (state.phase === 'turns') this.seats[state.turn]?.setTurnsLeft(state.actions_left[state.turn] - 1);
+  async _on_tray_cleared() {
+    await this._syncTray([], { animate: true });
   }
 
-  async _on_deck_reshuffled() { await tweens.wait(0.3); }
+  async _on_tray_refill(e, state) {
+    await this._syncTray(e.tray, { animate: true });
+    // in older logs this is also the end of the turn (newer ones have turn_end)
+    if (state.phase === 'turns' && !state.set_aside) this.seats[state.turn]?.setTurnsLeft(state.actions_left[state.turn] - 1);
+  }
+
+  async _on_turn_end(e, state) {
+    this.seats[e.p]?.setTurnsLeft(state.actions_left[e.p] - 1);
+  }
+
+  async _on_deck_reshuffled(e) {
+    // the discard pile becomes the new deck
+    await tweens.wait(0.3);
+    this.discard.setState({ count: 0, top: null });
+    this.deck.count = e.cards;
+  }
 
   async _on_round_end(e, state) {
     for (let p = 0; p < e.counts.length; p++) {

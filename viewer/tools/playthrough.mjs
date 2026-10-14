@@ -31,7 +31,7 @@ for (const log of logs) {
       await player.skip();
       await p;
     }
-    // Known gap in the log format (FORMAT-REQUESTS.md, R1): bonus cards leave the bonus deck
+    // Known gap in logs written before 13 October 2026 (FORMAT-REQUESTS.md, R1): bonus cards leave the bonus deck
     // with no event, so in a per-turn log the pile only catches up when one is kept.
     const known = c => c.event === 'bonus_kept' && Object.keys(JSON.parse(c.before)).every(k => k === 'bonusDeck' || k === 'bonusDiscard' || JSON.parse(c.before)[k] === undefined || JSON.stringify(JSON.parse(c.before)[k]) === JSON.stringify(JSON.parse(c.after)[k]));
     const checks = player.checks.filter(c => !known(c));

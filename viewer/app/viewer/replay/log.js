@@ -109,8 +109,8 @@ export function buildReplay(input, cards = null) {
       live = cloneState(state);
       const quiet = positions[positions.length - 1].quiet;
       for (const e of events) {
-        // a tray refill that changed nothing is bookkeeping, not news
-        quiet.push(e.e === 'tray_refill' && sameList(e.tray, live.tray));
+        // a tray refill that changed nothing, or the end of a turn, is bookkeeping, not news
+        quiet.push(e.e === 'turn_end' || (e.e === 'tray_refill' && sameList(e.tray, live.tray)));
         if (!applyEvent(live, e, { decision })) unknown.add(e.e);
         if (e.e === 'turn_start') turnOwner = e.p;
         if (e.e === 'round_end') turnOwner = null;

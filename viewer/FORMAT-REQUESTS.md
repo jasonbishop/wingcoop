@@ -10,6 +10,29 @@ cd viewer && WINGSIM_LOGS=../logs npm test
 
 Sequence numbers below refer to `docs/samples/coop-3p-greedy-every-decision.jsonl.gz` unless another file is named.
 
+## Status (13 October 2026)
+
+All of these are done on the simulator side, in the same version 2 format (fields and events were only added, apart from `card_tucked` gaining the source `"look"`). The format document marks each addition *(added)*, and its section 8 now lists what every event changes. `wingsim/tests/reduce_log.py` rebuilds every snapshot from the events on hundreds of games, reshuffles and the Oystercatcher draft included, and this viewer's `npm test` passes on the same kind of logs with the known-gap exemptions switched off for new logs.
+
+The viewer's reducer and table handle the new events and still read older logs (told apart by whether snapshots have `state.set_aside`). Older logs can be rewritten in the new form with `.venv/bin/python -m wingsim.engine.log relog <old> <new>`. Not yet used by the viewer: N1 (`goal_counts`), N2 (`scores`), N3 (`scientific`).
+
+| # | Done as |
+| --- | --- |
+| R1 | `bonus_drawn` event; `bonus_kept.discarded` (setup too) |
+| R2 | `card_set_aside` event; `draw_card` and the tray rule documented |
+| R3 | `state.set_aside` `{birds, bonus}`, also in a player's view |
+| R4 | `card_tucked` source `"look"`; `card_discarded` why `"predator_miss"`; documented |
+| R5 | `turn_end` event, plus a new `tray_cleared` event at round end; the order of end-of-turn and end-of-round events documented |
+| R6 | `deck_reshuffled.deck` (new order); `bonus_reshuffled` event. A tray refill or bonus draw that runs into a reshuffle is now reported in two parts so the events apply in order |
+| N1, N2 | snapshot fields `goal_counts` and `scores` |
+| N3 | `scientific` in the card reference |
+| N4 | documented |
+| N5 | `card_tucked.card` always present |
+| N6 | `vp_text` corrected to `7+ birds` |
+| Corrections | all three made in the document |
+
+The original requests follow, unchanged.
+
 ## Summary
 
 | # | Request | Kind | Viewer today |

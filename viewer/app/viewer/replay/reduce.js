@@ -7,12 +7,17 @@
 //
 // Only the fields a viewer draws are maintained. Engine internals (rng, stack,
 // registers, pending) are dropped by cloneState().
+//
+// Logs written before 13 October 2026 lack some events (turn_end, tray_cleared,
+// bonus_drawn, card_set_aside, ...) and their snapshots have no `set_aside` field.
+// For those, the reducer falls back to inferring what the missing events would say;
+// `legacy(state)` tells the two apart.
 
 /** Fields the viewer draws; everything else in a snapshot is ignored. */
 export const VIEW_FIELDS = [
   'phase', 'round', 'turn_no', 'first', 'turn', 'actions_left',
   'deck', 'discard', 'tray', 'feeder', 'bonus_deck', 'bonus_discard', 'tucked',
-  'goals', 'goal_points', 'group_score', 'goal_log', 'players', 'variant',
+  'goals', 'goal_points', 'group_score', 'goal_log', 'players', 'variant', 'set_aside',
   'looked',   // reducer bookkeeping, not part of a snapshot: a deck card a predator is looking at
 ];
 
@@ -44,6 +49,9 @@ export function findBirdAnywhere(state, bird) {
 }
 
 const TURNS_PER_ROUND = [8, 7, 6, 5];
+
+/** True for a state from an older log, which lacks the events added with `set_aside`. */
+const legacy = s => s.set_aside === undefined;
 
 function removeOne(list, value) {
   const i = list.indexOf(value);
@@ -84,8 +92,28 @@ const HANDLERS = {
     for (const f of e.food) s.players[e.p].food[f]--;
   },
 
+  bonus_drawn(s, e) {
+    for (const b of e.cards) {
+      removeCard(s.bonus_deck, b);
+      s.set_aside.bonus.push(b);
+    }
+  },
+
+  bonus_reshuffled(s, e) {
+    s.bonus_deck = e.deck.slice();
+    s.bonus_discard = [];
+  },
+
   bonus_kept(s, e, ctx) {
     const pl = s.players[e.p];
+    if (e.discarded) {
+      // from the cards a power set aside, or (setup) from the two dealt to the player
+      const from = s.set_aside?.bonus.includes(e.bonus) ? s.set_aside.bonus : pl.bonus;
+      for (const b of [e.bonus, ...e.discarded]) removeCard(from, b);
+      pl.bonus.push(e.bonus);
+      s.bonus_discard.push(...e.discarded);
+      return;
+    }
     if (s.phase === 'setup') {
       for (const b of pl.bonus) if (b !== e.bonus) s.bonus_discard.push(b);
       pl.bonus = [e.bonus];
@@ -129,6 +157,12 @@ const HANDLERS = {
     s.players[e.p].pink_used = [];
   },
 
+  turn_end(s, e) {
+    s.actions_left[e.p]--;
+    s.turn = (e.p + 1) % s.players.length;
+    s.turn_no++;
+  },
+
   action() {},
 
   food_spent(s, e) {
@@ -142,7 +176,8 @@ const HANDLERS = {
   },
 
   card_discarded(s, e) {
-    removeCard(s.players[e.p].hand, e.bird);
+    // a predator's miss: the card it looked at, already off the deck (see `predator`)
+    if (e.why !== 'predator_miss') removeCard(s.players[e.p].hand, e.bird);
     s.discard.push(e.bird);
   },
 
@@ -168,20 +203,29 @@ const HANDLERS = {
     for (const b of e.birds) {
       if (e.source === 'tray') removeOne(s.tray, b);
       else if (e.source === 'deck') popDeck(s, b);
+      else if (e.source === 'draft' && s.set_aside) removeOne(s.set_aside.birds, b);
       s.players[e.p].hand.push(b);
     }
   },
 
+  card_set_aside(s, e) {
+    // American Oystercatcher: the owner takes a card for the draft
+    if (e.source === 'tray') removeOne(s.tray, e.bird);
+    else popDeck(s, e.bird);
+    s.set_aside.birds.push(e.bird);
+  },
+
   cards_revealed(s, e) {
-    // American Oystercatcher: the cards were taken one at a time from the tray or the
-    // deck by draw_card decisions that log no event of their own; this is the first
-    // event to name them. A snapshot taken in between already has them removed.
+    if (!legacy(s)) return;   // card_set_aside has already moved them
+    // Older logs: the cards were taken one at a time by draw_card decisions that logged
+    // no event; this is the first event to name them.
     for (const b of e.birds) if (!removeOne(s.tray, b)) removeOne(s.deck, b);
   },
 
   card_tucked(s, e) {
     if (e.source === 'hand') removeCard(s.players[e.p].hand, e.card ?? -1);
-    // A card a predator has just looked at is already off the deck (see `predator`).
+    // A card a predator has just looked at is already off the deck (see `predator`): source
+    // "look", or in older logs "deck" naming the card just looked at.
     else if (e.source === 'deck' && !(e.card != null && e.card === s.looked)) popDeck(s, e.card);
     s.looked = null;
     const at = findBird(s, e.p, e.bird);
@@ -209,11 +253,11 @@ const HANDLERS = {
 
   predator(s, e) {
     if (e.kind !== 'look') return;
-    // The card leaves the deck when it is looked at. A hit is followed by its own
-    // card_tucked event; a miss goes to the discard pile with no further event.
+    // The card leaves the deck when it is looked at. A hit is followed by card_tucked, a
+    // miss by card_discarded (older logs have no event for a miss).
     popDeck(s, e.card);
     if (e.success) s.looked = e.card;
-    else s.discard.push(e.card);
+    else if (legacy(s)) s.discard.push(e.card);
   },
 
   bird_moved(s, e) {
@@ -224,14 +268,20 @@ const HANDLERS = {
     board[e.to].push(entry);
   },
 
+  tray_cleared(s, e) {
+    s.discard.push(...s.tray);
+    s.tray = [];
+  },
+
   tray_refill(s, e) {
     const before = s.tray;
-    // cards that left the tray without being drawn were cleared to the discard pile (round end)
+    // older logs: cards that left the tray without being drawn were cleared to the discard
+    // pile at the round end (newer logs say so with tray_cleared, leaving the tray empty)
     for (const b of before) if (!e.tray.includes(b)) s.discard.push(b);
     for (const b of e.tray) if (!before.includes(b)) popDeck(s, b);
     s.tray = e.tray.slice();
-    // During the turns of a round this event is also the end of the turn.
-    if (s.phase === 'turns') {
+    // In older logs this event during a round is also the end of the turn (now turn_end).
+    if (s.phase === 'turns' && legacy(s)) {
       s.actions_left[s.turn]--;
       s.turn = (s.turn + 1) % s.players.length;
       s.turn_no++;
@@ -239,9 +289,9 @@ const HANDLERS = {
   },
 
   deck_reshuffled(s, e) {
-    // The event carries only a count, so the new order is unknown: keep the right cards
-    // in some order and let popDeck() find each one as it is drawn.
-    if (Array.isArray(e.cards)) s.deck = e.cards.slice();
+    // `deck` is the new order. Older logs give only a count: keep the right cards in
+    // some order and let popDeck() find each one as it is drawn.
+    if (Array.isArray(e.deck)) s.deck = e.deck.slice();
     else s.deck = s.discard.slice();
     s.discard = [];
   },
