@@ -35,7 +35,8 @@ class FakeEndpoint:
                     self.wfile.write(b"busy")
                     return
                 reply = outer.replies.pop(0) if len(outer.replies) > 1 else outer.replies[0]
-                out = {"choices": [{"message": {"role": "assistant", "content": reply}}],
+                message = reply if isinstance(reply, dict) else {"content": reply}   # a dict: the whole message
+                out = {"choices": [{"message": {"role": "assistant", **message}}],
                        "usage": {"prompt_tokens": 1000, "completion_tokens": 2, "cost": 0.001}}
                 data = json.dumps(out).encode()
                 self.send_response(200)
@@ -290,3 +291,14 @@ def test_cut_off_reasoning_gets_a_short_answer_only_retry(endpoint, monkeypatch)
     s, d, b = agent_at_first_decision(e2.url, monkeypatch, reasoning=True)
     b.choose(api.observe(s, d.player), d)
     assert b.info()["fallback"] == "random"
+
+
+def test_separate_thinking_text_is_logged(endpoint, monkeypatch):
+    e = endpoint([{"content": "ANSWER: 2", "reasoning_content": "Option 2 keeps the fish."}])
+    s, d, a = agent_at_first_decision(e.url, monkeypatch, reasoning=True)
+    a.choose(api.observe(s, d.player), d)
+    assert a.info()["thinking"] == ["Option 2 keeps the fish."] and a.info()["chosen"] == 2
+    e2 = endpoint(["ANSWER: 2"])
+    s, d, b = agent_at_first_decision(e2.url, monkeypatch, reasoning=True)
+    b.choose(api.observe(s, d.player), d)
+    assert "thinking" not in b.info()

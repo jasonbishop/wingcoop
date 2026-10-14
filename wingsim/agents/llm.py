@@ -147,6 +147,7 @@ class LLMAgent(Agent):
             max_tokens = (600 if reasoning else 16) + (4000 if thinking else 0)
         self.plan_max_tokens = max_tokens + 600   # room for the plan at action decisions
         self.max_tokens = max_tokens
+        self.last_thinking = None
         self.timeout = timeout
         self.budget_usd = budget_usd      # stop when this process has spent this much
         self.max_calls = max_calls        # or made this many calls
@@ -224,6 +225,9 @@ class LLMAgent(Agent):
         message = out["choices"][0].get("message") or {}
         usage = dict(usage, finish_reason=out["choices"][0].get("finish_reason"),
                      reasoning_tokens=(usage.get("completion_tokens_details") or {}).get("reasoning_tokens"))
+        # Hidden thinking, when the server returns it apart from the answer (OpenRouter: "reasoning";
+        # mlx-openai-server and vLLM with a reasoning parser: "reasoning_content").
+        self.last_thinking = message.get("reasoning_content") or message.get("reasoning") or None
         return message.get("content") or "", usage
 
     # ------------------------------------------------------------ choosing
@@ -284,9 +288,10 @@ class LLMAgent(Agent):
                     return i + 1
             return None
 
-        replies = []
+        replies, thoughts = [], []
         reply, usage = self.call(messages, limit)
         replies.append(reply)
+        thoughts.append(self.last_thinking)
         k = read(reply)
         if k is None:
             self.stats["retries"] += 1
@@ -307,6 +312,7 @@ class LLMAgent(Agent):
             messages += [{"role": "assistant", "content": reply or "(no answer)"}, {"role": "user", "content": again}]
             reply, usage = self.call(messages, retry_limit)
             replies.append(reply)
+            thoughts.append(self.last_thinking)
             k = read(reply, bare_ok=True)
         fallback = k is None
         if fallback:
@@ -331,6 +337,8 @@ class LLMAgent(Agent):
                       "fallback": "random" if fallback else None,
                       "usage": {key: usage.get(key) for key in ("prompt_tokens", "completion_tokens", "cost",
                                                                 "reasoning_tokens", "finish_reason")}}
+        if any(thoughts):
+            self._info["thinking"] = thoughts
         if self.plan:
             self._info["plan"] = plan_in
             self._info["plan_updated"] = plan_out
