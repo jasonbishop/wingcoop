@@ -136,7 +136,7 @@ class LLMAgent(Agent):
         self.thinking = thinking
         self.temperature = temperature
         if max_tokens is None:
-            max_tokens = (300 if reasoning else 16) + (4000 if thinking else 0)
+            max_tokens = (600 if reasoning else 16) + (4000 if thinking else 0)
         self.plan_max_tokens = max_tokens + 600   # room for the plan at action decisions
         self.max_tokens = max_tokens
         self.timeout = timeout
@@ -263,9 +263,10 @@ class LLMAgent(Agent):
         planning = self.plan and decision.kind == "action"
         limit = self.plan_max_tokens if planning else None
 
-        def read(reply):
+        def read(reply, bare_ok=False):
             if mode == "one":
-                return parse_choice(reply, n, strict=self.reasoning)
+                bare = bare_ok and re.fullmatch(r"\W*\d+\W*", strip_reply(reply) or "")
+                return parse_choice(reply, n, strict=self.reasoning and not bare)
             nums = parse_numbers(reply, len(keep))
             if nums is None:
                 return None
@@ -281,17 +282,24 @@ class LLMAgent(Agent):
         k = read(reply)
         if k is None:
             self.stats["retries"] += 1
+            retry_limit = limit
             if mode == "keep":
                 again = "That was not a valid answer. " + KEEP_ASK
             elif planning:
                 again = (f"Your reply had no valid 'ANSWER: <number>' line (it may have been cut off). Reply now with "
                          f"only 'ANSWER: <number>' (1 to {n}), then your plan in the same form, kept short.")
+            elif self.reasoning:
+                # The usual cause is reasoning that ran past max_tokens; asking again with the same room only
+                # lets it run out again, so ask for the answer alone and allow only that.
+                again = (f"Your reply had no 'ANSWER: <number>' line (it may have been cut off). Do not explain "
+                         f"again. Reply with only 'ANSWER: <number>' (1 to {n}).")
+                retry_limit = 20
             else:
                 again = f"That was not a valid choice. Reply with one number from 1 to {n}: the option you choose."
             messages += [{"role": "assistant", "content": reply or "(no answer)"}, {"role": "user", "content": again}]
-            reply, usage = self.call(messages, limit)
+            reply, usage = self.call(messages, retry_limit)
             replies.append(reply)
-            k = read(reply)
+            k = read(reply, bare_ok=True)
         fallback = k is None
         if fallback:
             self.stats["fallbacks"] += 1

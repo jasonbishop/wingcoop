@@ -119,7 +119,8 @@ def test_unparsable_reply_is_retried_once_then_random_and_logged(endpoint, monke
     assert len(e.requests) == 2 and len(e.requests[1]["body"]["messages"]) == 4
     assert a.info()["replies"] == ["hmm, hard to say", "ANSWER: 5"] and a.info()["fallback"] is None
     assert a.stats["retries"] == 1 and a.stats["fallbacks"] == 0
-    assert "ANSWER: <number>" in a.system and a.max_tokens == 300
+    assert "ANSWER: <number>" in a.system and a.max_tokens == 600
+    assert e.requests[1]["body"]["max_tokens"] == 20 and "Do not explain" in e.requests[1]["body"]["messages"][-1]["content"]
     e2 = endpoint(["no idea"])
     s, d, b = agent_at_first_decision(e2.url, monkeypatch)
     choice = b.choose(api.observe(s, d.player), d)
@@ -277,3 +278,14 @@ def test_reasoned_replies_need_an_answer_line():
     assert parse_choice("Option 1 is weak; I keep 2 eggs in mind", 3) == 2
     assert parse_choice("Option 1 is weak; I keep 2 eggs in mind", 3, strict=True) is None
     assert parse_choice("so ANSWER: 3", 3, strict=True) == 3
+
+
+def test_cut_off_reasoning_gets_a_short_answer_only_retry(endpoint, monkeypatch):
+    # A reply that ran out of tokens mid-reasoning; asked again, the model gives just a number.
+    e = endpoint(["Option 1 gains 2 food, option 3 lays", "**3**"])
+    s, d, a = agent_at_first_decision(e.url, monkeypatch, reasoning=True)
+    assert a.choose(api.observe(s, d.player), d) == d.options[2] and a.info()["fallback"] is None
+    e2 = endpoint(["Option 1 gains 2 food, option 3 lays", "Option 2 is"])   # still no answer: random
+    s, d, b = agent_at_first_decision(e2.url, monkeypatch, reasoning=True)
+    b.choose(api.observe(s, d.player), d)
+    assert b.info()["fallback"] == "random"
