@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.venv/
+art/tools/preview.jpg
+art/source/*.boxes.jpg
+tests/shots/

@@ -1,0 +1,701 @@
+{
+ "$comment": "Every generated image in components/*/assets is produced from the sheets in art/source by art/tools/extract.py using this file. Boxes are pixel coordinates [x0, y0, x1, y1] on the source sheet; 'out' paths are relative to the repo root. Run: python3 art/tools/extract.py (--only id1,id2 to rebuild a few, --preview for a contact sheet).",
+ "sheets": {
+  "texture-sheet": {
+   "path": "art/source/texture-sheet.jpg",
+   "size": [
+    2576,
+    1438
+   ],
+   "about": "Flat, front-on birdfeeder panels"
+  },
+  "concept-sheet": {
+   "path": "art/source/concept-sheet.jpg",
+   "size": [
+    1792,
+    2400
+   ],
+   "about": "Overall concept: goal tiles, card back, sample bird cards, feeder, dice, goal grid, food tokens"
+  },
+  "player-mat": {
+   "path": "art/source/player-mat.jpg",
+   "size": [
+    2576,
+    1438
+   ],
+   "about": "Player mat: wetland / forest / grassland rows of 7 card slots"
+  },
+  "goals-and-cards": {
+   "path": "art/source/goals-and-cards.jpg",
+   "size": [
+    2400,
+    1792
+   ],
+   "about": "Round-end goal grid (blue side), card deck and card back, blank and sample bird card"
+  },
+  "card-and-eggs": {
+   "path": "art/source/card-and-eggs.jpg",
+   "size": [
+    2528,
+    1696
+   ],
+   "about": "Blank bird card template, three eggs, tucked-card tab"
+  },
+  "bonus-card-blank": {
+   "path": "art/source/bonus-card-blank.jpg",
+   "size": [
+    2400,
+    1792
+   ],
+   "about": "Blank bonus card front (left); the card on the right is partly covered, use bonus-card-sample for the back"
+  },
+  "bonus-card-sample": {
+   "path": "art/source/bonus-card-sample.jpg",
+   "size": [
+    2400,
+    1792
+   ],
+   "about": "Sample bonus card front with gibberish-free reference layout (left) and the bonus card back (right)"
+  }
+ },
+ "outputs": [
+  {
+   "id": "front",
+   "sheet": "texture-sheet",
+   "box": [
+    1434,
+    130,
+    1838,
+    774
+   ],
+   "inset": 8,
+   "ops": [
+    {
+     "op": "extend_down",
+     "ratio": 0.42,
+     "blend": 60,
+     "$why": "the painted wall is shorter than the tower; repeat its lower planks"
+    },
+    {
+     "op": "upscale",
+     "factor": 2
+    },
+    {
+     "op": "patch",
+     "center": [
+      0.501,
+      0.708
+     ],
+     "radius": 0.0515,
+     "source_dx": -0.116,
+     "$why": "paint out the perch hole duplicated by extend_down"
+    }
+   ],
+   "out": "components/birdfeeder/assets/front.jpg",
+   "use": "Front gable wall. UV maps to the wall's bounding box; the dice opening is cut from the geometry."
+  },
+  {
+   "id": "back",
+   "sheet": "texture-sheet",
+   "box": [
+    952,
+    129,
+    1358,
+    1138
+   ],
+   "inset": 8,
+   "ops": [
+    {
+     "op": "upscale",
+     "factor": 2
+    }
+   ],
+   "out": "components/birdfeeder/assets/back.jpg",
+   "use": "Back gable wall; also reused (rotated) for the internal ramps"
+  },
+  {
+   "id": "sideA",
+   "sheet": "texture-sheet",
+   "box": [
+    1949,
+    285,
+    2199,
+    774
+   ],
+   "inset": 8,
+   "ops": [
+    {
+     "op": "upscale",
+     "factor": 2
+    }
+   ],
+   "out": "components/birdfeeder/assets/sideA.jpg",
+   "use": "Left side wall. Box starts below the slanted top drawn on the sheet so the crop is rectangular."
+  },
+  {
+   "id": "sideB",
+   "sheet": "texture-sheet",
+   "box": [
+    2228,
+    285,
+    2479,
+    774
+   ],
+   "inset": 8,
+   "ops": [
+    {
+     "op": "upscale",
+     "factor": 2
+    }
+   ],
+   "out": "components/birdfeeder/assets/sideB.jpg",
+   "use": "Right side wall (the one hidden by x-ray mode)"
+  },
+  {
+   "id": "roofA",
+   "sheet": "texture-sheet",
+   "box": [
+    76,
+    119,
+    466,
+    726
+   ],
+   "inset": 24,
+   "ops": [
+    {
+     "op": "upscale",
+     "factor": 2
+    }
+   ],
+   "out": "components/birdfeeder/assets/roofA.jpg",
+   "use": "Roof board. Inset is larger to trim the ragged moss edge."
+  },
+  {
+   "id": "roofB",
+   "sheet": "texture-sheet",
+   "box": [
+    496,
+    124,
+    884,
+    735
+   ],
+   "inset": 24,
+   "ops": [
+    {
+     "op": "upscale",
+     "factor": 2
+    }
+   ],
+   "out": "components/birdfeeder/assets/roofB.jpg",
+   "use": "Roof board (paired with roofA so the moss doesn't repeat)"
+  },
+  {
+   "id": "trayFloor",
+   "sheet": "texture-sheet",
+   "box": [
+    1438,
+    893,
+    1836,
+    1306
+   ],
+   "inset": 4,
+   "ops": [
+    {
+     "op": "upscale",
+     "factor": 2
+    }
+   ],
+   "out": "components/birdfeeder/assets/trayFloor.jpg",
+   "use": "Tray floor (inside the drawn rim)"
+  },
+  {
+   "id": "trayRim",
+   "sheet": "texture-sheet",
+   "box": [
+    1404,
+    858,
+    1870,
+    893
+   ],
+   "inset": 0,
+   "ops": [
+    {
+     "op": "upscale",
+     "factor": 2
+    }
+   ],
+   "out": "components/birdfeeder/assets/trayRim.jpg",
+   "use": "Tray rim boards (horizontal grain)"
+  },
+  {
+   "id": "cap",
+   "sheet": "texture-sheet",
+   "box": [
+    2010,
+    1078,
+    2440,
+    1122
+   ],
+   "inset": 0,
+   "ops": [
+    {
+     "op": "upscale",
+     "factor": 2
+    }
+   ],
+   "out": "components/birdfeeder/assets/cap.jpg",
+   "use": "Ridge cap boards"
+  },
+  {
+   "id": "token_invertebrate",
+   "sheet": "concept-sheet",
+   "box": [
+    1097,
+    1808,
+    1279,
+    1992
+   ],
+   "ops": [
+    {
+     "op": "circle_mask",
+     "size": 160
+    }
+   ],
+   "out": "components/birdfeeder/assets/token_invertebrate.png",
+   "use": "Food token icon (UI) and dice face art"
+  },
+  {
+   "id": "token_seed",
+   "sheet": "concept-sheet",
+   "box": [
+    1319,
+    1808,
+    1502,
+    1993
+   ],
+   "ops": [
+    {
+     "op": "circle_mask",
+     "size": 160
+    }
+   ],
+   "out": "components/birdfeeder/assets/token_seed.png",
+   "use": "Food token icon (UI) and dice face art"
+  },
+  {
+   "id": "token_fish",
+   "sheet": "concept-sheet",
+   "box": [
+    1541,
+    1808,
+    1723,
+    1993
+   ],
+   "ops": [
+    {
+     "op": "circle_mask",
+     "size": 160
+    }
+   ],
+   "out": "components/birdfeeder/assets/token_fish.png",
+   "use": "Food token icon (UI) and dice face art"
+  },
+  {
+   "id": "token_fruit",
+   "sheet": "concept-sheet",
+   "box": [
+    1207,
+    2071,
+    1389,
+    2256
+   ],
+   "ops": [
+    {
+     "op": "circle_mask",
+     "size": 160
+    }
+   ],
+   "out": "components/birdfeeder/assets/token_fruit.png",
+   "use": "Food token icon (UI) and dice face art"
+  },
+  {
+   "id": "token_rodent",
+   "sheet": "concept-sheet",
+   "box": [
+    1437,
+    2072,
+    1619,
+    2256
+   ],
+   "ops": [
+    {
+     "op": "circle_mask",
+     "size": 160
+    }
+   ],
+   "out": "components/birdfeeder/assets/token_rodent.png",
+   "use": "Food token icon (UI) and dice face art"
+  },
+  {
+   "id": "mat",
+   "sheet": "player-mat",
+   "box": [
+    0,
+    0,
+    2576,
+    1438
+   ],
+   "ops": [],
+   "quality": 90,
+   "out": "components/player-mat/assets/mat.jpg",
+   "use": "Whole player mat. Card slot rectangles are in components/player-mat/src/layout.js (fractions of this image)."
+  },
+  {
+   "id": "goal_board",
+   "sheet": "goals-and-cards",
+   "box": [
+    122,
+    180,
+    2282,
+    1062
+   ],
+   "ops": [],
+   "quality": 90,
+   "out": "components/goal-board/assets/board.jpg",
+   "use": "Round-end goal grid. Square and medallion centres are in components/goal-board/src/layout.js."
+  },
+  {
+   "id": "goal_wetland_total",
+   "sheet": "concept-sheet",
+   "box": [
+    78,
+    176,
+    440,
+    548
+   ],
+   "ops": [
+    {
+     "op": "upscale",
+     "factor": 2
+    }
+   ],
+   "out": "components/goal-board/assets/goal_wetland_total.jpg",
+   "use": "Goal tile: total birds in wetlands"
+  },
+  {
+   "id": "goal_cave_dwellers",
+   "sheet": "concept-sheet",
+   "box": [
+    477,
+    176,
+    838,
+    548
+   ],
+   "ops": [
+    {
+     "op": "upscale",
+     "factor": 2
+    }
+   ],
+   "out": "components/goal-board/assets/goal_cave_dwellers.jpg",
+   "use": "Goal tile: cave dwellers"
+  },
+  {
+   "id": "card_back",
+   "sheet": "goals-and-cards",
+   "box": [
+    672,
+    1218,
+    1029,
+    1730
+   ],
+   "ops": [
+    {
+     "op": "upscale",
+     "factor": 2
+    }
+   ],
+   "out": "components/cards/assets/card_back.jpg",
+   "use": "Bird card back (face-down cards, deck)"
+  },
+  {
+   "id": "card_face",
+   "sheet": "card-and-eggs",
+   "box": [
+    170,
+    272,
+    1080,
+    1592
+   ],
+   "ops": [],
+   "quality": 90,
+   "out": "components/cards/assets/card_face.jpg",
+   "use": "Blank bird card; name, stats, art and power text are drawn on it at runtime (src/cardFace.js)"
+  },
+  {
+   "id": "bonus_face",
+   "sheet": "bonus-card-blank",
+   "box": [
+    120,
+    237,
+    1114,
+    1684
+   ],
+   "inset": 14,
+   "out": "components/cards/assets/bonus_face.jpg",
+   "use": "Blank bonus card front. Name, condition and points are drawn at runtime (components/cards/src/bonusFace.js REGIONS)."
+  },
+  {
+   "id": "bonus_back",
+   "sheet": "bonus-card-sample",
+   "box": [
+    1286,
+    237,
+    2281,
+    1686
+   ],
+   "inset": 14,
+   "out": "components/cards/assets/bonus_back.jpg",
+   "use": "Bonus card back (bonus deck, face-down bonus cards)"
+  },
+  {
+   "id": "tuck_tab",
+   "sheet": "card-and-eggs",
+   "box": [
+    1418,
+    1360,
+    2253,
+    1510
+   ],
+   "ops": [
+    {
+     "op": "upscale",
+     "factor": 2
+    }
+   ],
+   "out": "components/cards/assets/tuck_tab.jpg",
+   "use": "Tucked-cards counter tab; the count is drawn on the bar at runtime"
+  },
+  {
+   "id": "bird_sparrow",
+   "sheet": "goals-and-cards",
+   "box": [
+    1914,
+    1336,
+    2150,
+    1522
+   ],
+   "ops": [
+    {
+     "op": "upscale",
+     "factor": 2
+    }
+   ],
+   "out": "components/cards/assets/birds/sparrow.jpg",
+   "use": "Sample bird illustration (multiplied onto the card face, so the parchment background disappears)"
+  },
+  {
+   "id": "bird_osprey",
+   "sheet": "concept-sheet",
+   "box": [
+    1364,
+    252,
+    1518,
+    388
+   ],
+   "ops": [
+    {
+     "op": "upscale",
+     "factor": 2
+    }
+   ],
+   "out": "components/cards/assets/birds/osprey.jpg",
+   "use": "Sample bird illustration"
+  },
+  {
+   "id": "food_invertebrate",
+   "sheet": "concept-sheet",
+   "box": [
+    1097,
+    1808,
+    1279,
+    1992
+   ],
+   "ops": [
+    {
+     "op": "upscale",
+     "factor": 2
+    }
+   ],
+   "out": "components/pieces/assets/food_invertebrate.jpg",
+   "use": "Top face of the 3D food token disc"
+  },
+  {
+   "id": "food_seed",
+   "sheet": "concept-sheet",
+   "box": [
+    1319,
+    1808,
+    1502,
+    1993
+   ],
+   "ops": [
+    {
+     "op": "upscale",
+     "factor": 2
+    }
+   ],
+   "out": "components/pieces/assets/food_seed.jpg",
+   "use": "Top face of the 3D food token disc"
+  },
+  {
+   "id": "food_fish",
+   "sheet": "concept-sheet",
+   "box": [
+    1541,
+    1808,
+    1723,
+    1993
+   ],
+   "ops": [
+    {
+     "op": "upscale",
+     "factor": 2
+    }
+   ],
+   "out": "components/pieces/assets/food_fish.jpg",
+   "use": "Top face of the 3D food token disc"
+  },
+  {
+   "id": "food_fruit",
+   "sheet": "concept-sheet",
+   "box": [
+    1207,
+    2071,
+    1389,
+    2256
+   ],
+   "ops": [
+    {
+     "op": "upscale",
+     "factor": 2
+    }
+   ],
+   "out": "components/pieces/assets/food_fruit.jpg",
+   "use": "Top face of the 3D food token disc"
+  },
+  {
+   "id": "food_rodent",
+   "sheet": "concept-sheet",
+   "box": [
+    1437,
+    2072,
+    1619,
+    2256
+   ],
+   "ops": [
+    {
+     "op": "upscale",
+     "factor": 2
+    }
+   ],
+   "out": "components/pieces/assets/food_rodent.jpg",
+   "use": "Top face of the 3D food token disc"
+  },
+  {
+   "id": "egg_blue",
+   "sheet": "card-and-eggs",
+   "box": [
+    1451,
+    341,
+    1653,
+    621
+   ],
+   "ops": [
+    {
+     "op": "outline_cutout"
+    }
+   ],
+   "out": "components/pieces/assets/egg_blue.png",
+   "use": "2D egg icon for UI; the 3D eggs take their colours from this art (src/pieces.js)"
+  },
+  {
+   "id": "egg_speckled",
+   "sheet": "card-and-eggs",
+   "box": [
+    1753,
+    341,
+    1955,
+    626
+   ],
+   "ops": [
+    {
+     "op": "outline_cutout"
+    }
+   ],
+   "out": "components/pieces/assets/egg_speckled.png",
+   "use": "2D egg icon for UI; the 3D eggs take their colours from this art (src/pieces.js)"
+  },
+  {
+   "id": "egg_cream",
+   "sheet": "card-and-eggs",
+   "box": [
+    2059,
+    341,
+    2262,
+    621
+   ],
+   "ops": [
+    {
+     "op": "outline_cutout"
+    }
+   ],
+   "out": "components/pieces/assets/egg_cream.png",
+   "use": "2D egg icon for UI; the 3D eggs take their colours from this art (src/pieces.js)"
+  }
+ ],
+ "die_faces": {
+  "$comment": "Dice faces are composed: a warm wood square cut from the back wall, with food token art multiplied on top. Tokens are taken from the concept sheet boxes above (full resolution, not the 160px PNGs).",
+  "size": 512,
+  "wood": {
+   "sheet": "texture-sheet",
+   "box": [
+    1000,
+    437,
+    1300,
+    737
+   ],
+   "brightness": 1.25,
+   "saturation": 0.85,
+   "tint": [
+    196,
+    160,
+    118
+   ],
+   "tint_amount": 0.35,
+   "edge_darken": 0.62
+  },
+  "faces": {
+   "invertebrate": [
+    "token_invertebrate"
+   ],
+   "seed": [
+    "token_seed"
+   ],
+   "fish": [
+    "token_fish"
+   ],
+   "fruit": [
+    "token_fruit"
+   ],
+   "rodent": [
+    "token_rodent"
+   ],
+   "invertebrate_seed": [
+    "token_invertebrate",
+    "token_seed"
+   ]
+  },
+  "out_pattern": "components/birdfeeder/assets/die_{face}.jpg"
+ }
+}

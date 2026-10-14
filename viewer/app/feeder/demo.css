@@ -1,0 +1,88 @@
+/* Demo page only. The module itself has no CSS: it renders into whatever element you give it. */
+:root {
+  --ground: #e3e6da;
+  --ground-glow: #f1f2ea;
+  --ink: #2b2a24;
+  --ink-soft: #5d5b50;
+  --plate: rgba(250, 249, 243, 0.88);
+  --plate-line: rgba(60, 58, 48, 0.18);
+  --moss: #5f7042;
+  --moss-ink: #f6f7ef;
+  --font-display: "Alegreya SC", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-body: "Alegreya Sans", "Gill Sans", "Trebuchet MS", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ground: #1d221c; --ground-glow: #2c3329;
+    --ink: #ecebe2; --ink-soft: #b5b4a7;
+    --plate: rgba(32, 37, 31, 0.88); --plate-line: rgba(236, 235, 226, 0.16);
+    --moss: #93a96a; --moss-ink: #1a1f16;
+    color-scheme: dark;
+  }
+}
+
+html, body { height: 100%; }
+body {
+  margin: 0; overflow: hidden;
+  background: radial-gradient(ellipse 70% 60% at 50% 58%, var(--ground-glow), var(--ground) 70%);
+  background-color: var(--ground);
+  color: var(--ink);
+  font: 15px/1.4 var(--font-body);
+}
+#feeder { position: fixed; inset: 0; cursor: grab; }
+#feeder:active { cursor: grabbing; }
+
+.loading {
+  position: fixed; inset: 0; display: grid; place-items: center; pointer-events: none;
+  font-family: var(--font-display); font-size: 1.1rem; color: var(--ink-soft);
+}
+.loading[hidden] { display: none; }
+
+.plate {
+  position: fixed; padding: 12px 16px 14px;
+  background: var(--plate); border: 1px solid var(--plate-line); border-radius: 4px;
+  backdrop-filter: blur(6px);
+}
+header.plate { top: 16px; left: 16px; max-width: min(320px, calc(100% - 32px)); }
+.plate h1 { margin: 0; font: 700 1.45rem/1.1 var(--font-display); letter-spacing: 0.02em; }
+.plate p { margin: 6px 0 0; color: var(--ink-soft); font-size: 0.92rem; }
+
+.replay { top: 16px; right: 16px; width: 250px; display: flex; flex-direction: column; gap: 6px; }
+.replay h2 { margin: 0 0 2px; font: 700 0.85rem var(--font-display); letter-spacing: 0.08em; color: var(--ink-soft); }
+.replay .hint { margin: 0 0 6px; font-size: 0.8rem; }
+.replay code { font-size: 0.78rem; }
+.log { margin: 4px 0 0; padding: 8px 0 0 18px; border-top: 1px solid var(--plate-line); font-size: 0.78rem; color: var(--ink-soft); max-height: 150px; overflow: auto; }
+
+.bar {
+  position: fixed; left: 0; right: 0; bottom: 0; padding: 12px 16px 16px;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px;
+  pointer-events: none;
+}
+.bar > * { pointer-events: auto; }
+.tally {
+  display: flex; gap: 6px; align-items: center; min-height: 58px; padding: 6px 10px;
+  background: var(--plate); border: 1px solid var(--plate-line); border-radius: 4px; backdrop-filter: blur(6px);
+}
+.tally .label { font: 0.78rem var(--font-display); letter-spacing: 0.08em; color: var(--ink-soft); padding-right: 4px; }
+.tally .empty { font-size: 0.85rem; color: var(--ink-soft); padding: 0 6px; }
+.chip { display: flex; flex-direction: column; align-items: center; width: 54px; font-size: 0.7rem; color: var(--ink-soft); text-align: center; line-height: 1.1; }
+.chip .icons { display: flex; height: 34px; align-items: center; }
+.chip img { width: 34px; height: 34px; }
+.chip.double img { width: 26px; height: 26px; }
+.chip.double img + img { margin-left: -6px; }
+
+.controls { display: flex; gap: 8px; }
+button {
+  font: 700 1rem var(--font-display); letter-spacing: 0.04em; border-radius: 4px; cursor: pointer; padding: 10px 16px;
+  border: 1px solid var(--plate-line); background: var(--plate); color: var(--ink); backdrop-filter: blur(6px);
+}
+.replay button { font-size: 0.9rem; padding: 8px 12px; text-align: left; }
+button.primary { background: var(--moss); color: var(--moss-ink); border-color: transparent; padding: 12px 26px; font-size: 1.1rem; }
+button[aria-pressed="true"] { background: var(--ink); color: var(--ground); }
+button:disabled { opacity: 0.55; cursor: progress; }
+button:focus-visible { outline: 2px solid var(--moss); outline-offset: 2px; }
+
+@media (max-width: 720px) {
+  .replay { display: none; }
+  .plate p { display: none; }
+}

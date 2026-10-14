@@ -38,7 +38,30 @@ controls for the tree-search agent (see `wingsim/analysis/controls.py` for the m
 ## Replay logs and a viewer
 
 `docs/replay-log-format.md` describes the log files completely, with samples in `docs/samples/`.
-It is written to be handed to whoever builds a play-by-play viewer.
+It is the contract between the simulator and the viewer.
+
+`viewer/` plays logged games back on a 3D table in the browser (Three.js; needs Node and npm):
+
+```
+cd viewer
+npm install
+npm run dev        # http://<this machine>:5273/  (listens on all interfaces)
+npm test           # rebuilds every snapshot in docs/samples from the events
+```
+
+The opening page lists every log under `logs/` and `docs/samples/`; an exported `.json` can also
+be dropped on the page, and `/?log=docs/samples/coop-3p-greedy-every-decision.jsonl.gz&at=120`
+opens a log at a given position. Players sit around a round table with their mats, food, cubes
+for the turns left, bonus cards and hands; the goal board, birdfeeder, decks, tray and discard
+ride a lazy susan that turns to face the seat being watched. A side panel shows each decision:
+the options, what was chosen, the agent's values or the language model's reply and prompt, and
+what followed. Logs with a snapshot before every decision are shown exactly; per-turn logs are
+filled in from the events.
+
+The viewer reads only the log (and `wingsim/data/cards.json` for card text), never engine code.
+Where the log falls short for a viewer (events missing for some card movements, end of turn
+only implied, and a few nice-to-haves such as live goal counts) is written up in
+`viewer/FORMAT-REQUESTS.md` for the simulator side. See `viewer/README.md` for how it works.
 
 ## Language-model agent
 
@@ -68,6 +91,12 @@ wingsim/
   runner.py     experiment runner
   tune.py       per-condition weight tuning for the greedy bot
   game.py       plays one game between agents
+viewer/         browser replay viewer (Node; see viewer/README.md)
+  app/viewer/   log reader, event reducer, 3D table, playback, panels
+  components/   table pieces (mat, cards, goal board, birdfeeder, pieces) and their art
+  art/          concept sheets and the script that cuts textures from them
+  FORMAT-REQUESTS.md   log-format gaps for the simulator to fix
+docs/           replay-log-format.md and sample logs
 ```
 
 ## Where this differs from the spec
