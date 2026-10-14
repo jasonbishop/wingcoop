@@ -25,6 +25,8 @@ writes `{"cards": {...}, "lines": [...]}`. `lines` is the same list of objects a
 
 **Checking a log:** `.venv/bin/python -m wingsim.engine.log check <log.jsonl.gz>` rebuilds the game from the seed and the logged choices and compares every snapshot hash.
 
+**Older logs:** logs written before 13 October 2026 are also version 2 but lack the events and fields marked *(added)* below. `.venv/bin/python -m wingsim.engine.log relog <old.jsonl.gz> <new.jsonl.gz>` writes the same game again in the current form, keeping every choice and all agent data (language-model prompts and replies included), without calling any agent.
+
 ## 2. Conventions
 
 | Thing | Encoding |
@@ -85,6 +87,8 @@ The complete game state, hidden information included, at one moment. The log is 
 | `turn_no`, `round` | as in section 2 |
 | `player` | whose turn it is (`null` in the final snapshot). During setup this is not meaningful; use `state.pending[0]` |
 | `turn_start` | `true` if this is the first decision of a turn |
+| `goal_counts` | *(added)* each player's count so far for the current round's goal, during the turns of a round; `null` during setup and in the final snapshot. A count includes everything on the mat right now, so it can go down (an egg spent) as well as up |
+| `scores` | *(added)* the score as it stands, in the shape of section 5.3, bonus cards included. Before the game ends it is provisional: goal points are only those banked at earlier round ends |
 | `hash` | checksum used by the replay check; a viewer can ignore it |
 | `state` | the state object, section 5 |
 
@@ -129,7 +133,7 @@ Something that happened as a result of a choice, at the level a viewer would ani
 | `pay_egg` | removing an egg for the column cost | `["bird", id]` (the bird losing the egg) |
 | `take_die` | taking food from the birdfeeder | `["die", face, food]`; `["skip"]` where declining is allowed |
 | `reroll_feeder` | all dice in the feeder show one face | `["keep"]`, `["reroll"]` |
-| `draw_card` | drawing a bird card | `["tray", bird]`, `["deck"]` |
+| `draw_card` | drawing a bird card into the hand (followed by `cards_drawn`), or taking one for the American Oystercatcher draft (followed by `card_set_aside`) | `["tray", bird]`, `["deck"]` |
 | `lay_egg` | laying one egg | `["bird", id]`; `["skip"]` where declining is allowed |
 | `bonus_trade` | the row's optional trade for one extra | `["skip"]`, `["discard_card", bird]` (forest), `["discard_food", food]` (grassland), `["discard_egg", bird]` (wetland) |
 | `activate_power` | a brown, white or pink power may be used | `["activate", bird]`, `["skip"]` |
@@ -159,28 +163,33 @@ Decisions inside one turn can belong to other players: pink powers, and powers t
 | `setup` | `goals`, `first`, `tray`, `feeder` | the deal. `goals`: the 4 goal ids in round order; `first`: first player of round 1; `feeder`: list of die faces |
 | `setup_kept_birds` | `p`, `birds` | starting birds kept (the rest were discarded) |
 | `setup_discarded_food` | `p`, `food` | list of food indexes discarded |
-| `bonus_kept` | `p`, `bonus` | a bonus card was kept (setup, or a bird's power) |
+| `bonus_drawn` | `p`, `bird`, `cards` | *(added)* a power (on `bird`) took bonus cards off the top of `bonus_deck`, in the order listed, and set them aside (`state.set_aside.bonus`) until one is kept. If the bonus deck runs out part way, this event comes once before `bonus_reshuffled` and once after it |
+| `bonus_reshuffled` | `cards`, `deck` | *(added)* the bonus deck was empty, so `bonus_discard` was shuffled to become it. `cards` is how many; `deck` the new order (last element on top) |
+| `bonus_kept` | `p`, `bonus`, `discarded` | a bonus card was kept, at setup (from the player's 2 dealt cards) or by a power (from `set_aside.bonus`). *(added)* `discarded`: the cards not kept, which go on top of `bonus_discard` in that order |
 | `group_decision` | `kind`, `choice` | the group's answer, e.g. `choice: ["difficulty", 2]` |
 | `round_start` | `round`, `first`, `goal` | a round begins |
-| `turn_start` | `p`, `round`, `turn_no` | a turn begins |
+| `turn_start` | `p`, `round`, `turn_no` | a turn begins. The player's `pink_used` is emptied |
+| `turn_end` | `p` | *(added)* a turn is over: `actions_left[p]` goes down by 1, `turn` moves to the next seat and `turn_no` up by 1. It follows the end-of-turn `tray_refill` |
 | `action` | `p`, `action`, and for plays `bird`, `habitat` | `action` is `"play"`, `"food"`, `"eggs"`, `"cards"` or `"play_extra"` |
 | `food_spent` | `p`, `food` (vector), `why`, sometimes `bird` | `why`: `"bird_cost"` (with `bird`), `"bonus_trade"`, `"power_cost"` |
 | `egg_discarded` | `p`, `bird`, `why` | an egg left `bird`. `why`: `"bird_cost"`, `"bonus_trade"`, `"power_cost"` |
-| `card_discarded` | `p`, `bird`, `why` | a card went from hand to the discard pile. `why`: `"bonus_trade"`, `"end_of_turn"` |
+| `card_discarded` | `p`, `bird`, `why` | `bird` went on top of the discard pile. `why` `"bonus_trade"` or `"end_of_turn"`: from the hand. *(added)* `"predator_miss"`: the deck card a predator looked at and missed (it had already left the deck at the `predator` event) |
 | `bird_played` | `p`, `bird`, `habitat`, `slot` | a bird entered a mat; `slot` is its position from the left, from 0 |
 | `die_taken` | `p`, `face`, `food` | a die left the birdfeeder and the player gained that food |
 | `feeder_reset` | `dice`, `why` | all 5 dice were rolled into the feeder. `why`: `"empty"`, `"all_same"` |
 | `food_gained` | `p`, `food`, `n`, `source` | food from the supply (`source` is `"supply"`). Food from the feeder is reported by `die_taken` |
-| `cards_drawn` | `p`, `source`, `birds` | cards entered a hand. `source`: `"deck"`, `"tray"`, `"draft"` |
-| `cards_revealed` | `p`, `birds` | American Oystercatcher: the cards everyone picks from |
-| `card_tucked` | `p`, `bird`, `source`, sometimes `card` | a card was tucked behind `bird`. `source`: `"hand"` or `"deck"`; `card` is given when its identity was seen |
+| `cards_drawn` | `p`, `source`, `birds` | cards entered a hand. `source`: `"deck"` (off the top), `"tray"`, or `"draft"` (from `set_aside.birds`) |
+| `card_set_aside` | `p`, `source`, `bird` | *(added)* American Oystercatcher: the owner took `bird` from `source` (`"tray"` or `"deck"`) for the draft; it is in `set_aside.birds` until someone picks it. The tray is not refilled until the end of the turn |
+| `cards_revealed` | `p`, `birds` | American Oystercatcher: all the cards set aside are shown; players then take them with `draft_pick` decisions (`cards_drawn` with source `"draft"`), the owner last |
+| `card_tucked` | `p`, `bird`, `source`, `card` | `card` was tucked behind `bird`. `source`: `"hand"`, `"deck"` (off the top), or *(added)* `"look"` (the card a predator just looked at, already off the deck). *(added)* `card` is always given |
 | `eggs_laid` | `p`, `bird`, `n` | eggs were laid on `bird` |
 | `food_cached` | `p`, `bird`, `food`, `n`, `source` | food was cached on `bird`. `source` `"supply"`: it came from the general supply; `"player"`: the player moved food they had just gained onto the bird, so it leaves their supply |
 | `power` | `p`, `bird`, `color`, sometimes `repeated_by` | a power was used. `color`: `"brown"`, `"white"`, `"pink"` |
-| `predator` | `p`, `bird`, `kind`, `success`, and `dice` or `card` | a predator hunted. `kind` `"roll"` has `dice` (faces rolled outside the feeder); `kind` `"look"` has `card` (the deck card looked at) |
-| `bird_moved` | `p`, `bird`, `source`, `to` | a bird moved between habitats (indexes) |
-| `tray_refill` | `tray` | the tray after refilling, at the end of a turn or round |
-| `deck_reshuffled` | `cards` | the discard pile became the deck |
+| `predator` | `p`, `bird`, `kind`, `success`, and `dice` or `card` | a predator hunted. `kind` `"roll"` has `dice` (faces rolled outside the feeder; the feeder is unchanged). `kind` `"look"` has `card`: the top card of the deck, which leaves the deck now. Next comes `card_tucked` with source `"look"` on a hit, or `card_discarded` with why `"predator_miss"` on a miss |
+| `bird_moved` | `p`, `bird`, `source`, `to` | a bird moved between habitats (indexes). It is always the rightmost bird of row `source` and goes to the right-hand end of row `to`, keeping its eggs, cache and tucked cards |
+| `tray_cleared` | `birds` | *(added)* at the end of a round, the birds left in the tray go on top of the discard pile, in the order listed |
+| `tray_refill` | `tray` | the tray after refilling from the top of the deck, at the end of a turn or round (emitted every time, even if nothing changed). The cards already there keep their places and new ones are added at the end. If the deck runs out part way, one `tray_refill` comes before `deck_reshuffled` and another after it |
+| `deck_reshuffled` | `cards`, *(added)* `deck` | the deck was empty, so the discard pile was shuffled to become it. `cards` is how many; `deck` is the new order (last element on top) |
 | `round_end` | `round`, `goal`, `counts`, `points`, `group_delta`, `group_score`, `info` | round-goal scoring. `counts`: each player's raw count; `points`: individual goal points awarded; `group_delta`: change in group score. With co-op goals `info` is `["coop", difficulty, success]`; otherwise `null` |
 | `final_scoring` | `scores` | the final result, in the shape of section 5.3 |
 
@@ -190,23 +199,24 @@ Decisions inside one turn can belong to other players: pink powers, and powers t
 
 | Field | Meaning |
 | --- | --- |
-| `phase` | `"setup"`, `"pre_round"`, `"turns"`, `"round_end"`, `"over"` |
+| `phase` | `"setup"`, `"turns"` or `"over"` in every snapshot. (The engine also has `"pre_round"` and `"round_end"`, but no decision is ever pending in them, so no snapshot shows them) |
 | `round`, `turn_no` | as in section 2 |
 | `first` | the first player of the current round |
 | `turn` | whose turn it is |
 | `actions_left` | turns each player still has this round |
 | `deck` | bird ids; the **last** element is the top card |
-| `discard` | the discard pile |
+| `discard` | the discard pile; the **last** element is the top (most recently discarded) |
 | `tray` | the face-up birds (up to 3) |
 | `feeder` | die faces currently in the birdfeeder (1 to 5 of them; the other dice are outside it) |
-| `bonus_deck`, `bonus_discard` | bonus card ids; last element is the top |
+| `bonus_deck`, `bonus_discard` | bonus card ids; the last element is the top (for `bonus_discard`, the most recently discarded) |
 | `tucked` | ids of every tucked card in the game, in no useful order (which bird each sits behind is not recorded; see `players[].board[][].tucked` for counts) |
 | `goals` | the 4 goal ids, in round order |
 | `goal_points` | individual goal points banked so far, per player (always 0 with co-op goals) |
 | `group_score` | the shared group score (0 without co-op goals) |
 | `goal_log` | one entry per finished round: `[round, counts, points, group_delta, info]`, as in the `round_end` event |
 | `players` | one object per seat, section 5.2 |
-| `variant` | house-rule data. With co-op goals: `{"coop.d": difficulty}` (`null` before it is first set) |
+| `variant` | house-rule data. With co-op goals: `{"coop.d": difficulty}`. It is `{}` during setup, `{"coop.d": null}` from the first `round_start` until the group first sets the difficulty |
+| `set_aside` | *(added)* `{"birds": [...], "bonus": [...]}`: cards in no pile, hand or mat because a choice about them is pending: the bonus cards a power drew (until `bonus_kept`) and the birds taken for the American Oystercatcher draft (until each is picked). Both lists are empty almost all the time |
 | `pending` | `[player, kind, options]` for the decision about to be made (`player` is `-1` for the group); `null` when the game is over |
 | `rng`, `stack`, `registers` | engine internals; a viewer should ignore them. `rng` is a 64-bit integer, larger than JavaScript numbers hold exactly |
 
@@ -233,7 +243,7 @@ The `final_scoring` event carries:
 
 - A player's `total` is the sum of the six categories. `goals` is 0 under co-op goals.
 - `team_total` = sum of the players' totals + `group`.
-- A running score for any snapshot can be computed the same way from the state: for each bird on the mat add its printed points (`vp` in the card reference), its `eggs`, `cached` and `tucked`; add `goal_points`. Bonus-card points need the bonus rules and are easiest to show only at the end.
+- Every snapshot carries the running score in this shape as `scores` (section 4.2), bonus cards included, so a viewer never needs to compute one. Between snapshots, the parts that events change are easy to keep up: a bird's printed points (`vp` in the card reference), its `eggs`, `cached` and `tucked`, and `goal_points`; bonus points need the bonus rules, so take them from the next snapshot.
 
 ## 6. Agent data: `seats[].settings` and `decision.info`
 
@@ -254,8 +264,8 @@ In an exported file this is the top-level `cards` object. Otherwise read `wingsi
 
 | Section | Fields |
 | --- | --- |
-| `birds` | `name`; `color` (`"brown"`, `"white"`, `"pink"` or `null` for no power); `vp` (printed points); `nest`; `egg_limit`; `wingspan` (cm); `habitats` (list of habitat indexes it may be played in); `cost` (food vector); `wild` (number of any-food symbols in the cost); `either` (`true` if the cost is one food chosen from those marked in `cost`); `predator`; `flocking`; `text` (printed power text, with symbols written like `[fish]`); `caches` (food name this bird's power caches on it, or `null`) |
-| `bonus` | `name`, `condition`, `vp_text` |
+| `birds` | `name`; *(added)* `scientific` (scientific name); `color` (`"brown"`, `"white"`, `"pink"` or `null` for no power); `vp` (printed points); `nest`; `egg_limit`; `wingspan` (cm); `habitats` (list of habitat indexes it may be played in); `cost` (food vector); `wild` (number of any-food symbols in the cost); `either` (`true` if the cost is one food chosen from those marked in `cost`); `predator`; `flocking`; `text` (printed power text, with symbols written like `[fish]`); `caches` (food name this bird's power caches on it, or `null`) |
+| `bonus` | `name`, `condition`, `vp_text` (printed scoring, symbols written like `[point]`) |
 | `goals` | `text` (printed form, e.g. `"[egg] in [bowl]"`), `kind`, `param` |
 
 Goal `kind` values: `birds_in_habitat` and `eggs_in_habitat` (`param` is a habitat name), `nest_birds_with_egg` and `eggs_in_nest` (`param` is a nest type), `egg_sets`, `total_birds`.
@@ -272,14 +282,41 @@ The card text belongs to Stonemaier Games and the data comes from wingsearch (GP
 4. List the events with `seq` = `k` as "what happened next".
 5. The next snapshot (`before_seq` = `k+1`, or `null` at the end) shows the result.
 
-**Logs with per-turn snapshots only.** Start each turn from its snapshot (`turn_start: true`) and apply events to move forward inside the turn. Each event in section 4.6 says exactly what changed, with these details:
+**Logs with per-turn snapshots only.** Start each turn from its snapshot (`turn_start: true`) and apply the events in order to move forward inside the turn. Applying every event after one snapshot gives exactly the next snapshot; `wingsim/tests/reduce_log.py` is a short reference implementation, and the tests check it on hundreds of games. What each event changes:
 
-- `die_taken` removes one die showing `face` from `feeder` and adds 1 `food` to the player.
-- `cards_drawn` with source `"tray"` removes the cards from `tray`; with `"deck"` it pops from the end of `deck`.
-- `bird_played` removes the bird from the hand and appends it to the row.
-- `card_tucked` with source `"hand"` removes `card` from the hand; either way add 1 to the bird's `tucked`.
-- `food_cached` adds `n` to the bird's `cached`; when `source` is `"player"` also subtract it from the player's food.
-- `tray_refill` and `feeder_reset` give the new tray and feeder outright.
+| Event | Change to the state |
+| --- | --- |
+| `setup_kept_birds` | the hand becomes `birds`; the other dealt birds go on top of `discard`, in hand order |
+| `setup_discarded_food` | subtract 1 of each listed food |
+| `bonus_drawn` | pop each of `cards` off the end of `bonus_deck` into `set_aside.bonus` |
+| `bonus_reshuffled`, `deck_reshuffled` | the deck becomes `deck`; its discard pile becomes empty |
+| `bonus_kept` | add `bonus` to the player's `bonus`; move `discarded` to the end of `bonus_discard`. Take both from `set_aside.bonus` if they are there (a power), otherwise from the player's `bonus` (setup) |
+| `group_decision` | for `set_difficulty`, set `variant["coop.d"]` |
+| `round_start` | set `round` and `first`; `turn` = `first`; `actions_left` = 8, 7, 6 or 5 for everyone; `phase` = `"turns"`; with co-op goals, `variant["coop.d"]` exists from now on |
+| `turn_start` | set `turn`, `turn_no`, `round`; empty the player's `pink_used` |
+| `turn_end` | `actions_left[p]` − 1; `turn` = next seat; `turn_no` + 1 |
+| `food_spent` | subtract the food vector |
+| `egg_discarded` | the bird's `eggs` − 1 |
+| `card_discarded` | append `bird` to `discard`; unless `why` is `"predator_miss"`, remove it from the hand |
+| `bird_played` | remove the bird from the hand; insert it in row `habitat` at position `slot` with no eggs, cache or tucked cards |
+| `die_taken` | remove one die showing `face` from `feeder`; add 1 `food` |
+| `feeder_reset` | `feeder` = `dice` |
+| `food_gained` | add `n` of `food` |
+| `cards_drawn` | for each bird: source `"tray"` removes it from `tray`, `"deck"` pops it off the end of `deck`, `"draft"` removes it from `set_aside.birds`; then append it to the hand |
+| `card_set_aside` | remove `bird` from `tray`, or pop it off `deck`; append it to `set_aside.birds` |
+| `card_tucked` | source `"hand"` removes `card` from the hand, `"deck"` pops it off `deck`, `"look"` takes nothing; append `card` to `tucked`; the bird's `tucked` + 1 |
+| `eggs_laid` | the bird's `eggs` + `n` |
+| `food_cached` | the bird's `cached` + `n`; with source `"player"`, also subtract `n` of `food` from the player |
+| `power` | if `color` is `"pink"`, add `bird` to the player's `pink_used` |
+| `predator` | with `kind` `"look"`, pop `card` off `deck` (its next event says where it went) |
+| `bird_moved` | move the last bird of row `source` to the end of row `to` |
+| `tray_cleared` | append the tray to `discard`; the tray becomes empty |
+| `tray_refill` | pop each card beyond the current tray's length off `deck`; `tray` = `tray` |
+| `round_end` | append `[round, counts, points, group_delta, info]` to `goal_log`; add `points` to `goal_points`; set `group_score`; `first` moves one seat on; `round` + 1 (it is 5 after round 4) |
+| `final_scoring` | `phase` = `"over"` |
+| `setup`, `action`, `cards_revealed` | nothing (they announce; other events make the changes) |
+
+The events that make up the end of a turn come in this order: `tray_refill`, `turn_end`, then either the next `turn_start` or, after a round's last turn, `round_end`, `tray_cleared`, `tray_refill` and (unless the game is over) the group's decision and `round_start`. `goal_counts`, `scores`, `players[].board[][]` and the rest can be shown from the snapshots; between snapshots, `scores` are not kept up by events.
 
 If exactness inside a turn matters, ask for `snapshots: decision` logs instead; they are about twice as large (about 75 KB gzipped for a 3-player game against about 40 KB) and remove the need to apply events.
 
@@ -300,6 +337,8 @@ The simulator does not support interactive play yet, and this file format will n
 | `pending[2]` (the options), when it is another player's decision that lists their hidden cards | `null` |
 | `rng` | `0` |
 | everything else (mats, food, tray, birdfeeder, discard pile, goals, scores) | as in a snapshot |
+
+`set_aside` is visible too, except that with closed hands the bonus cards another player is choosing between are `-1`.
 
 So a board renderer that draws card id `-1` as a face-down card, and copes with `pending` options being `null`, works for replays and for a live player's view alike. With open hands (the default) only the deck, tucked cards and bonus decks are hidden.
 

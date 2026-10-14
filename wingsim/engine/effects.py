@@ -118,19 +118,26 @@ def x_tuck(s, p, c, step, chain):
         s.tucked.append(card)
         slot[3] += 1
         s.did = True
-        R.emit(s, "card_tucked", p=p, bird=c, source="deck")
+        R.emit(s, "card_tucked", p=p, bird=c, card=card, source="deck")
 
 
 def x_draw_bonus_keep(s, p, c, step, chain):
     cards = []
+    reported = 0
     for _ in range(step["draw"]):
         if not s.bonus_deck:
             if not s.bonus_discard:
                 break
+            if len(cards) > reported:  # report the cards drawn before the reshuffle first
+                R.emit(s, "bonus_drawn", p=p, bird=c, cards=cards[reported:])
+                reported = len(cards)
             s.bonus_deck = s.bonus_discard
             s.bonus_discard = []
             R.shuffle(s, s.bonus_deck)
+            R.emit(s, "bonus_reshuffled", cards=len(s.bonus_deck), deck=list(s.bonus_deck))
         cards.append(s.bonus_deck.pop())
+    if len(cards) > reported:
+        R.emit(s, "bonus_drawn", p=p, bird=c, cards=cards[reported:])
     if cards:
         s.stack.append(("bonus_keep", p, tuple(cards)))
 
@@ -181,9 +188,10 @@ def x_look_at_deck_card(s, p, c, step, chain):
         s.tucked.append(card)
         R.find(s.players[p], c)[2][3] += 1
         s.pinkq.append((R.T_PREDATOR, p, 0))
-        R.emit(s, "card_tucked", p=p, bird=c, card=card, source="deck")
+        R.emit(s, "card_tucked", p=p, bird=c, card=card, source="look")
     else:
         s.discard.append(card)
+        R.emit(s, "card_discarded", p=p, bird=card, why="predator_miss")
 
 
 def x_repeat_power(s, p, c, step, chain):

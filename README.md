@@ -26,6 +26,7 @@ The engine itself uses only the standard library.
 .venv/bin/python -m wingsim.tune wingsim/experiments/coop-goals-small.yaml --minutes 18 --workers 8
 .venv/bin/python -m wingsim.runner wingsim/experiments/llm-smoke.yaml --workers 1 --no-report
 .venv/bin/python -m wingsim.engine.log export <log.jsonl.gz> <out.json>     # one JSON file for a viewer
+.venv/bin/python -m wingsim.engine.log relog <old.jsonl.gz> <new.jsonl.gz>    # rewrite an older log in the current format
 ```
 
 A run writes `results/<experiment>/games.parquet` (one row per game),

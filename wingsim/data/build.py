@@ -202,7 +202,7 @@ def cached_food(steps):
 def parse_vp(text):
     m = re.fullmatch(r"(\d+)\[point\] per bird", text)
     if m:
-        return {"per": int(m[1])}
+        return {"per": int(m[1]), "vp_text": text}
     tiers = []
     for part in text.split(";"):
         m = re.fullmatch(r"\s*(\d+)(?: to (\d+)|\+)? birds: (\d+)\[point\]", part)
@@ -214,8 +214,9 @@ def parse_vp(text):
     # tier starts one above the lower tier's printed range.
     first = re.match(r"\s*(\d+) to (\d+)", text)
     if first and len(tiers) == 2 and tiers[1][0] <= int(first[2]):
+        text = text.replace(f"{tiers[1][0]}+ birds", f"{int(first[2]) + 1}+ birds")
         tiers[1][0] = int(first[2]) + 1
-    return {"tiers": tiers}
+    return {"tiers": tiers, "vp_text": text}
 
 
 # Bonus cards whose count comes from the game state rather than a bird column.
@@ -265,8 +266,8 @@ def build():
     bonus = []
     for b in sorted(bonus_raw, key=lambda b: b["id"]):
         name = b["Bonus card"]
-        entry = {"id": b["id"], "name": name, "condition": b["Condition"], "vp_text": b["VP"]}
-        entry.update(parse_vp(b["VP"]))
+        entry = {"id": b["id"], "name": name, "condition": b["Condition"]}
+        entry.update(parse_vp(b["VP"]))  # vp_text and tiers (or per)
         if name in STATE_BONUS:
             entry["count"] = STATE_BONUS[name]
         else:
@@ -283,6 +284,7 @@ def build():
         bird = {
             "id": b["id"],
             "name": b["Common name"],
+            "scientific": b["Scientific name"],
             "color": b.get("Color"),
             "vp": int(b["Victory points"]),
             "nest": b["Nest type"],

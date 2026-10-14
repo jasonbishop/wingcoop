@@ -128,11 +128,24 @@ def state_to_dict(s):
             for p in s.players
         ],
         "variant": _plain(s.variant),
+        "set_aside": set_aside(s),
         "stack": [_frame_plain(f) for f in s.stack],
         "pending": _plain(s.pend),
         "registers": [s.did, s.memo, s.last_food, _plain(s.pinkq), s.eot_discard, s.food_action, s.rodent,
                       s.setup_idx],
     }
+
+
+def set_aside(s):
+    """Cards out of every pile while a choice about them is pending: the bonus cards a power drew, and the
+    birds taken for the American Oystercatcher draft. They live only in stack frames."""
+    birds, bonus = [], []
+    for f in s.stack:
+        if f[0] in ("draft", "draft_pick"):
+            birds.extend(f[2])
+        elif f[0] == "bonus_keep":
+            bonus.extend(f[2])
+    return {"birds": birds, "bonus": bonus}
 
 
 def _frame_plain(f):
@@ -144,4 +157,6 @@ def _frame_plain(f):
 
 def state_hash(s):
     import hashlib
-    return hashlib.sha1(json.dumps(state_to_dict(s), sort_keys=True).encode()).hexdigest()
+    d = state_to_dict(s)
+    del d["set_aside"]  # derived from the stack, which the hash already covers; leaving it out keeps old logs valid
+    return hashlib.sha1(json.dumps(d, sort_keys=True).encode()).hexdigest()

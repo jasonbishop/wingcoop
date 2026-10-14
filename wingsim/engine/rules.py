@@ -68,13 +68,18 @@ def draw_from_deck(s):
         s.deck = deck = s.discard
         s.discard = []
         shuffle(s, deck)
-        emit(s, "deck_reshuffled", cards=len(deck))
+        emit(s, "deck_reshuffled", cards=len(deck), deck=list(deck))
     return deck.pop()
 
 
 def refill_tray(s):
     tray = s.tray
+    start = len(tray)
     while len(tray) < 3:
+        if not s.deck and len(tray) > start:
+            # The deck runs out part way: report the cards drawn so far before the reshuffle event.
+            emit(s, "tray_refill", tray=list(tray))
+            start = len(tray)
         c = draw_from_deck(s)
         if c < 0:
             break
@@ -252,6 +257,7 @@ def end_round(s):
     s.goal_log = s.goal_log + ((r, counts, tuple(ind), delta, info),)
     emit(s, "round_end", round=r, goal=goal.id, counts=list(counts), points=list(ind), group_delta=delta,
          group_score=s.group_score, info=info)
+    emit(s, "tray_cleared", birds=list(s.tray))
     s.discard.extend(s.tray)
     s.tray = []
     refill_tray(s)
@@ -293,9 +299,10 @@ def r_setup(s, f, ch):
         emit(s, "setup_discarded_food", p=p, food=list(ch[1]))
         s.stack[-1] = ("setup", p, 2)
     else:
-        s.bonus_discard.extend(b for b in pl.bonus if b != ch[1])
+        discarded = [b for b in pl.bonus if b != ch[1]]
+        s.bonus_discard.extend(discarded)
         pl.bonus = [ch[1]]
-        emit(s, "bonus_kept", p=p, bonus=ch[1])
+        emit(s, "bonus_kept", p=p, bonus=ch[1], discarded=discarded)
         s.stack.pop()
 
 
@@ -335,6 +342,7 @@ def finish_turn(s, p):
     s.actions_left[p] -= 1
     s.turn = (p + 1) % len(s.players)
     s.turn_no += 1
+    emit(s, "turn_end", p=p)
     s.stack.pop()
 
 
@@ -817,7 +825,7 @@ def r_bonus_keep(s, f, ch):
     _, p, cards = f
     s.players[p].bonus.append(ch[1])
     s.bonus_discard.extend(b for b in cards if b != ch[1])
-    emit(s, "bonus_kept", p=p, bonus=ch[1])
+    emit(s, "bonus_kept", p=p, bonus=ch[1], discarded=[b for b in cards if b != ch[1]])
     s.stack.pop()
 
 
@@ -952,6 +960,7 @@ def h_draft(s, f):
 def r_draft(s, f, ch):
     _, p, pool, need = f
     c = _take_card(s, ch)
+    emit(s, "card_set_aside", p=p, source=ch[0], bird=c)
     s.stack[-1] = ("draft", p, pool + (c,), need - 1)
 
 
