@@ -230,6 +230,7 @@ def test_openrouter_key_is_sent_only_to_openrouter(endpoint, monkeypatch):
 
 def test_replies_are_read_past_thinking_tags_and_plan_blocks():
     assert parse_choice("<think>maybe 9</think>ANSWER: 2", 3) == 2
+    assert parse_choice("<think>Option 2 is solid.\nANSWER: 3", 3, strict=True) == 3   # stray tag, thinking off
     assert parse_choice("ANSWER: 3\nPLAN:\nNeed next: 2 fish\nEND PLAN", 4) == 3
     assert llm.parse_plan(PLANNED).startswith("Engine: forest")
     assert llm.parse_numbers("I keep two. ANSWER: 1, 4", 5) == [1, 4]

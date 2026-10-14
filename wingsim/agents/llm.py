@@ -67,15 +67,23 @@ def load_env(path=".env"):
         os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
 
 
+def drop_thinking(reply):
+    """The reply without hidden reasoning (<think>...</think>). An opening tag with no closing tag is dropped on
+    its own: some local servers (mlx-openai-server with a Qwen reasoning parser) put a stray '<think>' before
+    the visible answer when thinking is off."""
+    reply = re.sub(r"<think>.*?</think>", "", reply or "", flags=re.S)
+    return reply.replace("<think>", "")
+
+
 def strip_reply(reply):
     """The reply without hidden-reasoning tags (<think>...</think>) or a plan block."""
-    reply = re.sub(r"<think>.*?(</think>|$)", "", reply or "", flags=re.S)
+    reply = drop_thinking(reply)
     return re.sub(r"PLAN:.*?(END PLAN|$)", "", reply, flags=re.S | re.IGNORECASE)
 
 
 def parse_plan(reply):
     """The plan block of a reply (between 'PLAN:' and 'END PLAN'), or None."""
-    reply = re.sub(r"<think>.*?(</think>|$)", "", reply or "", flags=re.S)
+    reply = drop_thinking(reply)
     m = re.search(r"PLAN:\s*(.*?)\s*(END PLAN|$)", reply, flags=re.S | re.IGNORECASE)
     if not m or not m.group(1).strip():
         return None
