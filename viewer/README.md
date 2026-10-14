@@ -9,7 +9,7 @@ Built on the birdtable components (Three.js and cannon-es), textured from the co
 ```bash
 npm install
 npm run dev        # http://<this machine>:5273/  (listens on all interfaces)
-npm test           # log reader and event reducer, checked against the sample games
+npm test           # log reader, event reducer and model-panel helpers, checked against the sample games
 ```
 
 ## Opening a game
@@ -30,6 +30,17 @@ Logs with a snapshot before every decision (`logging: {snapshots: decision}` in 
 
 **Turns tab.** Every turn with its action; click to jump. **Game tab.** Settings, seats, round-goal results, final scores.
 
+**Model tab** (games with a language-model seat). Follows the replay cursor: it shows the model decision at the cursor, or the latest one before it.
+- Each reply split into its parts: hidden thinking (collapsed, from `info.thinking` or a `<think>…</think>` pair; a lone `<think>` is a server quirk and only the tag is dropped), the reasoning, the `ANSWER:` line, and in plan games the plan block. With two replies the second is marked *retry* and the first *not accepted*.
+- **Random move** in a red box when `fallback` is `"random"`: the option played was not the model's choice.
+- **Cut off** when `usage.completion_tokens` is within a few tokens of `max_tokens` (plus 600 at action decisions in plan games). The usage belongs to the last reply only, so a cut-off first reply can't be flagged yet (`FORMAT-REQUESTS.md`, L2).
+- **Plan** (plan seats): the plan shown against the plan written back, line by line, with word-level highlights; and above the search, a timeline with a lane per plan line and a mark wherever it changed. Click a mark to go there.
+- **Search** across the reasoning and hidden thinking (not the plan blocks, which all say "Round goal:"), and **filters**: fallbacks, retries, cut off, plan changed. Matches are listed with an excerpt; ◀ ▶ step through them.
+- **Transcript**: every decision in order on one page, with options, replies, choice and plan diff side by side, and other players' decisions as one line each. Same search and filters. `&transcript=1` in the address opens it.
+- **Rules**: a drawer with the seat's system prompt (its rules summary), search words marked, to compare what the model was told with how it reasons.
+
+Drag the panel's left edge to widen it (double-click to reset); the width is remembered in this browser.
+
 **Controls.** Play / pause, one decision forward or back, previous / next turn or round, a scrubber, speed. `Space` plays, `←` `→` step, `Shift`+arrows jump by turn. "Watch" chooses whose seat the camera sits behind (it follows the turn by default); Seat / Mat / Middle / Table are camera distances. Drag to orbit, scroll to zoom. Click a card to read it, a score chip or name plate to sit at that seat.
 
 ## Layout
@@ -43,16 +54,18 @@ app/viewer/
   replay/load.js           files, the dev server's log list
   data.js                  log conventions and card reference -> what components draw
   describe.js              sentences for events and decisions
+  llm.js                   language-model decisions: reply parts, plans, word diffs, flags, search
   player.js                ReplayPlayer: step, scrub, autoplay, camera following
   scene/GameTable.js       the whole table: setState(state), animate(event), reconcile(state)
   scene/layout.js          where seats, shared pieces and cameras go
-  ui/                      top bar, tabs, transport, inspector, opening screen, styles
+  ui/                      top bar, tabs, transport, inspector, opening screen, styles;
+                           ui/model.js: the Model tab, transcript and rules drawer
   birdArt.js               finds bird illustrations by id or name
 app/feeder.html, feeder/   the birdfeeder on its own (physics tuning)
 components/                table pieces: no game rules, no HTML (see below)
 server/api.js              dev-server routes: /api/runs, /api/log, /api/cards (read-only)
 art/                       concept sheets, manifest.json, extract.py, find_boxes.py
-tests/                     node tests for the log reader and reducer
+tests/                     node tests for the log reader, reducer and language-model helpers
 tools/                     headless screenshots and whole-game playthrough checks
 FORMAT-REQUESTS.md         what the simulator's log should add or document
 ```

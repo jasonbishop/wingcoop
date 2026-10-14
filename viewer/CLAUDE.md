@@ -5,6 +5,7 @@ Replay viewer for the simulator's game logs: a 3D table (Three.js components) pl
 ## Ground rules
 - **The log format document is the contract.** Build from `../docs/replay-log-format.md`, not from the engine source, and never edit anything under `../wingsim` from here. If the log lacks something the viewer needs, or the document is silent on it, write it up in `FORMAT-REQUESTS.md` for the simulator side (reading the engine to pin down what actually happens is fine for that); don't work around it by re-implementing game rules in the viewer.
 - **Components render; the app decides.** Nothing in `components/` knows game rules, log conventions or has HTML UI. Those live in `app/viewer/`.
+- **Language-model data is read as logged.** `llm.js` splits replies for display and diffs plans, but takes `chosen`, `fallback`, `plan` and `plan_updated` from the log as they are, even when they look wrong (that is how `FORMAT-REQUESTS.md` L1 was found).
 - **Every action needs both forms.** An animated method (`await mat.doThing()`) and a `setState()`/`getState()` that reproduces its result instantly. `setState()` should rebuild only what differs.
 - **The state is the truth, animations are best effort.** `GameTable.animate(event)` moves pieces; `reconcile(state)` then makes the table agree. A new event needs a line in `replay/reduce.js` (and its test still passing) before it needs an animation.
 - **Use `fly()` / `tweens`** for movement and `tweens.wait()` for pauses, so speed, skip and scrub keep working. No `setTimeout` or own requestAnimationFrame loop inside an animation.
@@ -14,7 +15,7 @@ Replay viewer for the simulator's game logs: a 3D table (Three.js components) pl
 - Birdfeeder rolls are simulate-then-playback; don't make them depend on live physics.
 
 ## Checking your work
-- `npm test`: reducer and log reader against `../docs/samples`. `WINGSIM_LOGS=<dir> npm test` adds every log under a folder.
+- `npm test`: reducer, log reader and `llm.js` against `../docs/samples`. `WINGSIM_LOGS=<dir>[:<dir>…] npm test` adds every log under those folders (e.g. `WINGSIM_LOGS=../logs:../../logs`).
 - `npm run build` must succeed (viewer page and feeder demo).
 - `npm run dev` serves on port 5273 (5173 is often taken on this machine). The page exposes `window.viewer` (`replay`, `game`, `player`, `hud`, `tweens`).
 - No desktop browser here: use `tools/shot.mjs` for screenshots and `tools/playthrough.mjs` to run whole games through the animations (page errors, and events whose animation ended somewhere the state disagrees with). Both run in the `mcr.microsoft.com/playwright` podman image; the command is in each file's header. Run them one at a time: software WebGL uses every core.
