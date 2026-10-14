@@ -5,9 +5,10 @@
 #               starting birds chosen by naming them
 #   plan_after  + a line per action option saying what it changes right away
 # Compare seat 0's score (p0_total) and its margin over the bot (p0_total - p1_total), paired by seed.
-# Qwen3.6-35B-A3B (MoE) on the local server, which batches up to 3 replies. This model reasons at length
+# Qwen3.6-35B-A3B (MoE) on the local server, which batches up to 2 replies (3 ran the Mac
+# out of GPU buffers after 20 minutes). This model reasons at length
 # despite "three sentences at most", so replies get 1500 tokens (2100 with a plan).
-# Run with --workers 3, and --resume after a stop.
+# Run with --workers 2, and --resume after a stop.
 name: llm-prompts-moe
 seeds: {start: 101, count: 10}
 players: [2]
