@@ -121,7 +121,7 @@ def test_unparsable_reply_is_retried_once_then_random_and_logged(endpoint, monke
     assert a.info()["replies"] == ["hmm, hard to say", "ANSWER: 5"] and a.info()["fallback"] is None
     assert a.stats["retries"] == 1 and a.stats["fallbacks"] == 0
     assert "ANSWER: <number>" in a.system and a.max_tokens == 600
-    assert e.requests[1]["body"]["max_tokens"] == 20 and "Do not explain" in e.requests[1]["body"]["messages"][-1]["content"]
+    assert e.requests[1]["body"]["max_tokens"] == 300 and "Do not start over" in e.requests[1]["body"]["messages"][-1]["content"]
     e2 = endpoint(["no idea"])
     s, d, b = agent_at_first_decision(e2.url, monkeypatch)
     choice = b.choose(api.observe(s, d.player), d)
@@ -302,3 +302,12 @@ def test_separate_thinking_text_is_logged(endpoint, monkeypatch):
     s, d, b = agent_at_first_decision(e2.url, monkeypatch, reasoning=True)
     b.choose(api.observe(s, d.player), d)
     assert "thinking" not in b.info()
+
+
+def test_full_reasoning_relaxes_the_length_and_raises_the_limit(endpoint, monkeypatch):
+    e = endpoint(["ANSWER: 1"])
+    s, d, a = agent_at_first_decision(e.url, monkeypatch, reasoning="full")
+    assert a.reasoning and a.full and a.max_tokens == 4000 and a.settings()["reasoning"] == "full"
+    assert "a few short paragraphs at most" in a.system and "three sentences" not in a.system
+    s, d, b = agent_at_first_decision(e.url, monkeypatch, reasoning=True)
+    assert not b.full and b.max_tokens == 600 and "three sentences at most" in b.system

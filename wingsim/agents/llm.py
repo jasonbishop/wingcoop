@@ -37,6 +37,11 @@ from .base import Agent
 ANSWER_ONLY = "Reply with only the number of the option you choose. No other text."
 ANSWER_REASONED = ("Think briefly (three sentences at most) about which option best serves your objective, "
                    "then finish with a line of the form 'ANSWER: <number>'.")
+# reasoning: "full" asks for as much reasoning as the decision needs (for free local models, and for reading
+# how the model understands the rules); plain reasoning keeps it to a few sentences, to save paid tokens.
+ANSWER_FULL = ("Think through which option best serves your objective, in a few short paragraphs at most: what "
+               "each serious option gains now and what it sets up for later rounds. Then finish with a line of the "
+               "form 'ANSWER: <number>'.")
 PLAN_FORM = "PLAN:\nEngine: ...\nBonus target: ...\nRound goal: ...\nNeed next: ...\nPivot if: ...\nEND PLAN"
 PLAN_ASK = ("First check your plan against the position above: does it still hold given what has changed? Keep it, "
             "adjust it or drop it, and say why in one or two sentences. Then give your choice on a line of the form "
@@ -45,6 +50,14 @@ PLAN_LIMIT = 700          # characters kept from a plan
 NOTE_LIMIT = 400          # characters kept from the reasoning behind this turn's action
 KEEP_ASK = ("Reply with your reasoning in three sentences at most, then a line of the form 'ANSWER: <numbers>' "
             "listing the birds you keep, separated by commas (for example 'ANSWER: 1, 4'), or 'ANSWER: none'.")
+PLAN_ASK_FULL = ("First check your plan against the position above: does it still hold given what has changed? Think "
+                 "through your options, taking the space you need, and decide whether to keep, adjust or drop the "
+                 "plan. Then give your choice on a line of the form 'ANSWER: <number>'. Then write your updated "
+                 "plan, short, in exactly this form:\n" + PLAN_FORM)
+KEEP_ASK_FULL = ("Think through which birds to keep, taking the space you need, then finish with a line of the form "
+                 "'ANSWER: <numbers>' listing the birds you keep, separated by commas (for example 'ANSWER: 1, 4'), "
+                 "or 'ANSWER: none'.")
+RETRY_LIMIT = 300         # tokens for the reply to "your answer was cut off"
 
 # Spending is tracked per process, across every language-model seat in it.
 SPEND = {"calls": 0, "prompt_tokens": 0, "completion_tokens": 0, "cost_usd": 0.0}
@@ -138,13 +151,14 @@ class LLMAgent(Agent):
         if self.plan:
             reasoning = True
         self.prompt = prompt
-        self.reasoning = bool(reasoning)   # ask for a few visible sentences before the answer
+        self.full = reasoning == "full"    # as much visible reasoning as the decision needs
+        self.reasoning = bool(reasoning)   # visible reasoning before the answer (a few sentences unless full)
         # Hidden model-side thinking: None switches it off (on OpenRouter); "low", "medium" or "high"
         # asks for that much effort. Thinking tokens count against max_tokens and are billed.
         self.thinking = thinking
         self.temperature = temperature
         if max_tokens is None:
-            max_tokens = (600 if reasoning else 16) + (4000 if thinking else 0)
+            max_tokens = (4000 if self.full else 600 if reasoning else 16) + (4000 if thinking else 0)
         self.plan_max_tokens = max_tokens + 600   # room for the plan at action decisions
         self.max_tokens = max_tokens
         self.last_thinking = None
@@ -159,7 +173,7 @@ class LLMAgent(Agent):
 
     def settings(self):
         return {"model": self.model, "base_url": self.base_url, "prompt": self.prompt,
-                "reasoning": self.reasoning, "thinking": self.thinking, "temperature": self.temperature,
+                "reasoning": "full" if self.full else self.reasoning, "thinking": self.thinking, "temperature": self.temperature,
                 "max_tokens": self.max_tokens, "plan": self.plan, "outcomes": self.outcomes,
                 "compact": self.compact,
                 "system_prompt": getattr(self, "system", None)}
@@ -174,7 +188,7 @@ class LLMAgent(Agent):
         self.system = prompts.template(self.prompt).format(
             player=player_index, players=config.n, objective=objective.describe(),
             rules=api.rules_summary(config),
-            answer_format=ANSWER_REASONED if self.reasoning else ANSWER_ONLY)
+            answer_format=ANSWER_FULL if self.full else ANSWER_REASONED if self.reasoning else ANSWER_ONLY)
 
     # ------------------------------------------------------------ the endpoint
 
@@ -252,7 +266,7 @@ class LLMAgent(Agent):
         if keep:
             lines += ["DECISION: " + what, "", "Your dealt birds:"]
             lines += [f"{i}. {line}" for i, (_, line) in enumerate(keep, 1)]
-            lines += ["", KEEP_ASK]
+            lines += ["", KEEP_ASK_FULL if self.full else KEEP_ASK]
             return "\n".join(lines), "keep", keep
         after = api.describe_outcomes(observation) if self.outcomes else None
         lines += ["DECISION: " + what, "", "Your options:"]
@@ -261,7 +275,7 @@ class LLMAgent(Agent):
             if after and after[i - 1]:
                 lines.append(f"   After: {after[i - 1]}")
         if self.plan and decision.kind == "action":
-            lines += ["", PLAN_ASK]
+            lines += ["", PLAN_ASK_FULL if self.full else PLAN_ASK]
         return "\n".join(lines), "one", None
 
     def choose(self, observation, decision):
@@ -297,16 +311,18 @@ class LLMAgent(Agent):
             self.stats["retries"] += 1
             retry_limit = limit
             if mode == "keep":
-                again = "That was not a valid answer. " + KEEP_ASK
+                again = "That was not a valid answer. " + (KEEP_ASK_FULL if self.full else KEEP_ASK)
             elif planning:
                 again = (f"Your reply had no valid 'ANSWER: <number>' line (it may have been cut off). Reply now with "
                          f"only 'ANSWER: <number>' (1 to {n}), then your plan in the same form, kept short.")
             elif self.reasoning:
                 # The usual cause is reasoning that ran past max_tokens; asking again with the same room only
-                # lets it run out again, so ask for the answer alone and allow only that.
-                again = (f"Your reply had no 'ANSWER: <number>' line (it may have been cut off). Do not explain "
-                         f"again. Reply with only 'ANSWER: <number>' (1 to {n}).")
-                retry_limit = 20
+                # lets it run out again. Some models start reasoning again even when told not to, so the
+                # reply gets room for a sentence or two.
+                again = (f"Your reply had no 'ANSWER: <number>' line (it may have been cut off). Do not start over: "
+                         f"in one sentence at most, finish your decision, then give the line 'ANSWER: <number>' "
+                         f"(1 to {n}).")
+                retry_limit = RETRY_LIMIT
             else:
                 again = f"That was not a valid choice. Reply with one number from 1 to {n}: the option you choose."
             messages += [{"role": "assistant", "content": reply or "(no answer)"}, {"role": "user", "content": again}]

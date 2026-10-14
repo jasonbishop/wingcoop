@@ -69,7 +69,8 @@ only implied, and a few nice-to-haves such as live goal counts) is written up in
 `agents: [{type: llm, model: ...}, {type: greedy}]` in an experiment file seats one agent per
 seat. It calls any OpenAI-compatible endpoint (OpenRouter by default; the key is read from
 `OPENROUTER_API_KEY`, or from `.env`, and sent only to OpenRouter). Settings: `prompt` (template
-name), `reasoning` (a few visible sentences before the answer), `thinking` (hidden model-side reasoning:
+name), `reasoning` (`true`: a few visible sentences before the answer, 600 tokens; `full`: a few short
+paragraphs, 4000 tokens, for free local models or for reading the model's reasoning), `thinking` (hidden model-side reasoning:
 off unless set to `low`, `medium` or `high`), `budget_usd`, `max_calls`, `base_url`, `api_key_env` (a
 key to send to another endpoint), `extra_body` (extra request fields, e.g.
 `{chat_template_kwargs: {enable_thinking: false}}` for a local Qwen server).
