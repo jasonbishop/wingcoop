@@ -149,6 +149,7 @@ uv venv .venv && uv pip install --python .venv/bin/python pillow numpy scipy
 - Live goal counts during a round, and bonus points in the running scores: both wait on the log (`FORMAT-REQUESTS.md`, N1 and N2).
 - Dice a predator rolls outside the feeder are reported in the panel and a banner, not rolled on the table.
 - Live play. The screen is built for it (one step; a state-shaped board; face-down `-1` cards) but options are not clickable and there is nothing to connect to.
+- Painted wooden bird meeples for the first-player marker and the action cubes (the way it's played at our table); `createFirstPlayerToken()` and `createCube()` in `components/pieces` are where they'd go.
 - A static build (`npm run build`) opens exported `.json` files by drag and drop only; the run list and native logs need the dev server.
 
 Three.js 0.160 and cannon-es 0.20. Browser needs WebGL. Card text belongs to Stonemaier Games and the card data comes from wingsearch (GPL-3.0); keep logs and builds that include it private.
