@@ -99,10 +99,12 @@ def strip_reply(reply):
 def parse_plan(reply):
     """The plan block of a reply (between 'PLAN:' and 'END PLAN'), or None."""
     reply = drop_thinking(reply)
-    m = re.search(r"^[*#\s]*PLAN:\**\s*(.*?)\s*(END PLAN|\Z)", reply, flags=re.S | re.M)
-    if not m or not m.group(1).strip():
+    # the last block: the updated plan comes after the answer, and the reasoning may quote the old one
+    blocks = re.findall(r"^[*#\s]*PLAN:\**\s*(.*?)\s*(?:END PLAN|\Z)", reply, flags=re.S | re.M)
+    m = blocks[-1] if blocks else None
+    if not m or not m.strip():
         return None
-    return m.group(1).strip()[:PLAN_LIMIT]
+    return m.strip()[:PLAN_LIMIT]
 
 
 def parse_numbers(reply, n):
@@ -304,10 +306,12 @@ class LLMAgent(Agent):
                     return i + 1
             return None
 
-        replies, thoughts = [], []
+        replies, thoughts, usages, limits = [], [], [], []
         reply, usage = self.call(messages, limit)
         replies.append(reply)
         thoughts.append(self.last_thinking)
+        usages.append(usage)
+        limits.append(limit or self.max_tokens)
         k = read(reply)
         if k is None:
             self.stats["retries"] += 1
@@ -331,6 +335,8 @@ class LLMAgent(Agent):
             reply, usage = self.call(messages, retry_limit)
             replies.append(reply)
             thoughts.append(self.last_thinking)
+            usages.append(usage)
+            limits.append(retry_limit or self.max_tokens)
             k = read(reply, bare_ok=True)
         fallback = k is None
         if fallback:
@@ -351,10 +357,12 @@ class LLMAgent(Agent):
                 why = re.sub(r"ANSWER\s*[:=].*", "", why, flags=re.S | re.IGNORECASE).strip()[:NOTE_LIMIT] or None
             label = api.describe_decision(observation)[1][k - 1]
             self.turn_notes = (turn, notes + [(label, why)])
+        keys = ("prompt_tokens", "completion_tokens", "cost", "reasoning_tokens", "finish_reason")
+        usages = [{key: u.get(key) for key in keys} for u in usages]
+        # usage is the last call's (kept for older readers); usage_all and limits are per reply
         self._info = {"model": self.model, "prompt": user, "replies": replies, "chosen": k,
-                      "fallback": "random" if fallback else None,
-                      "usage": {key: usage.get(key) for key in ("prompt_tokens", "completion_tokens", "cost",
-                                                                "reasoning_tokens", "finish_reason")}}
+                      "fallback": "random" if fallback else None, "usage": usages[-1],
+                      "usage_all": usages, "limits": limits}
         if any(thoughts):
             self._info["thinking"] = thoughts
         if self.plan:

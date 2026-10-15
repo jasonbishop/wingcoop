@@ -122,6 +122,8 @@ def test_unparsable_reply_is_retried_once_then_random_and_logged(endpoint, monke
     assert a.stats["retries"] == 1 and a.stats["fallbacks"] == 0
     assert "ANSWER: <number>" in a.system and a.max_tokens == 600
     assert e.requests[1]["body"]["max_tokens"] == 300 and "Do not start over" in e.requests[1]["body"]["messages"][-1]["content"]
+    assert a.info()["limits"] == [600, 300] and len(a.info()["usage_all"]) == 2
+    assert a.info()["usage"] == a.info()["usage_all"][-1]
     e2 = endpoint(["no idea"])
     s, d, b = agent_at_first_decision(e2.url, monkeypatch)
     choice = b.choose(api.observe(s, d.player), d)
@@ -236,6 +238,8 @@ def test_replies_are_read_past_thinking_tags_and_plan_blocks():
     assert parse_choice("Game plan: get fish, then eggs.\nANSWER: 2", 4, strict=True) == 2    # not a plan block
     assert parse_choice("ANSWER: 1\n**PLAN:**\nEngine: ducks\nEND PLAN", 4, strict=True) == 1
     assert llm.parse_plan(PLANNED).startswith("Engine: forest")
+    quoted = "My old plan:\nPLAN:\nEngine: ducks\nEND PLAN\nIt still holds.\nANSWER: 2\nPLAN:\nEngine: geese\nEND PLAN"
+    assert llm.parse_plan(quoted) == "Engine: geese" and parse_choice(quoted, 3, strict=True) == 2
     assert llm.parse_numbers("I keep two. ANSWER: 1, 4", 5) == [1, 4]
     assert llm.parse_numbers("ANSWER: none", 5) == []
     assert llm.parse_numbers("ANSWER: 1, 6", 5) is None

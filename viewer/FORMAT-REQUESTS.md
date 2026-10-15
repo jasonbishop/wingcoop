@@ -42,6 +42,17 @@ Found while building the model panel (`app/viewer/llm.js`, `ui/model.js`) on the
 | L3 | The token limit of each call is not logged | missing field | judges against `max_tokens` (+600 at action decisions in plan games) |
 | L4 | Plan fields and where `plan_updated` comes from | documentation | follows `PLAN_FORM` in `llm.py` |
 
+**Status (simulator side, 14 October 2026):**
+
+| # | Done |
+| --- | --- |
+| L1 | Fixed: a block starts only at a line beginning `PLAN:` (capitals; `**PLAN:**` allowed), the *last* block is the plan, and the answer is read outside blocks. Logs written before this fix keep the old behaviour: `llm-prompts-moe-brief` and `llm-prompts-moe/default` seed 101. |
+| L2 | `info.usage_all`, one entry per reply; `usage` stays as the last call's |
+| L3 | `info.limits`, the token limit of each call |
+| L4 | Section 6 of the format document now says all of this |
+
+Games in `llm-prompts-moe` started after this change carry `usage_all` and `limits`; older games don't, so keep the fallback.
+
 **L1. A reply that mentions "plan:" in its reasoning loses its answer and can corrupt the plan.** `wingsim/agents/llm.py` finds the plan block with `re.search(r"PLAN:\s*(.*?)\s*(END PLAN|$)", reply, re.S | re.IGNORECASE)` (in `parse_plan`) and removes it the same way (in `strip_reply`). The models often quote their plan in the reasoning, e.g. `Let's consider the "Need next" in my plan: "…"`. Then:
 
 - `strip_reply` cuts from that phrase to the final `END PLAN`, taking the `ANSWER:` line with it, so a reply with a valid answer is read as having none and the model is asked again. In these three games that happened at `plan` seq 43 and 62 and `plan_after` seq 93, 96, 135 and 143: each first reply has a valid `ANSWER:` and a retry follows. (The same match, e.g. `So, Plan:` or `my plan:`, also appears in `default` 33 and `plan_after` 37, 112 and 124, where the first reply had no answer anyway.)
