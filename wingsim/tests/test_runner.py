@@ -44,6 +44,11 @@ def test_open_hands_can_be_switched_off_per_condition():
     assert not any(c["open_hands"] for c in runner.expand(exp))
 
 
+def test_a_condition_can_set_its_own_motivation():
+    exp = dict(EXP, players=[2], motivation=[0.0], conditions={"solo": {"plugins": {}}, "team": {"plugins": {}, "motivation": [1.0]}})
+    assert sorted((c["condition"], c["w"]) for c in runner.expand(exp)) == [("solo", 0.0), ("team", 1.0)]
+
+
 @pytest.fixture(scope="module")
 def run(tmp_path_factory):
     root = tmp_path_factory.mktemp("exp")

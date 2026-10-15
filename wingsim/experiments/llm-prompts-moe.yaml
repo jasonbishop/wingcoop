@@ -1,5 +1,6 @@
 # Which prompt features help a language model play? Seat 0 is the model, seat 1 the tuned greedy bot,
-# normal (individual) scoring, open hands. The three conditions differ only in the model's prompt:
+# open hands. Three prompts, each under normal (individual) scoring with w = 0 and under the co-op house
+# rules with w = 1 (the coop_ conditions). The prompts:
 #   default     the current prompt (reasons briefly, then answers)
 #   plan        + a written plan carried between turns, notes within the turn, compact payment labels,
 #               starting birds chosen by naming them
@@ -33,5 +34,33 @@ conditions:
     agents:
       - {<<: *qwen, prompt: plan, plan: true, compact: true, outcomes: true}
       - {type: greedy, weights: "tuned/baseline.json"}
-motivation:  [0.0]
+  # The same three prompts under the co-op house rules: co-op round goals, team-total scoring, every player
+  # told to maximize the team total (w = 1), group goal set by fixed(2), the bot on its co-op weights.
+  coop_default:
+    plugins: {coop_goals: {penalty: avg_x_d, allowed_changes: [0, 1]}}
+    open_hands: true
+    win_condition: team_total
+    motivation: [1.0]
+    agents:
+      - *qwen
+      - {type: greedy, weights: "tuned/coop.json"}
+  coop_plan:
+    plugins: {coop_goals: {penalty: avg_x_d, allowed_changes: [0, 1]}}
+    open_hands: true
+    win_condition: team_total
+    motivation: [1.0]
+    agents:
+      - {<<: *qwen, prompt: plan, plan: true, compact: true}
+      - {type: greedy, weights: "tuned/coop.json"}
+  coop_plan_after:
+    plugins: {coop_goals: {penalty: avg_x_d, allowed_changes: [0, 1]}}
+    open_hands: true
+    win_condition: team_total
+    motivation: [1.0]
+    agents:
+      - {<<: *qwen, prompt: plan, plan: true, compact: true, outcomes: true}
+      - {type: greedy, weights: "tuned/coop.json"}
+motivation:  [0.0]                    # the individual-scoring conditions; the co-op ones set their own
+group_policy: ["fixed(2)"]
+group_share: [false]
 logging:     {level: full, snapshots: decision}

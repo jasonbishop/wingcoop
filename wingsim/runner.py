@@ -33,7 +33,8 @@ def expand(exp, base_dir="."):
 
     A condition with a group score (one that uses coop_goals) is crossed with
     every group policy and every `group_share` setting; other conditions run
-    once per player count and motivation.
+    once per player count and motivation. A condition's own `motivation` list
+    replaces the experiment's.
     """
     cells = []
     policies = as_list(exp.get("group_policy", "fixed(2)"))
@@ -57,7 +58,7 @@ def expand(exp, base_dir="."):
                     weights = weights.get("weights", weights)
                 spec["weights_file"] = str(path) if path.exists() else None
         for n in as_list(exp["players"]):
-            for w in as_list(exp.get("motivation", 0.0)):
+            for w in as_list(cond.get("motivation", exp.get("motivation", 0.0))):   # a condition may set its own
                 for policy in (policies if has_group else [None]):
                     for share in (shares if has_group else [False]):
                         cells.append({
