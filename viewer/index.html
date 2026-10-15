@@ -43,13 +43,16 @@
       </section>
 
       <aside id="side">
+        <div id="side-resize" role="separator" aria-orientation="vertical" aria-label="Drag to resize the panel" title="Drag to widen the panel; double-click to reset"></div>
         <nav class="tabs" role="tablist">
           <button role="tab" data-tab="step" aria-selected="true">Step</button>
           <button role="tab" data-tab="turns" aria-selected="false">Turns</button>
+          <button role="tab" data-tab="model" aria-selected="false" hidden>Model</button>
           <button role="tab" data-tab="game" aria-selected="false">Game</button>
         </nav>
         <div class="tab" id="tab-step"></div>
         <div class="tab" id="tab-turns" hidden></div>
+        <div class="tab" id="tab-model" hidden></div>
         <div class="tab" id="tab-game" hidden></div>
       </aside>
     </main>
@@ -80,6 +83,9 @@
       </label>
     </footer>
   </div>
+
+  <div id="transcript" hidden></div>
+  <aside id="rules" hidden aria-label="The model's rules summary"></aside>
 
   <div id="home">
     <div class="home-inner">

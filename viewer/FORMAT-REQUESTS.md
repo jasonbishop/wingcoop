@@ -31,6 +31,30 @@ The viewer's reducer and table handle the new events and still read older logs (
 | N6 | `vp_text` corrected to `7+ birds` |
 | Corrections | all three made in the document |
 
+## Language-model data (14 October 2026)
+
+Found while building the model panel (`app/viewer/llm.js`, `ui/model.js`) on the three games in `llm-prompts-moe-brief` (`default`, `plan`, `plan_after`, seed 101, 2 players). Sequence numbers refer to those files.
+
+| # | Request | Kind | Viewer today |
+| --- | --- | --- | --- |
+| L1 | `parse_plan` / `strip_reply` match `plan:` anywhere, in any case | agent bug | shows the replies and the logged plans as they are |
+| L2 | `usage` covers only the last call | missing field | "cut off" can only be judged for the last reply |
+| L3 | The token limit of each call is not logged | missing field | judges against `max_tokens` (+600 at action decisions in plan games) |
+| L4 | Plan fields and where `plan_updated` comes from | documentation | follows `PLAN_FORM` in `llm.py` |
+
+**L1. A reply that mentions "plan:" in its reasoning loses its answer and can corrupt the plan.** `wingsim/agents/llm.py` finds the plan block with `re.search(r"PLAN:\s*(.*?)\s*(END PLAN|$)", reply, re.S | re.IGNORECASE)` (in `parse_plan`) and removes it the same way (in `strip_reply`). The models often quote their plan in the reasoning, e.g. `Let's consider the "Need next" in my plan: "…"`. Then:
+
+- `strip_reply` cuts from that phrase to the final `END PLAN`, taking the `ANSWER:` line with it, so a reply with a valid answer is read as having none and the model is asked again. In these three games that happened at `plan` seq 43 and 62 and `plan_after` seq 93, 96, 135 and 143: each first reply has a valid `ANSWER:` and a retry follows. (The same match, e.g. `So, Plan:` or `my plan:`, also appears in `default` 33 and `plan_after` 37, 112 and 124, where the first reply had no answer anyway.)
+- `parse_plan` returns the text after the first match. At `plan` seq 43 `plan_updated` is a run of reasoning that starts `"Invertebrate/Seed food to play…` and has none of the five fields, and from seq 43 that text is the plan shown in the next prompts (`info.plan`) until the model writes another.
+
+Suggested fix: match the block only at the start of a line and in capitals (`^PLAN:` with `re.M`, no `IGNORECASE`), take the *last* such block, and look for the answer outside it. The viewer splits replies that way for display.
+
+**L2. `usage` is for the last call only.** When there are two replies, `usage.completion_tokens` is the retry's count (e.g. `plan` seq 2: a long first reply with no answer, then `ANSWER: 1`, and `completion_tokens: 6`). The first reply, which is the one usually cut off, has no count, so "cut off" is flagged on only one decision per game. Suggested: `usage` as a list parallel to `replies` (or a `usage_all` list beside the current field, so older readers keep working). The format document should also say which call `usage` describes.
+
+**L3. The token limit of each call.** The first call's limit is `max_tokens`, or `max_tokens + 600` at action decisions of plan seats (`plan_max_tokens`), and a reasoning seat's "finish now" retry gets `RETRY_LIMIT` = 300. None of these are in the log except `max_tokens`, so a viewer has to know the agent's code to judge a cut-off retry. Since `finish_reason` is `"stop"` even for cut-off replies on this server, logging the limit (say `limits`, parallel to `replies`) would make "cut off" a simple comparison.
+
+**L4. Documentation.** Section 6 could say: the plan has five lines (`Engine:`, `Bonus target:`, `Round goal:`, `Need next:`, `Pivot if:`); it is only written at `kind == "action"` decisions; `plan_updated` is taken from the first reply's plan block, or the retry's if the first has none; `chosen` is the random option's number when `fallback` is `"random"`.
+
 The original requests follow, unchanged.
 
 ## Summary

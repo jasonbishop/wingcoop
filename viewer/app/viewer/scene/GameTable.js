@@ -399,7 +399,8 @@ export class GameTable extends EventTarget {
     }
     // a power: the kept card comes from the ones held up, the rest are discarded
     const kept = this.offer.take(`b${e.bonus}`) || this.bonusDeck.lift(this.book.bonus(e.bonus));
-    const rest = this.offer.keys.map(key => this.offer.take(key));
+    // newer logs name the discarded cards; older ones discard whatever else is held up
+    const rest = (e.discarded ? e.discarded.map(b => `b${b}`) : this.offer.keys).map(key => this.offer.take(key)).filter(Boolean);
     await Promise.all([
       seat.bonus.add(e.bonus, kept, { faceUp: true }),
       ...rest.map(card => this.bonusDiscard.add(card)),

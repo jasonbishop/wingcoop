@@ -23,7 +23,8 @@ function logRoots() {
   ];
   for (const extra of (process.env.WINGSIM_LOGS || '').split(':').filter(Boolean)) {
     const dir = isAbsolute(extra) ? extra : resolve(process.cwd(), extra);
-    roots.push({ name: dir, dir });
+    // named relative to the repository (e.g. "../logs"), so addresses stay short
+    roots.push({ name: relative(REPO, dir).split(sep).join('/') || '.', dir });
   }
   return roots;
 }

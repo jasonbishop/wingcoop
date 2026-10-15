@@ -11,6 +11,8 @@ import { turnIndex, roundIndex } from '../replay/log.js';
 import { runningScore, seatCss, seatLabel, playerName, HABITATS } from '../data.js';
 import { describeEvent, DECISION_TITLES, ACTION_NAMES, fmt, eventSeat } from '../describe.js';
 import { el, esc, rich } from './rich.js';
+import { ModelPanel, decisionCard } from './model.js';
+import { isLlmSeat, llmSeats, modelEntry } from '../llm.js';
 
 const $ = id => document.getElementById(id);
 const TURNS_PER_ROUND = [8, 7, 6, 5];
@@ -39,6 +41,7 @@ export class Hud {
     this._buildTabs();
     this._buildTurns();
     this._buildGame();
+    this._buildModel();
 
     this._listen(player, 'position', () => { this.showAll = false; this.stage = null; this.render(); });
     this._listen(player, 'stage', e => { this.stage = e.detail; this._renderStage(); this._banner(e.detail); });
@@ -54,6 +57,7 @@ export class Hud {
 
   dispose() {
     for (const off of this._off) off();
+    this.model?.dispose();
     clearTimeout(this._bannerTimer);
     $('inspect').hidden = true;
     $('banner').hidden = true;
@@ -173,6 +177,7 @@ export class Hud {
     const onKey = e => {
       if (e.target.closest('input, select, textarea, [contenteditable]') || e.metaKey || e.ctrlKey || e.altKey) return;
       if ($('home') && !$('home').hidden) return;
+      if (!$('transcript').hidden) return;   // the transcript scrolls; the replay behind it stays put
       if (e.key === ' ') { e.preventDefault(); p.toggle(); }
       else if (e.key === 'ArrowRight') { e.preventDefault(); e.shiftKey ? p.jump(this.turns, +1) : p.step(); }
       else if (e.key === 'ArrowLeft') { e.preventDefault(); e.shiftKey ? p.jump(this.turns, -1) : p.back(); }
@@ -210,6 +215,7 @@ export class Hud {
           $(`tab-${o.dataset.tab}`).hidden = !on;
         }
         if (b.dataset.tab === 'turns') this._renderTurns(true);
+        if (b.dataset.tab === 'model') this.model?.render();
       };
     }
   }
@@ -220,6 +226,21 @@ export class Hud {
     this._renderTransport();
     this._renderStep();
     this._renderTurns(false);
+    this.model?.render();
+  }
+
+  // ------------------------------------------------------------------ Model tab
+
+  _buildModel() {
+    const button = document.querySelector('#side .tabs [data-tab="model"]');
+    button.hidden = !llmSeats(this.replay.header).length;
+    if (button.hidden) { $('tab-model').replaceChildren(); return; }
+    this.model = new ModelPanel({ replay: this.replay, player: this.player, book: this.book, box: $('tab-model'), rounds: this.rounds });
+  }
+
+  /** Show a tab by name ('step', 'turns', 'model', 'game'). */
+  showTab(name) {
+    document.querySelector(`#side .tabs [data-tab="${name}"]:not([hidden])`)?.click();
   }
 
   // ------------------------------------------------------------------ Step tab
@@ -246,10 +267,11 @@ export class Hud {
     d.options.forEach((opt, i) => {
       if (many && !keep.has(i)) return;
       const note = notes.get(i);
-      list.append(el('li', { class: i === d.choice ? 'chosen' : '', title: i === d.choice ? 'The option chosen' : null },
-        el('span.mark', {}, i === d.choice ? '✓' : ''),
+      const random = i === d.choice && d.info?.fallback;
+      list.append(el('li', { class: i === d.choice ? (random ? 'chosen random' : 'chosen') : '', title: i === d.choice ? (random ? "Played at random: the model's answer couldn't be read" : 'The option chosen') : null },
+        el('span.mark', {}, i === d.choice ? (random ? '?' : '✓') : ''),
         el('span.label', { html: rich(d.labels?.[i] ?? JSON.stringify(opt)) }),
-        note ? el('span.val', { title: note.title }, note.text) : null));
+        note ? el('span.val', { title: note.title }, note.text) : random ? el('span.val', {}, 'random') : null));
     });
     out.push(list);
     if (d.options.length > MANY_OPTIONS) {
@@ -297,22 +319,10 @@ export class Hud {
   _agentView(d) {
     const info = d.info, out = [];
     if (!info) return out;
-    if (info.replies) {
+    if (info.replies && isLlmSeat(this.replay.header, d.player)) {
       out.push(el('h3', {}, `What ${esc((info.model || 'the model').split('/').pop())} said`));
-      if (info.fallback) out.push(el('p.warn', {}, `No reply could be read as an answer; a ${info.fallback} option was played instead.`));
-      info.replies.forEach((r, i) => {
-        if (info.replies.length > 1) out.push(el('p.hint', {}, i === 0 ? 'First reply (could not be read):' : 'Second reply:'));
-        out.push(el('blockquote.reply', {}, r || '(empty reply)'));
-      });
-      const u = info.usage || {};
-      const bits = [];
-      if (u.prompt_tokens != null) bits.push(`${u.prompt_tokens} tokens in`);
-      if (u.completion_tokens != null) bits.push(`${u.completion_tokens} out`);
-      if (u.reasoning_tokens) bits.push(`${u.reasoning_tokens} hidden reasoning`);
-      if (u.cost != null) bits.push(`$${Number(u.cost).toFixed(5)}`);
-      if (u.finish_reason && u.finish_reason !== 'stop') bits.push(`stopped: ${u.finish_reason}`);
-      if (bits.length) out.push(el('p.hint', {}, bits.join(' · ')));
-      if (info.prompt) out.push(el('details', {}, el('summary', {}, 'The position as the model was shown it'), el('pre.prompt', {}, info.prompt)));
+      out.push(decisionCard(this.model?.byIndex.get(this.player.index) ?? modelEntry(this.replay.header, this.player.position),
+        { options: false, query: this.model?.query }));
     } else if (info.options != null && info.values) {
       out.push(el('p.hint', {}, `The bot scored ${info.options} option${info.options === 1 ? '' : 's'}; its best ${info.values.length} are marked.`));
     } else if (info.iterations != null) {
@@ -524,7 +534,7 @@ export class Hud {
       const raw = this.book.rawBird(bird.id);
       if (d.type === 'slot') facts.push(`On ${playerName(d.mat)}'s mat (${d.habitat}, column ${d.slot + 1})`);
       if (raw) facts.push(`${raw.vp} point${raw.vp === 1 ? '' : 's'} · ${raw.nest} nest · holds ${raw.egg_limit} egg${raw.egg_limit === 1 ? '' : 's'} · ${raw.wingspan} cm`);
-      box.replaceChildren(close, canvas, el('h3', {}, bird.name), ...facts.map(f => el('p.hint', {}, f)), bird.power ? el('p', { html: rich(bird.power) }) : null);
+      box.replaceChildren(...[close, canvas, el('h3', {}, bird.name), ...facts.map(f => el('p.hint', {}, f)), bird.power ? el('p', { html: rich(bird.power) }) : null].filter(Boolean));
     } else {
       box.replaceChildren(close, canvas, el('h3', {}, bonus.name), el('p', { html: rich(bonus.condition) }), el('p.hint', { html: rich(bonus.points) }));
     }

@@ -27,9 +27,9 @@ function walk(dir, out = []) {
   return out;
 }
 
-/** The sample logs, plus every log under $WINGSIM_LOGS if it is set (for a wider check). */
+/** The sample logs, plus every log under $WINGSIM_LOGS (folders separated by ":") if it is set. */
 export function logFiles() {
   const files = walk(SAMPLES);
-  if (process.env.WINGSIM_LOGS) files.push(...walk(process.env.WINGSIM_LOGS));
+  for (const dir of (process.env.WINGSIM_LOGS || '').split(':').filter(Boolean)) files.push(...walk(dir));
   return files;
 }

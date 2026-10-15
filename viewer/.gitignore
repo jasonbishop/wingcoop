@@ -4,3 +4,4 @@ dist/
 art/tools/preview.jpg
 art/source/*.boxes.jpg
 tests/shots/
+.vite/
