@@ -1,0 +1,22 @@
+# The local Qwen MoE paired with a tree-search partner under the co-op house rules, on the same seeds as
+# llm-prompts-moe.yaml, so each game compares with coop_plan there (the same prompt, a greedy partner).
+# The tree search runs 1000 iterations a move (200 for the follow-up choices); in 2-player bot games
+# on these seeds that partner reached a team total of 120 against greedy's 115. Run it serially:
+#   .venv/bin/python -m wingsim.runner wingsim/experiments/llm-mcts-moe.yaml --workers 1 --no-report
+name: llm-mcts-moe
+seeds: {start: 101, count: 5}
+players: [2]
+conditions:
+  coop_plan_mcts:
+    plugins: {coop_goals: {penalty: avg_x_d, allowed_changes: [0, 1]}}
+    open_hands: true
+    win_condition: team_total
+    agents:
+      - {type: llm, model: qwen-moe, base_url: "http://10.20.0.71:8000/v1", reasoning: full, max_tokens: 6000,
+         timeout: 900, extra_body: {chat_template_kwargs: {enable_thinking: false}},
+         prompt: plan, plan: true, compact: true}
+      - {type: mcts, iterations: 1000, minor_iterations: 200}
+motivation:  [1.0]
+group_policy: ["fixed(2)"]
+group_share: [false]
+logging:     {level: full, snapshots: decision}
