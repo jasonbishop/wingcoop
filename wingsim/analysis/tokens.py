@@ -19,6 +19,7 @@ Usage:
   python -m wingsim.analysis.tokens logs/llm-prompts-moe
   python -m wingsim.analysis.tokens results/llm-prompts-moe/rows.jsonl --model qwen/qwen3.6-35b-a3b anthropic/claude-haiku-5.5
   python -m wingsim.analysis.tokens logs/llm-prompts-moe/coop_plan/103-2p-w1.0-fixed_2.jsonl.gz --price 0.15 1.00
+  python -m wingsim.analysis.tokens results/llm-prompts-moe/rows.jsonl --list --max-cost 0.50
 """
 import argparse
 import gzip
@@ -71,16 +72,47 @@ def collect(paths):
     return [g for g in games if g["calls"]]
 
 
-def openrouter_prices(ids):
-    """{model id: (input, output) dollars per million tokens} from OpenRouter's public model list."""
+def openrouter_models():
+    """OpenRouter's public model list (no key is sent)."""
     with urllib.request.urlopen(MODELS_URL, timeout=30) as resp:
-        listed = {m["id"]: m.get("pricing") or {} for m in json.load(resp)["data"]}
-    prices = {}
+        return json.load(resp)["data"]
+
+
+def price_of(model):
+    """(input, output) dollars per million tokens; negative for routers whose price depends on the pick."""
+    p = model.get("pricing") or {}
+    return float(p.get("prompt") or 0) * 1e6, float(p.get("completion") or 0) * 1e6
+
+
+def openrouter_prices(ids, models=None):
+    """{model id: (input, output) dollars per million tokens} for the given OpenRouter ids."""
+    listed = {m["id"]: m for m in models or openrouter_models()}
     for i in ids:
         if i not in listed:
             raise SystemExit(f"{i} is not in OpenRouter's model list")
-        prices[i] = (float(listed[i].get("prompt") or 0) * 1e6, float(listed[i].get("completion") or 0) * 1e6)
-    return prices
+    return {i: price_of(listed[i]) for i in ids}
+
+
+def cheapest(models, games, max_cost=0.50, min_context=16384, batch=False):
+    """Text models whose average game would cost at most max_cost, cheapest first:
+    [(id, input price, output price, context length, cost per game)]. Left out: batch variants (replies
+    come back hours later, no use for a game played turn by turn), aliases (ids starting with "~", each
+    the same as a listed model), routers with no fixed price, models that also output images or audio,
+    tools billed by input only, and models with too little context for a prompt and a long reply."""
+    n = len(games)
+    avg = {"input": sum(g["input"] for g in games) / n, "output": sum(g["output"] for g in games) / n}
+    out = []
+    for m in models:
+        price = price_of(m)
+        if (min(price) < 0 or m["id"].startswith("~") or (m["id"].endswith(":batch") and not batch)
+                or (m.get("architecture") or {}).get("output_modalities", ["text"]) != ["text"]
+                or (price[1] == 0 and price[0] > 0)            # text tools billed by input only, not chat models
+                or (m.get("context_length") or 0) < min_context):
+            continue
+        c = cost(avg, price)
+        if c <= max_cost:
+            out.append((m["id"], price[0], price[1], m.get("context_length") or 0, c))
+    return sorted(out, key=lambda r: (r[4], r[0]))
 
 
 def cost(game, price):
@@ -93,11 +125,17 @@ def main():
     ap.add_argument("--model", nargs="+", default=[], help="OpenRouter model ids to price the games at")
     ap.add_argument("--price", nargs=2, type=float, metavar=("IN", "OUT"),
                     help="a price by hand, dollars per million input and output tokens")
+    ap.add_argument("--list", action="store_true",
+                    help="list every OpenRouter model (free and paid) that would cost at most --max-cost a game")
+    ap.add_argument("--max-cost", type=float, default=0.50, help="dollars per game for --list (default 0.50)")
+    ap.add_argument("--min-context", type=int, default=16384, help="smallest context length for --list")
+    ap.add_argument("--batch", action="store_true", help="include batch-priced variants in --list")
     args = ap.parse_args()
     games = collect(args.paths)
     if not games:
         raise SystemExit("no language-model games found")
-    prices = openrouter_prices(args.model) if args.model else {}
+    models = openrouter_models() if args.model or args.list else None
+    prices = openrouter_prices(args.model, models) if args.model else {}
     if args.price:
         prices["--price"] = tuple(args.price)
     width = max(len(g["game"]) for g in games)
@@ -110,6 +148,14 @@ def main():
     for name, price in prices.items():
         total = sum(cost(g, price) for g in games)
         print(f"  {name} (${price[0]:g} in / ${price[1]:g} out per M): ${total / n:.2f} a game, ${total:.2f} in all")
+    if args.list:
+        rows = cheapest(models, games, args.max_cost, args.min_context, args.batch)
+        print(f"\nOpenRouter models at ${args.max_cost:.2f} a game or less, at the average game above "
+              f"({len(rows)} models; free ones are rate-limited, see openrouter.ai/docs):")
+        w = max([len(r[0]) for r in rows] + [5])
+        print(f"  {'model':{w}}  {'$ in/M':>7}  {'$ out/M':>7}  {'context':>9}  {'$ a game':>8}  {f'$ {n} games':>11}")
+        for mid, pin, pout, ctx, c in rows:
+            print(f"  {mid:{w}}  {pin:7.3f}  {pout:7.3f}  {ctx:9,}  {c:8.3f}  {c * n:11.2f}")
 
 
 if __name__ == "__main__":

@@ -29,6 +29,21 @@ def test_log_totals_count_every_call_and_mark_old_retries(tmp_path):
     assert tokens.cost(new, (1.0, 10.0)) == pytest.approx((350 + 6150) / 1e6)
 
 
+def test_cheapest_lists_free_and_paid_models_under_the_limit_cheapest_first():
+    def model(mid, pin, pout, ctx=200_000, out=("text",)):
+        return {"id": mid, "context_length": ctx, "architecture": {"output_modalities": list(out)},
+                "pricing": {"prompt": str(pin / 1e6), "completion": str(pout / 1e6)}}
+    models = [model("a/mid", 0.2, 1.0), model("a/cheap", 0.1, 0.5), model("a/free:free", 0, 0),
+              model("a/dear", 2.0, 10.0), model("a/cheap:batch", 0.05, 0.25), model("~a/cheap-latest", 0.1, 0.5),
+              model("a/router", -1, -1), model("a/music", 0, 0, out=("audio", "text")),
+              model("a/tool", 0.04, 0), model("a/short", 0.01, 0.01, ctx=8192)]
+    games = [{"input": 400_000, "output": 200_000}, {"input": 400_000, "output": 100_000}]
+    rows = tokens.cheapest(models, games, max_cost=0.50)
+    assert [r[0] for r in rows] == ["a/free:free", "a/cheap", "a/mid"]
+    assert rows[1][4] == pytest.approx((400_000 * 0.1 + 150_000 * 0.5) / 1e6)
+    assert "a/cheap:batch" in [r[0] for r in tokens.cheapest(models, games, batch=True)]
+
+
 def test_rows_totals_skip_bot_only_games(tmp_path):
     rows = [{"row": {"condition": "plan", "seed": 101, "llm_calls": 3, "llm_prompt_tokens": 900,
                      "llm_completion_tokens": 50}},
