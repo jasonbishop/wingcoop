@@ -18,7 +18,7 @@ __all__ = ["GameConfig", "Decision", "GROUP", "HIDDEN", "IllegalChoice", "Observ
            "pending_decision", "apply", "apply_in_place", "observe", "is_over", "final_scores", "scores",
            "totals", "goal_counts", "score_goal_counts", "simulate_turn", "play_random", "turns_left", "round_turns_left",
            "rules_summary", "describe_observation", "describe_decision",
-           "describe_decision_compact", "describe_outcomes", "describe_keep_birds"]
+           "describe_decision_compact", "describe_outcomes", "describe_goal_status", "describe_keep_birds"]
 
 Decision = namedtuple("Decision", "player kind options context")
 
@@ -151,6 +151,13 @@ def describe_decision_compact(observation):
     from . import describe
     s = observation.state
     return describe.compact_payments(s, describe.decision_text(s), describe.option_labels(s))
+
+
+def describe_goal_status(observation):
+    """A few lines on where the table stands on the current round goal (counts against the co-op difficulty,
+    what the round would score if it ended now, turns left, earlier rounds), or None once the game is over."""
+    from . import describe
+    return describe.goal_status(observation.state, observation.player)
 
 
 def describe_outcomes(observation):

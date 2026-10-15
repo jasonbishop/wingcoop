@@ -78,7 +78,9 @@ key to send to another endpoint), `extra_body` (extra request fields, e.g.
 Prompt features, each a setting so variants can be compared (`wingsim/agents/llm.py` describes them):
 `plan` (a short written plan carried between turns, with the `plan` template), `outcomes` (a line per
 action option saying what it changes right away), `compact` (shorter payment choices; starting birds
-chosen by naming them). `experiments/llm-prompts-local.yaml` compares them against a local model; run
+chosen by naming them), `goal_status` (a block on the current round goal: each player's count against
+the co-op difficulty, what the round would score if it ended now, turns left, earlier rounds).
+`experiments/llm-prompts-moe.yaml` compares them against a local model; run
 it with `--workers 1`, and `--resume` to continue after a stop (every finished game is saved in
 `results/<experiment>/rows.jsonl`).
 

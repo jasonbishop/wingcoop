@@ -409,3 +409,53 @@ def action_outcomes(s):
         else:
             out.append(None)
     return out
+
+
+def goal_status(s, me):
+    """Where the table stands on the current round goal, as a few lines: each player's count, what the
+    round would score if it ended now, the turns left, and how earlier rounds went. None when there is no
+    current round goal (the game is over)."""
+    from .scoring import score_goal_counts
+    counts = current_goal_counts(s)
+    if counts is None or s.phase == OVER:
+        return None
+    n = len(counts)
+    db = s.cfg.db
+    who = lambda j: f"player {j}" + (" (you)" if j == me else "")
+    _, delta, info = score_goal_counts(s, counts)
+    coop = isinstance(info, tuple) and info and info[0] == "coop"
+    L = [f"ROUND GOAL STATUS - round {s.round}: {goal_text(db, s.goals[s.round - 1])}"]
+    if coop and info[1] is not None:
+        d = info[1]
+        L.append(f"  Difficulty d = {d}: EVERY player needs a count of at least {d} (counts above 5 count as 5).")
+        L.append("  " + "; ".join(f"{who(j)}: {c}" + (" - meets it" if c >= d else f" - short by {d - c}")
+                                  for j, c in enumerate(counts)) + ".")
+        mean = sum(min(c, 5) for c in counts) / n
+        if info[2]:
+            L.append(f"  If the round ended now: the goal is met and the group score rises by {delta:g} "
+                     f"(average {mean:g} x d {d}).")
+        else:
+            met = tuple(max(c, d) for c in counts)
+            _, up, _ = score_goal_counts(s, met)
+            short = [j for j, c in enumerate(counts) if c < d]
+            L.append(f"  If the round ended now: the goal fails (short: {', '.join(who(j) for j in short)}) and the "
+                     f"group score falls by {-delta + 0.0:g}. With every player at {d} or more it would rise by "
+                     f"at least {up:g}.")
+    elif coop:
+        L.append("  The difficulty has not been set yet.")
+    else:
+        pts, _, _ = score_goal_counts(s, counts)
+        L.append("  " + "; ".join(f"{who(j)}: count {c}, {pts[j]:g} points" for j, c in enumerate(counts))
+                 + " if the round ended now.")
+    if s.phase != SETUP:
+        L.append("  Turns left this round: " + ", ".join(f"{who(j)} {s.actions_left[j]}" for j in range(n)) + ".")
+    done = []
+    for r, cs, pts, dl, inf in s.goal_log:
+        if isinstance(inf, tuple) and inf and inf[0] == "coop" and inf[1] is not None:
+            done.append(f"round {r} (d = {inf[1]}) {'met' if inf[2] else 'failed'}, group score {dl + 0.0:+g}")
+        else:
+            done.append(f"round {r}: points " + ", ".join(f"{who(j)} {p:g}" for j, p in enumerate(pts)))
+    if done:
+        L.append("  Earlier rounds: " + "; ".join(done) + f". Group score so far: {s.group_score:g}." if coop
+                 else "  Earlier rounds: " + "; ".join(done) + ".")
+    return "\n".join(L)

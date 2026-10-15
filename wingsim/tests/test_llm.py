@@ -317,3 +317,42 @@ def test_full_reasoning_relaxes_the_length_and_raises_the_limit(endpoint, monkey
     assert "a few short paragraphs at most" in a.system and "three sentences" not in a.system
     s, d, b = agent_at_first_decision(e.url, monkeypatch, reasoning=True)
     assert not b.full and b.max_tokens == 600 and "three sentences at most" in b.system
+
+
+def _play_to(cfg, stop, seed=7):
+    """Play a game with greedy seats (and fixed(2) for the group) until stop(state, decision) holds."""
+    from wingsim.agents import group_policies
+    from wingsim.agents.greedy import GreedyAgent
+    s = api.new_game(cfg, seed)
+    seats = [GreedyAgent() for _ in range(cfg.n)]
+    for i, g in enumerate(seats):
+        g.start(cfg, i, Objective(1.0, cfg.n))
+    pol = group_policies.parse("fixed(2)")
+    pol.start(cfg, None, seed)
+    while (d := api.pending_decision(s)) is not None and not stop(s, d):
+        s = api.apply(s, d, (pol if d.player == api.GROUP else seats[d.player]).choose(api.observe(s, d.player), d))
+    return s, d
+
+
+def test_goal_status_block_in_coop_games():
+    cfg = api.GameConfig(2, {"coop_goals": {"penalty": "avg_x_d", "allowed_changes": [0, 1]}}, True, "team_total")
+    s, d = _play_to(cfg, lambda s, d: s.round == 2 and d.player == 0 and d.kind == "action")
+    a = LLMAgent("test/model", base_url="http://localhost:1/v1", reasoning="full", goal_status=True)
+    a.start(cfg, 0, Objective(1.0, 2))
+    user = a.build_prompt(api.observe(s, 0), d)[0]
+    counts = api.goal_counts(s)
+    assert "ROUND GOAL STATUS - round 2:" in user and "EVERY player needs a count of at least 2" in user
+    assert f"player 0 (you): {counts[0]}" in user and "If the round ended now:" in user
+    assert "Earlier rounds: round 1 (d = 2)" in user and a.settings()["goal_status"] is True
+    b = LLMAgent("test/model", base_url="http://localhost:1/v1", reasoning="full")
+    b.start(cfg, 0, Objective(1.0, 2))
+    assert "ROUND GOAL STATUS" not in b.build_prompt(api.observe(s, 0), d)[0]
+
+
+def test_goal_status_block_in_individual_games():
+    cfg = api.GameConfig(2, {}, True, "individual")
+    s, d = _play_to(cfg, lambda s, d: s.round == 2 and d.player == 0 and d.kind == "action")
+    text = api.describe_goal_status(api.observe(s, 0))
+    pts, _, _ = api.score_goal_counts(s, api.goal_counts(s))
+    assert f"player 0 (you): count {api.goal_counts(s)[0]}, {pts[0]:g} points" in text
+    assert "Earlier rounds: round 1: points player 0 (you)" in text and "Difficulty" not in text

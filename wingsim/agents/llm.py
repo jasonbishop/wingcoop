@@ -141,7 +141,7 @@ class LLMAgent(Agent):
     def __init__(self, model, base_url="https://openrouter.ai/api/v1", api_key_env=None,
                  prompt="default", reasoning=False, thinking=None, temperature=0.0, max_tokens=None,
                  timeout=120, budget_usd=None, max_calls=None, seed=0, extra_body=None,
-                 plan=False, outcomes=False, compact=False):
+                 plan=False, outcomes=False, compact=False, goal_status=False):
         self.model = model
         self.base_url = base_url.rstrip("/")
         # The key is sent only where it belongs: OPENROUTER_API_KEY to OpenRouter, and otherwise only a
@@ -152,6 +152,7 @@ class LLMAgent(Agent):
         self.plan = bool(plan)
         self.outcomes = bool(outcomes)
         self.compact = bool(compact)
+        self.goal_status = bool(goal_status)   # a block on where the table stands on the round goal
         if self.plan:
             reasoning = True
         self.prompt = prompt
@@ -179,7 +180,7 @@ class LLMAgent(Agent):
         return {"model": self.model, "base_url": self.base_url, "prompt": self.prompt,
                 "reasoning": "full" if self.full else self.reasoning, "thinking": self.thinking, "temperature": self.temperature,
                 "max_tokens": self.max_tokens, "plan": self.plan, "outcomes": self.outcomes,
-                "compact": self.compact,
+                "compact": self.compact, "goal_status": self.goal_status,
                 "system_prompt": getattr(self, "system", None)}
 
     def start(self, config, player_index, objective):
@@ -257,6 +258,9 @@ class LLMAgent(Agent):
         else:
             what, labels = api.describe_decision(observation)
         lines = [api.describe_observation(observation), ""]
+        status = api.describe_goal_status(observation) if self.goal_status else None
+        if status:
+            lines += [status, ""]
         if self.plan:
             lines += ["YOUR PLAN (your own notes from earlier turns; they may be out of date. If they conflict "
                       "with the position above, trust the position):", self.current_plan or "(none yet)", ""]
