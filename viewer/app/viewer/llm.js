@@ -123,8 +123,8 @@ export function tokenLimit(seat, decision) {
 
 /**
  * Which reply looks cut off, judged from usage.completion_tokens against the limit, or -1.
- * `usage` covers the last call only (see FORMAT-REQUESTS.md, L1), so only the last reply
- * can be judged; and only against the first call's limit (L2).
+ * `usage` covers the last call only (see FORMAT-REQUESTS.md, L2), so only the last reply
+ * can be judged; and only against the first call's limit (L3).
  */
 export function cutOffReply(seat, decision) {
   const info = decision.info, limit = tokenLimit(seat, decision);
