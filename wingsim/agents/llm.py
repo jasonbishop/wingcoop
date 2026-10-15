@@ -91,13 +91,15 @@ def drop_thinking(reply):
 def strip_reply(reply):
     """The reply without hidden-reasoning tags (<think>...</think>) or a plan block."""
     reply = drop_thinking(reply)
-    return re.sub(r"PLAN:.*?(END PLAN|$)", "", reply, flags=re.S | re.IGNORECASE)
+    # A plan block starts with "PLAN:" at the start of a line, as the prompt asks; "my plan: ..." inside the
+    # reasoning is not one (matching it once cut the ANSWER line off a reply).
+    return re.sub(r"^[*#\s]*PLAN:.*?(END PLAN|\Z)", "", reply, flags=re.S | re.M)
 
 
 def parse_plan(reply):
     """The plan block of a reply (between 'PLAN:' and 'END PLAN'), or None."""
     reply = drop_thinking(reply)
-    m = re.search(r"PLAN:\s*(.*?)\s*(END PLAN|$)", reply, flags=re.S | re.IGNORECASE)
+    m = re.search(r"^[*#\s]*PLAN:\**\s*(.*?)\s*(END PLAN|\Z)", reply, flags=re.S | re.M)
     if not m or not m.group(1).strip():
         return None
     return m.group(1).strip()[:PLAN_LIMIT]
