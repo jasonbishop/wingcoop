@@ -82,7 +82,13 @@ chosen by naming them), `goal_status` (a block on the current round goal: each p
 the co-op difficulty, what the round would score if it ended now, turns left, earlier rounds).
 `experiments/llm-prompts-moe.yaml` compares them against a local model; run
 it with `--workers 1`, and `--resume` to continue after a stop (every finished game is saved in
-`results/<experiment>/rows.jsonl`).
+`results/<experiment>/rows.jsonl`). `experiments/llm-mcts-moe.yaml` pairs the local model with a
+tree-search partner under the co-op rules.
+
+To total a run's tokens and estimate what it would cost on a paid model (current OpenRouter prices,
+fetched from its public model list):
+`.venv/bin/python -m wingsim.analysis.tokens results/<experiment>/rows.jsonl --model <openrouter id> ...`
+(it also reads game logs, or `--price IN OUT` in dollars per million tokens).
 
 The prompt text lives in `wingsim/prompts/`: `rules.md` is the rules summary and `default.md` the
 system prompt template. Copy `default.md` to a new name and set `prompt: <name>` to try a variant.
@@ -98,7 +104,7 @@ wingsim/
   plugins/      coop_goals.py, open_hands.py
   agents/       random.py, greedy.py, mcts.py, llm.py, group_policies.py   (must never import analysis)
   prompts/      rules.md, default.md   (text the language-model agent is given)
-  analysis/     tags.py, metrics.py, report.py, controls.py
+  analysis/     tags.py, metrics.py, report.py, controls.py, tokens.py
   experiments/  *.yaml
   tests/
   runner.py     experiment runner
