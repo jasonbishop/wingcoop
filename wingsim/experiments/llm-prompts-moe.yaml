@@ -12,7 +12,7 @@
 # Run with --workers 1, and --resume after a stop. The brief-prompt games (1500 tokens) are in
 # results/llm-prompts-moe-brief.
 name: llm-prompts-moe
-seeds: {start: 101, count: 10}
+seeds: {start: 101, count: 5}           # 5 seeds first; raise to 10 if the results warrant it
 players: [2]
 conditions:
   default:
