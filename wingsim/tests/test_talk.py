@@ -92,6 +92,7 @@ def test_coach_and_digest_calls_feed_the_action_prompt(endpoint, tmp_path):
                                         log_root=tmp_path / "logs", progress=False)
     path, = (tmp_path / "logs" / "harness").rglob("*.jsonl.gz")
     lines = read_log(path)
+    assert lines[0]["seats"][0]["settings"]["coach_system_prompt"].startswith("You are the coach of player 0 of 3")
     acts = [ln for ln in lines if ln["t"] == "decision" and ln["kind"] == "action" and ln["player"] in (0, 2)]
     first, second = acts[0], acts[1]
     assert [c["role"] for c in first["info"]["aux"]] == ["coach"]                # nothing said yet

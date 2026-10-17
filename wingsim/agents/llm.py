@@ -243,7 +243,8 @@ class LLMAgent(Agent):
                 "max_tokens": self.max_tokens, "plan": self.plan, "outcomes": self.outcomes,
                 "compact": self.compact, "goal_status": self.goal_status, "talk": self.talk,
                 "coach": self.coach, "digest": self.digest,
-                "system_prompt": getattr(self, "system", None)}
+                "system_prompt": getattr(self, "system", None),
+                "coach_system_prompt": getattr(self, "coach_system", None)}
 
     def start(self, config, player_index, objective):
         super().start(config, player_index, objective)
