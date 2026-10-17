@@ -19,7 +19,7 @@ conditions:
     plugins: {}
     open_hands: true
     agents:
-      - &qwen {type: llm, model: qwen-moe, base_url: "http://10.20.0.71:8000/v1", reasoning: full, max_tokens: 6000,
+      - &qwen {type: llm, model: qwen-moe, base_url: "http://10.20.0.86:8000/v1", reasoning: full, max_tokens: 6000,
                timeout: 900, extra_body: {chat_template_kwargs: {enable_thinking: false}}}
       - {type: greedy, weights: "tuned/baseline.json"}
   plan:

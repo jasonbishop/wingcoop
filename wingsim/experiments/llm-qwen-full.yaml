@@ -19,7 +19,7 @@ conditions:
     - &qwen
       type: llm
       model: qwen-moe
-      base_url: http://10.20.0.71:8000/v1
+      base_url: http://10.20.0.86:8000/v1
       reasoning: full
       thinking: high          # the local server has no effort levels; this switches thinking on and is logged
       max_tokens: 16000
