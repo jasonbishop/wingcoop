@@ -1,0 +1,32 @@
+# The local Qwen MoE on the co-op seed-103 game again, now with full reasoning (plan: true used to switch it
+# to brief) and the fixed plan-block parser: the fair comparison for llm-glm-flash.yaml. Run it serially:
+#   .venv/bin/python -m wingsim.runner wingsim/experiments/llm-qwen-full.yaml --workers 1 --no-report
+name: llm-qwen-full
+seeds: {start: 103, count: 1}
+players: [2]
+conditions:
+  coop_plan_after:
+    plugins:
+      coop_goals:
+        penalty: avg_x_d
+        allowed_changes: [0, 1]
+    open_hands: true
+    win_condition: team_total
+    agents:
+    - type: llm
+      model: qwen-moe
+      base_url: http://10.20.0.71:8000/v1
+      reasoning: full
+      max_tokens: 6000
+      timeout: 900
+      extra_body:
+        chat_template_kwargs: {enable_thinking: false}
+      prompt: plan
+      plan: true
+      compact: true
+      outcomes: true
+    - {type: greedy, weights: tuned/coop.json}
+motivation: [1.0]
+group_policy: [fixed(2)]
+group_share: [false]
+logging: {level: full, snapshots: decision}
