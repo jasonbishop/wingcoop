@@ -262,6 +262,83 @@ button.go { margin-left: auto; padding: 2px 9px; font-size: 0.8rem; }
 #rules .close { padding: 0 8px; font-size: 1.3rem; border: none; }
 .rules-text { margin-top: 8px; }
 
+/* ---------- scorecard: a paper score sheet, light in either theme, numbers in pen */
+#scorecard { position: fixed; inset: 0; z-index: 12; display: grid; place-items: center; padding: 24px 16px; overflow: auto; background: rgba(20, 22, 16, 0.55); }
+#scorecard .sheet {
+  --sc-paper: #f6f0de; --sc-ink: #3b3428; --sc-soft: #7a6f5c; --sc-rule: #b9ab8c; --sc-band: #e9dfc4; --sc-pen: #1f3d7a; --sc-team: #e3ebdd;
+  position: relative; width: min(100%, calc(250px + var(--players, 2) * 112px + 104px)); max-height: calc(100vh - 48px); display: flex; flex-direction: column;
+  padding: 18px 20px 20px; color: var(--sc-ink); border-radius: 6px; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+  background: radial-gradient(ellipse at 20% 0%, rgba(255, 255, 255, 0.55), transparent 60%), repeating-linear-gradient(0deg, rgba(120, 100, 60, 0.025) 0 2px, transparent 2px 5px), var(--sc-paper);
+}
+#scorecard .scroll { overflow: auto; min-height: 0; }
+#scorecard header { text-align: center; border-bottom: 3px double var(--sc-rule); padding-bottom: 6px; margin: 0 28px 4px; }
+#scorecard h2 { margin: 0; font: 700 2rem/1 var(--font-display); letter-spacing: 0.14em; text-transform: uppercase; color: var(--sc-ink); }
+#scorecard header p { margin: 2px 0 0; font: 500 0.95rem var(--font-display); letter-spacing: 0.08em; color: var(--sc-soft); }
+#scorecard .game { margin: 0 0 10px; text-align: center; font-size: 0.82rem; color: var(--sc-soft); }
+#scorecard .close { position: absolute; top: 8px; right: 10px; padding: 0 8px; font-size: 1.2rem; color: var(--sc-soft); background: none; border: none; }
+.sc { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.sc th, .sc td { border: 1px solid var(--sc-rule); padding: 5px 8px; }
+.sc thead th:first-child, .sc th { text-align: left; font-weight: 500; }
+.sc tr > th:first-child { width: 230px; }
+.sc .names th { border-top: none; border-left: none; border-right: none; vertical-align: bottom; }
+.sc .names th:first-child { border-bottom: none; }
+.sc .player { text-align: center; padding-bottom: 6px; border-bottom: 2px solid var(--sc-ink); }
+.sc .player .name { display: flex; align-items: center; justify-content: center; gap: 5px; font: 700 0.92rem var(--font-display); white-space: nowrap; }
+.sc .player .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--seat); flex: none; }
+.sc .player .short { display: none; }
+.sc .player .agent { display: block; font-size: 0.72rem; font-weight: 400; color: var(--sc-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sc .section th { padding: 9px 8px 3px; border-left: none; border-right: none; font: 700 0.8rem var(--font-display); letter-spacing: 0.12em; text-transform: uppercase; color: var(--sc-soft); background: none; }
+.sc tbody tr:not(.section):not(.colnote) > th { background: var(--sc-band); }
+.sc tbody th { display: table-cell; }
+.sc tbody th .ic, .sc tbody th .goal { vertical-align: middle; }
+.sc .ic { display: inline-flex; align-items: center; justify-content: center; width: 34px; margin-right: 6px; }
+.sc .ic-card { width: 16px; height: 24px; object-fit: cover; border-radius: 2px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35); }
+.sc .ic-egg { height: 20px; }
+.sc .ic-food { width: 17px; height: 17px; border-radius: 50%; object-fit: cover; }
+.sc .ic-pair { display: inline-flex; }
+.sc .ic-pair > :last-child { margin-left: -6px; }
+.sc .ic-tuck > :first-child { transform: rotate(-12deg); }
+.sc .ic-tuck > :last-child { margin-left: -9px; transform: rotate(8deg); }
+.sc .ic-goal { width: 22px; height: 22px; display: grid; place-items: center; border-radius: 50%; color: #f6f0de; background: #6e8c5a; font-size: 0.75rem; }
+.sc .ic-round { width: 26px; height: 22px; display: grid; place-items: center; border-radius: 4px; color: #f6f0de; background: #5b7f95; font: 700 0.72rem var(--font-body); }
+.sc .goal { display: inline-flex; flex-direction: column; line-height: 1.2; max-width: calc(100% - 44px); }
+.sc .goal small { color: var(--sc-soft); font-size: 0.74rem; }
+.sc .goal .sym { height: 1.05em; vertical-align: -0.18em; }
+.sc .pen { text-align: center; font: 700 1.45rem/1 "Caveat", "Segoe Print", "Bradley Hand", cursive; color: var(--sc-pen); }
+.sc .pen.count { font-size: 1.15rem; color: #5b6a8a; }
+.sc .na { background: repeating-linear-gradient(135deg, transparent 0 5px, rgba(120, 100, 60, 0.09) 5px 6px); }
+.sc .teamcol { background: var(--sc-team); }
+.sc .colnote th, .sc .colnote td { padding: 2px 8px; border-top: none; font-size: 0.72rem; color: var(--sc-soft); text-align: center; }
+.sc .colnote th { text-align: left; }
+.sc .result { font: 700 0.9rem var(--font-body); margin-right: 6px; }
+.sc .met .result { color: #3f7a34; }
+.sc .missed .result { color: #a8433a; }
+.sc .subtotal th { font-weight: 700; }
+.sc .subtotal > * { border-top: 2px solid var(--sc-ink); }
+.sc tfoot th { font: 700 1rem var(--font-display); letter-spacing: 0.04em; background: none; border-left: none; }
+.sc tfoot tr > * { border-bottom: none; border-right: none; }
+.sc .combined > * { border-top: 3px double var(--sc-ink); padding-top: 10px; padding-bottom: 6px; }
+.sc .combined td { text-align: right; padding-right: 22px; }
+.sc .sum { font: 700 1.25rem "Caveat", cursive; color: var(--sc-soft); margin-right: 20px; }
+.sc .pen.big { font-size: 2.2rem; display: inline-block; }
+.sc .circled { position: relative; }
+.sc .circled::after { content: ""; position: absolute; inset: -2px -6px; border: 2px solid var(--sc-pen); border-radius: 50%; transform: rotate(-4deg); opacity: 0.75; pointer-events: none; }
+.sc td.circled::after { inset: 3px 18%; }
+.sc .pen.big.circled::after { inset: -4px -14px; }
+.sc .target td { text-align: right; color: var(--sc-soft); }
+.scorecard-open { margin: 4px 0 10px; }
+@media (max-width: 560px) {
+  #scorecard { padding: 8px; }
+  #scorecard .sheet { padding: 14px 10px; }
+  .sc tr > th:first-child { width: 130px; }
+  .sc .ic { width: 24px; margin-right: 3px; }
+  .sc th, .sc td { padding: 4px 4px; }
+  .sc .goal { max-width: 100%; }
+  .sc tbody th { font-size: 0.85rem; }
+  .sc .player .long { display: none; }
+  .sc .player .short { display: inline; }
+}
+
 /* ---------- transport */
 #transport { display: flex; align-items: center; gap: 14px; padding: 8px 14px; background: var(--paper); border-top: 1px solid var(--line); }
 #transport .buttons { display: flex; gap: 4px; }

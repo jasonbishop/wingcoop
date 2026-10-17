@@ -12,6 +12,7 @@ import { runningScore, seatCss, seatLabel, playerName, HABITATS } from '../data.
 import { describeEvent, DECISION_TITLES, ACTION_NAMES, fmt, eventSeat } from '../describe.js';
 import { el, esc, rich } from './rich.js';
 import { ModelPanel, decisionCard, dealtBirdList, birdsByNumber } from './model.js';
+import { Scorecard } from './scorecard.js';
 import { isLlmSeat, llmSeats, modelEntry } from '../llm.js';
 
 const $ = id => document.getElementById(id);
@@ -42,9 +43,19 @@ export class Hud {
     this._buildTurns();
     this._buildGame();
     this._buildModel();
+    this.scorecard = new Scorecard(replay, this.book);
 
-    this._listen(player, 'position', () => { this.showAll = false; this.stage = null; this.render(); });
-    this._listen(player, 'stage', e => { this.stage = e.detail; this._renderStage(); this._banner(e.detail); });
+    // the scorecard comes up when playback plays into the end of the game (not on a jump there)
+    let finishing = false;
+    this._listen(player, 'position', () => {
+      this.showAll = false; this.stage = null; this.render();
+      if (finishing && player.index === player.last) this.scorecard.open();
+      finishing = false;
+    });
+    this._listen(player, 'stage', e => {
+      this.stage = e.detail; this._renderStage(); this._banner(e.detail);
+      finishing = e.detail.stage === 'done' && e.detail.index === player.last - 1;
+    });
     this._listen(player, 'playing', () => this._renderPlay());
     this._listen(game, 'pick', e => this._pick(e.detail));
     this.render();
@@ -58,6 +69,7 @@ export class Hud {
   dispose() {
     for (const off of this._off) off();
     this.model?.dispose();
+    this.scorecard?.dispose();
     clearTimeout(this._bannerTimer);
     $('inspect').hidden = true;
     $('banner').hidden = true;
@@ -177,7 +189,7 @@ export class Hud {
     const onKey = e => {
       if (e.target.closest('input, select, textarea, [contenteditable]') || e.metaKey || e.ctrlKey || e.altKey) return;
       if ($('home') && !$('home').hidden) return;
-      if (!$('transcript').hidden) return;   // the transcript scrolls; the replay behind it stays put
+      if (!$('transcript').hidden || this.scorecard.isOpen) return;   // overlays scroll; the replay behind stays put
       if (e.key === ' ') { e.preventDefault(); p.toggle(); }
       else if (e.key === 'ArrowRight') { e.preventDefault(); e.shiftKey ? p.jump(this.turns, +1) : p.step(); }
       else if (e.key === 'ArrowLeft') { e.preventDefault(); e.shiftKey ? p.jump(this.turns, -1) : p.back(); }
@@ -378,6 +390,7 @@ export class Hud {
     const fs = this.replay.finalScores, out = [];
     out.push(el('h2', {}, 'Game over'));
     if (!fs) { out.push(el('p.hint', {}, 'This log has no final scoring.')); return out; }
+    out.push(el('button.primary.scorecard-open', { onclick: () => this.scorecard.open() }, 'Show the scorecard'));
     out.push(this._scoreTable(fs));
     if (this.replay.coop) {
       out.push(el('p.total', { html: `Group score <b>${fs.group > 0 ? '+' : ''}${fmt(fs.group)}</b> · team total <b>${fmt(fs.team_total)}</b>` }));
@@ -513,7 +526,8 @@ export class Hud {
       out.push(t, el('p.hint', {}, 'Each player’s count for the round’s goal. Hover a row for the goal.'));
     }
     if (this.replay.finalScores) {
-      out.push(el('h3', {}, 'Final scores'), this._scoreTable(this.replay.finalScores));
+      out.push(el('h3', {}, 'Final scores'), this._scoreTable(this.replay.finalScores),
+        el('button.quiet.scorecard-open', { onclick: () => this.scorecard.open() }, 'Show the scorecard'));
       if (this.replay.coop) out.push(el('p.total', { html: `Group score <b>${fmt(this.replay.finalScores.group)}</b> · team total <b>${fmt(this.replay.finalScores.team_total)}</b>` }));
     }
     out.push(el('h3', {}, 'Keys'), el('p.hint', { html: '<kbd>Space</kbd> play / pause · <kbd>→</kbd> play one decision · <kbd>←</kbd> back one · <kbd>Shift</kbd>+<kbd>←</kbd>/<kbd>→</kbd> previous / next turn · <kbd>Home</kbd> / <kbd>End</kbd>. Drag the table to orbit, right-drag to pan, scroll to zoom. Click a card to read it; click a name plate to sit at that seat.' }));
