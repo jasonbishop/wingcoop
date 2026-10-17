@@ -319,6 +319,19 @@ def test_full_reasoning_relaxes_the_length_and_raises_the_limit(endpoint, monkey
     assert not b.full and b.max_tokens == 600 and "three sentences at most" in b.system
 
 
+def test_plan_keeps_full_reasoning():
+    from wingsim.agents import llm
+    full = LLMAgent("test/model", base_url="http://localhost:1/v1", reasoning="full", plan=True)
+    assert full.full and full.settings()["reasoning"] == "full" and full.max_tokens == 4000
+    brief = LLMAgent("test/model", base_url="http://localhost:1/v1", plan=True)     # a plan turns reasoning on
+    assert brief.reasoning and not brief.full
+    cfg = api.GameConfig(2)
+    s, d = _play_to(cfg, lambda s, d: d.player == 0 and d.kind == "action")
+    full.start(cfg, 0, Objective(0.0, 2))
+    user = full.build_prompt(api.observe(s, 0), d)[0]
+    assert llm.PLAN_ASK_FULL in user and llm.PLAN_ASK not in user
+
+
 def _play_to(cfg, stop, seed=7):
     """Play a game with greedy seats (and fixed(2) for the group) until stop(state, decision) holds."""
     from wingsim.agents import group_policies

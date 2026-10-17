@@ -153,7 +153,7 @@ class LLMAgent(Agent):
         self.outcomes = bool(outcomes)
         self.compact = bool(compact)
         self.goal_status = bool(goal_status)   # a block on where the table stands on the round goal
-        if self.plan:
+        if self.plan and not reasoning:    # a plan needs visible reasoning; "full" stays full
             reasoning = True
         self.prompt = prompt
         self.full = reasoning == "full"    # as much visible reasoning as the decision needs
