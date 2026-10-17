@@ -1,0 +1,20 @@
+# GLM-5.3 Flash on OpenRouter with full visible reasoning and high hidden thinking, in the co-op game that
+# llm-prompts-moe.yaml's coop_plan_after played on seed 103 with the local Qwen (same deal, partner and rules).
+# About $0.004 a call (~$0.40-0.50 a game); budget_usd stops the run if it spends more. Run it with:
+#   .venv/bin/python -m wingsim.runner wingsim/experiments/llm-glm-flash.yaml --workers 1 --no-report
+name: llm-glm-flash
+seeds: {start: 103, count: 1}
+players: [2]
+conditions:
+  coop_plan_after:
+    plugins: {coop_goals: {penalty: avg_x_d, allowed_changes: [0, 1]}}
+    open_hands: true
+    win_condition: team_total
+    agents:
+      - {type: llm, model: z-ai/glm-5.3-flash, reasoning: full, thinking: high, max_tokens: 16000, timeout: 900,
+         budget_usd: 1.0, prompt: plan, plan: true, compact: true, outcomes: true}
+      - {type: greedy, weights: "tuned/coop.json"}
+motivation:  [1.0]
+group_policy: ["fixed(2)"]
+group_share: [false]
+logging:     {level: full, snapshots: decision}
