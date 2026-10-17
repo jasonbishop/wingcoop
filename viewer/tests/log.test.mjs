@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { join } from 'node:path';
-import { buildReplay, turnIndex, roundIndex } from '../app/viewer/replay/log.js';
+import { buildReplay, turnIndex, roundIndex, keptBirds } from '../app/viewer/replay/log.js';
 import { SAMPLES, readLog } from './helpers.mjs';
 
 const load = name => buildReplay(readLog(join(SAMPLES, name)));
@@ -43,4 +43,18 @@ test('turn and round indexes', () => {
   assert.equal(turns.length, 3 * (8 + 7 + 6 + 5));
   assert.deepEqual(turns.slice(0, 4).map(t => t.player), [2, 0, 1, 2]);
   assert.deepEqual(roundIndex(r).map(x => x.round), [0, 1, 2, 3, 4]);
+});
+
+test('keep-birds decisions read as the dealt birds (hand order) and the ones kept', () => {
+  for (const name of ['coop-3p-greedy-every-decision.json', 'coop-2p-haiku-vs-greedy.json']) {
+    const r = load(name);
+    const ds = r.positions.filter(p => p.decision?.kind === 'setup_keep_birds');
+    assert.ok(ds.length > 0);
+    for (const p of ds) {
+      const k = keptBirds(p.decision);
+      assert.deepEqual(k.dealt, p.state.players[p.decision.player].hand);
+      assert.deepEqual([...k.kept], p.decision.options[p.decision.choice][1]);
+    }
+  }
+  assert.equal(keptBirds({ kind: 'take_die', options: [['die', 0, 0]], choice: 0 }), null);
 });

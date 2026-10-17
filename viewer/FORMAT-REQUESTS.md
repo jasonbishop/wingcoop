@@ -66,6 +66,8 @@ Suggested fix: match the block only at the start of a line and in capitals (`^PL
 
 **L4. Documentation.** Section 6 could say: the plan has five lines (`Engine:`, `Bonus target:`, `Round goal:`, `Need next:`, `Pivot if:`); it is only written at `kind == "action"` decisions; `plan_updated` is taken from the first reply's plan block, or the retry's if the first has none; `chosen` is the random option's number when `fallback` is `"random"`.
 
+**L5. Documentation: the keep-birds prompt (16 October 2026).** With `compact` on, a `setup_keep_birds` prompt lists the 5 dealt birds numbered 1-5 and the model answers with bird numbers (`ANSWER: 4, 5`); without it, the prompt lists all 32 options and the model answers with one option number. The viewer now shows this decision as the 5 birds with the kept ones ticked, numbered only for `compact` seats, so its answer lines up. Section 6 could say what `compact` changes here, and section 4.5 that the birds are numbered in hand order, which is also the order of the option keeping all 5 (true in all 85 keep-birds decisions in the logs tested; the viewer relies on it).
+
 The original requests follow, unchanged.
 
 ## Summary

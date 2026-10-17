@@ -11,6 +11,7 @@
 import { el, esc, rich } from './rich.js';
 import { modelIndex, llmSeats, excerpt, parsePlan, tokenLimit, PLAN_FIELDS } from '../llm.js';
 import { DECISION_TITLES } from '../describe.js';
+import { keptBirds } from '../replay/log.js';
 import { seatCss, seatLabel, playerName } from '../data.js';
 
 const $ = id => document.getElementById(id);
@@ -55,17 +56,40 @@ function badges(entry) {
     el('span.badge', { class: `b-${f.key}`, title: f.title }, `${f.icon} ${f.one}`));
 }
 
-function optionList(entry) {
+/**
+ * The keep-birds decision as the 5 dealt birds, the kept ones ticked ('?' if kept at random),
+ * instead of its 32 subsets. `numbered`: number them 1-5, as a `compact` language-model seat's
+ * prompt does (it answers with bird numbers). Null for any other decision.
+ */
+export function dealtBirdList(d, book, { random = !!d.info?.fallback, numbered = false } = {}) {
+  const k = keptBirds(d);
+  if (!k) return null;
+  return el('ol.options.dealt', {}, k.dealt.map((id, i) => {
+    const kept = k.kept.has(id);
+    return el('li', { class: kept ? (random ? 'chosen random' : 'chosen') : '', title: kept ? (random ? 'Kept at random' : 'Kept') : 'Not kept' },
+      el('span.mark', {}, kept ? (random ? '?' : '✓') : ''),
+      el('span.label', {}, numbered ? el('span.num', {}, `${i + 1}. `) : null, book ? book.birdName(id) : `bird ${id}`),
+      kept ? el('span.val', {}, random ? 'kept at random' : 'kept') : null);
+  }));
+}
+
+/** Does this seat's prompt show the dealt birds by number rather than the 32 options? */
+export const birdsByNumber = seat => !!seat?.settings?.compact;
+
+function optionList(entry, book) {
   const d = entry.d, random = entry.flags.fallback;
+  const numbered = birdsByNumber(entry.seat);
+  const dealt = dealtBirdList(d, book, { random, numbered });
+  // the chosen row keeps its number too: it is what the model's ANSWER refers to
   const row = i => el('li', { class: i === d.choice ? (random ? 'chosen random' : 'chosen') : '' },
     el('span.mark', {}, i === d.choice ? (random ? '?' : '✓') : `${i + 1}`),
-    el('span.label', { html: rich(d.labels?.[i] ?? JSON.stringify(d.options[i])) }),
+    el('span.label', {}, i === d.choice ? el('span.num', {}, `${i + 1}. `) : null, el('span', { html: rich(d.labels?.[i] ?? JSON.stringify(d.options[i])) })),
     i === d.choice && random ? el('span.val', { title: 'Played at random, not chosen by the model' }, 'random') : null);
   if (d.options.length <= 8) return [el('ol.options', {}, d.options.map((_, i) => row(i)))];
-  return [
-    el('ol.options', {}, row(d.choice)),
-    el('details', {}, el('summary', {}, `All ${d.options.length} options`), el('ol.options', {}, d.options.map((_, i) => row(i)))),
-  ];
+  const all = el('details', {}, el('summary', {}, `All ${d.options.length} options`), el('ol.options', {}, d.options.map((_, i) => row(i))));
+  if (!dealt) return [el('ol.options', {}, row(d.choice)), all];
+  if (numbered) return [el('p.hint', {}, 'The model was shown these 5 birds and answered with their numbers.'), dealt, all];
+  return [dealt, el('p.hint', {}, `The model was shown all ${d.options.length} combinations and answered with an option number:`), el('ol.options', {}, row(d.choice)), all];
 }
 
 function replyNodes(entry, q) {
@@ -150,10 +174,10 @@ function promptNode(entry, q) {
 /**
  * One model decision.
  * @param {object} entry   from modelIndex()
- * @param {{query?: string, options?: boolean, wide?: boolean, planContext?: boolean}} [opts]
+ * @param {{query?: string, options?: boolean, wide?: boolean, planContext?: boolean, book?: object}} [opts]
  *   planContext: show the plan the model was shown at decisions where it can't write one
  */
-export function decisionCard(entry, { query = '', options = true, wide = false, planContext = true } = {}) {
+export function decisionCard(entry, { query = '', options = true, wide = false, planContext = true, book = null } = {}) {
   const main = [], side = [];
   if (entry.flags.fallback) {
     main.push(el('p.fallback', {}, el('b', {}, 'Random move. '),
@@ -161,7 +185,7 @@ export function decisionCard(entry, { query = '', options = true, wide = false, 
   }
   const b = badges(entry).filter(x => !x.classList.contains('b-fallback'));
   if (b.length) main.push(el('div.badges', {}, b));
-  if (options) main.push(...optionList(entry));
+  if (options) main.push(...optionList(entry, book));
   main.push(...replyNodes(entry, query));
   if (planContext || entry.d.kind === 'action') (wide ? side : main).push(...planNodes(entry));
   main.push(...usageNodes(entry));
@@ -376,7 +400,7 @@ export class ModelPanel {
       el('span.dot'), el('b', {}, DECISION_TITLES[e.d.kind] || e.d.kind),
       el('span.hint', {}, ` ${whereText(e)} · decision ${e.index + 1}`),
       e.index !== index ? el('button.quiet.go', { onclick: () => this._go(e.index) }, 'Go there') : null));
-    out.push(decisionCard(e, { query: this.finder.query }));
+    out.push(decisionCard(e, { query: this.finder.query, book: this.book }));
     this.current.replaceChildren(...out);
   }
 
@@ -462,7 +486,7 @@ class Transcript {
             el('span.dot'), el('b', {}, DECISION_TITLES[d.kind] || d.kind),
             el('span.hint', {}, ` ${playerName(entry.seatNo)} · ${whereText(pos)} · decision ${pos.index + 1}`),
             el('button.quiet.go', { onclick: () => { this.close(); p.player.goto(pos.index); } }, 'Show on the table')),
-          decisionCard(entry, { query: q, wide: true, planContext: false }));
+          decisionCard(entry, { query: q, wide: true, planContext: false, book: p.book }));
       } else if (!entry && !f.active && this.showOthers) {
         const who = d.player === 'group' ? 'The group' : playerName(d.player);
         const agent = d.player === 'group' ? (h.group_policy || 'group policy') : seatLabel(h, d.player);

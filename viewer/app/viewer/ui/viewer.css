@@ -112,6 +112,8 @@ img.sym-egg { border-radius: 0; height: 1.2em; }
 .options li.chosen .label { display: block; }
 .options .mark { color: var(--moss); font-weight: 700; }
 .options .val { font-variant-numeric: tabular-nums; font-size: 0.82rem; color: var(--ink-soft); white-space: nowrap; }
+.options .num { font-variant-numeric: tabular-nums; color: var(--ink-soft); font-weight: 400; }
+.options.dealt + .options, .options.dealt + .hint { margin-top: 8px; }
 .more { margin-top: 6px; font-size: 0.82rem; padding: 3px 9px; }
 
 .reply { margin: 6px 0; padding: 8px 12px; border-left: 3px solid var(--moss); background: var(--paper-2); white-space: pre-wrap; font-size: 0.93rem; border-radius: 0 4px 4px 0; }

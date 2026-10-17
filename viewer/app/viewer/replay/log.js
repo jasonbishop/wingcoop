@@ -163,3 +163,17 @@ export function roundIndex(replay) {
   }
   return out;
 }
+
+/**
+ * A `setup_keep_birds` decision as the 5 dealt birds and the ones kept, instead of its 32
+ * subsets: { dealt: [bird ids, in dealt order], kept: Set }, or null for any other decision.
+ * The dealt order (the player's hand order, and the numbers a language model is shown) is that
+ * of the option keeping them all (format section 4.5: one option per subset).
+ */
+export function keptBirds(d) {
+  if (d?.kind !== 'setup_keep_birds') return null;
+  const all = d.options.reduce((a, o) => (o[1].length > a.length ? o[1] : a), []);
+  const chosen = d.options[d.choice]?.[1];
+  if (!all.length || !chosen) return null;
+  return { dealt: all, kept: new Set(chosen) };
+}
