@@ -28,6 +28,8 @@ Logs with a snapshot before every decision (`logging: {snapshots: decision}` in 
 
 **Step tab.** One decision: who is deciding and with which agent, the options (the chosen one marked, with the agent's own value for the options it ranked), a language model's reply and the prompt it saw, and the events the choice caused. During playback the events light up as they happen on the table.
 
+The starting-birds decision is shown as the 5 dealt birds with the kept ones ticked, instead of its 32 combinations (still one click away). For a language model the list matches its prompt: numbered 1-5 for a `compact` seat, which answers with bird numbers; otherwise the combination it picked is shown with its option number.
+
 **Turns tab.** Every turn with its action; click to jump. **Game tab.** Settings, seats, round-goal results, final scores.
 
 **Model tab** (games with a language-model seat). Follows the replay cursor: it shows the model decision at the cursor, or the latest one before it.

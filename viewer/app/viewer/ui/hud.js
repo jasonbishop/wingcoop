@@ -11,7 +11,7 @@ import { turnIndex, roundIndex } from '../replay/log.js';
 import { runningScore, seatCss, seatLabel, playerName, HABITATS } from '../data.js';
 import { describeEvent, DECISION_TITLES, ACTION_NAMES, fmt, eventSeat } from '../describe.js';
 import { el, esc, rich } from './rich.js';
-import { ModelPanel, decisionCard } from './model.js';
+import { ModelPanel, decisionCard, dealtBirdList, birdsByNumber } from './model.js';
 import { isLlmSeat, llmSeats, modelEntry } from '../llm.js';
 
 const $ = id => document.getElementById(id);
@@ -260,19 +260,27 @@ export class Hud {
 
     // options, with the agent's own numbers where it gave them
     const notes = this._optionNotes(d);
+    const llm = !group && isLlmSeat(this.replay.header, seat);
+    const numbered = llm && birdsByNumber(this.replay.header.seats[seat]);
+    const dealt = dealtBirdList(d, this.book, { numbered });
+    // under the birds: a bot's scored options, or the option number a model answered with
+    const under = i => notes.has(i) || (llm && !numbered && i === d.choice);
+    if (dealt) out.push(dealt);
     const many = d.options.length > MANY_OPTIONS && !this.showAll;
     const keep = new Set([d.choice, ...notes.keys()]);
     for (let i = 0; i < d.options.length && keep.size < MANY_OPTIONS; i++) keep.add(i);
     const list = el('ol.options');
     d.options.forEach((opt, i) => {
       if (many && !keep.has(i)) return;
+      if (dealt && !this.showAll && !under(i)) return;
       const note = notes.get(i);
       const random = i === d.choice && d.info?.fallback;
       list.append(el('li', { class: i === d.choice ? (random ? 'chosen random' : 'chosen') : '', title: i === d.choice ? (random ? "Played at random: the model's answer couldn't be read" : 'The option chosen') : null },
         el('span.mark', {}, i === d.choice ? (random ? '?' : '✓') : ''),
-        el('span.label', { html: rich(d.labels?.[i] ?? JSON.stringify(opt)) }),
+        el('span.label', {}, dealt && llm ? el('span.num', {}, `${i + 1}. `) : null, el('span', { html: rich(d.labels?.[i] ?? JSON.stringify(opt)) })),
         note ? el('span.val', { title: note.title }, note.text) : random ? el('span.val', {}, 'random') : null));
     });
+    if (dealt && !this.showAll && list.children.length) out.push(el('p.hint', {}, llm ? `It was shown all ${d.options.length} combinations and answered with an option number:` : 'Its best-scored choices:'));
     out.push(list);
     if (d.options.length > MANY_OPTIONS) {
       out.push(el('button.quiet.more', { onclick: () => { this.showAll = !this.showAll; this._renderStep(); this._renderStage(); } },
