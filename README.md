@@ -88,7 +88,15 @@ tree-search partner under the co-op rules.
 To total a run's tokens and estimate what it would cost on a paid model (current OpenRouter prices,
 fetched from its public model list):
 `.venv/bin/python -m wingsim.analysis.tokens results/<experiment>/rows.jsonl --model <openrouter id> ...`
-(it also reads game logs, or `--price IN OUT` in dollars per million tokens).
+(it also reads game logs, or `--price IN OUT` in dollars per million tokens; `--list` prices every
+OpenRouter model, free and paid, cheapest first).
+
+To ask the model one logged decision again, N times, with any setting changed (model, endpoint,
+`--reasoning off|brief|full`, `--thinking off|low|medium|high`, `--plan on|off|empty`, `--outcomes`,
+`--goal-status`, `--temperature`), use `wingsim.analysis.probe`. It replays the log to the exact position,
+saves every reply to `results/probes/`, and prints a tally of the choices; `--show-prompt` prints the
+prompt without calling anything:
+`.venv/bin/python -m wingsim.analysis.probe <log> --turn 19 --reasoning full -n 10`
 
 The prompt text lives in `wingsim/prompts/`: `rules.md` is the rules summary and `default.md` the
 system prompt template. Copy `default.md` to a new name and set `prompt: <name>` to try a variant.
@@ -104,7 +112,7 @@ wingsim/
   plugins/      coop_goals.py, open_hands.py
   agents/       random.py, greedy.py, mcts.py, llm.py, group_policies.py   (must never import analysis)
   prompts/      rules.md, default.md   (text the language-model agent is given)
-  analysis/     tags.py, metrics.py, report.py, controls.py, tokens.py
+  analysis/     tags.py, metrics.py, report.py, controls.py, tokens.py, probe.py
   experiments/  *.yaml
   tests/
   runner.py     experiment runner
