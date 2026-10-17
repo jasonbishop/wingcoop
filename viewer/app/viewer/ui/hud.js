@@ -11,7 +11,7 @@ import { turnIndex, roundIndex } from '../replay/log.js';
 import { runningScore, seatCss, seatLabel, playerName, HABITATS } from '../data.js';
 import { describeEvent, DECISION_TITLES, ACTION_NAMES, fmt, eventSeat } from '../describe.js';
 import { el, esc, rich } from './rich.js';
-import { ModelPanel, decisionCard, dealtBirdList, birdsByNumber } from './model.js';
+import { ModelPanel, decisionCard, dealtBirdList, birdsByNumber, seatFacts, tokenLines } from './model.js';
 import { Scorecard } from './scorecard.js';
 import { isLlmSeat, llmSeats, modelEntry } from '../llm.js';
 
@@ -41,8 +41,8 @@ export class Hud {
     this._buildCamera();
     this._buildTabs();
     this._buildTurns();
+    this._buildModel();   // before the Game tab, which shows each model seat's token use
     this._buildGame();
-    this._buildModel();
     this.scorecard = new Scorecard(replay, this.book);
 
     // the scorecard comes up when playback plays into the end of the game (not on a jump there)
@@ -342,7 +342,7 @@ export class Hud {
     if (info.replies && isLlmSeat(this.replay.header, d.player)) {
       out.push(el('h3', {}, `What ${esc((info.model || 'the model').split('/').pop())} said`));
       out.push(decisionCard(this.model?.byIndex.get(this.player.index) ?? modelEntry(this.replay.header, this.player.position),
-        { options: false, query: this.model?.query }));
+        { options: false, query: this.model?.query, entries: this.model?.entries }));
     } else if (info.options != null && info.values) {
       out.push(el('p.hint', {}, `The bot scored ${info.options} option${info.options === 1 ? '' : 's'}; its best ${info.values.length} are marked.`));
     } else if (info.iterations != null) {
@@ -498,15 +498,18 @@ export class Hud {
       const facts = [];
       if (s.w != null) facts.push(`motivation w = ${s.w} (${s.w === 0 ? 'selfish' : s.w === 1 ? 'team-minded' : 'in between'})`);
       if (s.group_share != null) facts.push(`group share ${s.group_share ? 'counts' : 'does not count'} as own score`);
-      if (st.model) facts.push(`model ${st.model}`);
-      if (st.reasoning != null) facts.push(st.reasoning ? 'asked to explain briefly' : 'answers only');
-      if (st.thinking) facts.push(`hidden reasoning: ${st.thinking}`);
+      if (s.type === 'llm') facts.push(...seatFacts(st));
       if (st.iterations) facts.push(`${st.iterations} simulations`);
       if (st.chain_budget) facts.push(`chain budget ${st.chain_budget}`);
       const card = el('div.seatcard', { style: { '--seat': seatCss(p) } },
         el('div.who', {}, el('span.dot'), el('b', {}, playerName(p)), el('span.agent', {}, seatLabel(h, p))),
         facts.length ? el('p.hint', {}, facts.join(' · ')) : null);
+      if (s.type === 'llm' && this.model) {
+        const lines = tokenLines(this.model.entries, p);
+        if (lines.length) card.append(el('div.tokens', {}, el('b', {}, 'Token use'), el('ul', {}, lines.map(l => el('li', {}, l)))));
+      }
       if (st.system_prompt) card.append(el('details', {}, el('summary', {}, 'System prompt'), el('pre.prompt', {}, st.system_prompt)));
+      if (st.coach_system_prompt) card.append(el('details', {}, el('summary', {}, "Coach's system prompt"), el('pre.prompt', {}, st.coach_system_prompt)));
       if (st.weights) card.append(el('details', {}, el('summary', {}, 'Value-function weights'), el('pre.prompt', {}, Object.entries(st.weights).map(([k, v]) => `${k}: ${v}`).join('\n'))));
       out.push(card);
     });

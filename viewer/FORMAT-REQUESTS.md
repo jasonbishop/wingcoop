@@ -31,6 +31,15 @@ The viewer's reducer and table handle the new events and still read older logs (
 | N6 | `vp_text` corrected to `7+ birds` |
 | Corrections | all three made in the document |
 
+## Table talk and the harness (17 October 2026)
+
+Built from section 6 on `llm-glm-pair-talk` (talk only) and a game played against a local stand-in model with talk, coach and digest on (no real coach log yet). Nothing is missing; two things the viewer relies on that the document could say:
+
+| # | Request | Kind | Viewer today |
+| --- | --- | --- | --- |
+| T1 | When a coach "flags" a problem | documentation, or a field | counts notes as flagged unless they start "No problems", the wording `wingsim/prompts/coach.md` asks for. A `flagged` boolean on the coach call would make it exact |
+| T2 | What a digest read | documentation | rebuilds it from the `said` of other seats since this seat's previous digest. Worth one sentence in section 6 confirming that is exactly the set the digest saw (or log it, e.g. `aux[].read` as decision indexes) |
+
 ## Language-model data (14 October 2026)
 
 Found while building the model panel (`app/viewer/llm.js`, `ui/model.js`) on the three games in `llm-prompts-moe-brief` (`default`, `plan`, `plan_after`, seed 101, 2 players). Sequence numbers refer to those files.

@@ -2,7 +2,7 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { parseReply, parsePlan, diffWords, planDiff, cutOffReply, modelIndex, excerpt } from '../app/viewer/llm.js';
+import { parseReply, parsePlan, diffWords, planDiff, cutOffReply, replyCuts, coachFlagged, modelIndex, talkLog, digestRead, tokenTotals, excerpt } from '../app/viewer/llm.js';
 import { buildReplay } from '../app/viewer/replay/log.js';
 import { logFiles, readLog } from './helpers.mjs';
 
@@ -66,6 +66,28 @@ test('cut off is judged on the last reply against max_tokens (+600 at plan actio
   assert.equal(cutOffReply({ settings: {} }, d('take_die', 1499)), -1);
 });
 
+test('SAY and TO COACH lines: the last of each, and never read as the answer', () => {
+  const r = parseReply('I take fish.\nANSWER: 2\nSAY: my answer is wetland birds\nSAY: second thought\n**TO COACH:** agreed');
+  assert.equal(r.answer.value, '2');
+  assert.equal(r.say.text, 'SAY: second thought');
+  assert.equal(r.toCoach.text, '**TO COACH:** agreed');
+  assert.equal(parseReply('ANSWER: 1').say, null);
+});
+
+test('cut off per reply from usage_all and limits', () => {
+  const d = { kind: 'action', info: { replies: ['a', 'b'], usage_all: [{ completion_tokens: 2100 }, { completion_tokens: 12 }], limits: [2100, 300], usage: { completion_tokens: 12 } } };
+  assert.deepEqual(replyCuts({ settings: { max_tokens: 1500, plan: true } }, d), [true, false]);
+  delete d.info.usage_all;   // an older log: only the last reply can be judged
+  assert.deepEqual(replyCuts({ settings: { max_tokens: 1500, plan: true } }, d), [false, false]);
+});
+
+test('coach flagged: anything but "No problems"', () => {
+  assert.equal(coachFlagged('- No problems: the plan fits the position.'), false);
+  assert.equal(coachFlagged('No problems.'), false);
+  assert.equal(coachFlagged('- Too many cards, no food.'), true);
+  assert.equal(coachFlagged(null), false);
+});
+
 test('excerpt', () => {
   assert.equal(excerpt('aaa round goal bbb', 'round goal', 3), '…aa round goal bb…');
   assert.equal(excerpt('nothing', 'x'), null);
@@ -85,6 +107,20 @@ for (const file of logFiles()) {
       assert.equal(e.flags.fallback, info.fallback === 'random');
       if (!info.fallback) assert.equal(info.chosen, e.d.choice + 1, `chosen vs choice at ${e.d.seq}`);
       if (info.thinking) assert.equal(info.thinking.length, info.replies.length);
+      // table talk and the harness: only at action decisions, and the flags follow the logged fields
+      assert.equal(e.flags.said, !!info.said);
+      assert.equal(e.flags.answeredCoach, !!info.to_coach);
+      assert.equal(e.flags.readTalk, !!info.aux?.some(a => a.role === 'digest'));
+      if (info.said || info.aux || info.to_coach) assert.equal(e.d.kind, 'action', `talk or harness fields off an action at ${e.d.seq}`);
+      if (info.aux) {
+        assert.equal(e.coach, info.coach ?? null);
+        assert.equal(e.digest, info.digest ?? null);
+        // a digest comes first, and only when someone else said something since this seat's last one
+        const roles = info.aux.map(a => a.role);
+        assert.ok(roles.indexOf('digest') <= 0, `digest not first at ${e.d.seq}`);
+        if (e.flags.readTalk) assert.ok(digestRead(entries, e).length > 0, `digest with nothing new at ${e.d.seq}`);
+      }
+      if (Array.isArray(info.usage_all)) assert.equal(e.cuts.length, info.replies.length);
       if (e.flags.planChanged) assert.equal(e.d.kind, 'action');
       // the reply the viewer shows keeps all the text apart from the tags and the plan block
       e.replies.forEach((r, i) => {
@@ -92,6 +128,13 @@ for (const file of logFiles()) {
         assert.ok(!r.body.includes('<think>'));
         if (!r.plan) assert.equal(r.body, raw.replace(/<\/?think>/g, '').trim());
       });
+    }
+    // the talk log is every said, in order; token totals count every call
+    assert.deepEqual(talkLog(entries).map(m => m.text), entries.filter(e => e.d.info.said).map(e => e.d.info.said));
+    for (const p of new Set(entries.map(e => e.seatNo))) {
+      const t = tokenTotals(entries, p);
+      const aux = entries.filter(e => e.seatNo === p).flatMap(e => e.d.info.aux || []);
+      assert.equal((t.coach?.calls || 0) + (t.digest?.calls || 0), aux.length);
     }
   });
 }

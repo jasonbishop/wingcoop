@@ -19,6 +19,9 @@
   --del-bg: #f2d6d1;
   --mark-bg: #f5e08a;
   --drawer: min(520px, 46vw);
+  --talk: #4f7f9a;
+  --coach: #b07a2a;
+  --coach-bg: #f6ead2;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -27,6 +30,7 @@
     --moss: #93a96a; --moss-ink: #1a1f16; --good: #8fbf7a; --bad: #e08a80; --warn-bg: #4a3f22;
     --plate: rgba(32, 37, 31, 0.92); color-scheme: dark;
     --ins-bg: #34502b; --del-bg: #5a2f2a; --mark-bg: #6b5a1a;
+    --talk: #7fb0cc; --coach: #d9a24f; --coach-bg: #3d3220;
   }
 }
 * { box-sizing: border-box; }
@@ -175,6 +179,59 @@ mark { background: var(--mark-bg); color: inherit; border-radius: 2px; padding: 
 .rhead b { font: 700 0.85rem var(--font-display); letter-spacing: 0.06em; color: var(--ink-soft); }
 .mcard .reply { margin: 4px 0; }
 .reply .answer { display: inline-block; margin-top: 2px; padding: 0 6px; border-radius: 3px; background: var(--moss); color: var(--moss-ink); font-weight: 700; }
+.reply .sayline, .reply .coachline { display: inline-block; margin-top: 2px; padding: 0 6px; border-radius: 3px; border: 1px solid var(--line); background: var(--paper); font-weight: 500; }
+.reply .sayline { border-color: var(--talk); }
+.reply .coachline { border-color: var(--coach); }
+
+/* table talk and coach: bubbles, steps within a decision */
+.bubble { display: block; width: auto; max-width: 88%; margin: 6px 0; padding: 6px 10px; text-align: left; font: inherit; font-size: 0.9rem; line-height: 1.35; color: var(--ink);
+  background: var(--paper-2); border: 1px solid var(--line); border-left: 4px solid var(--seat, var(--talk)); border-radius: 10px 10px 10px 2px; white-space: pre-wrap; }
+button.bubble { cursor: pointer; }
+button.bubble:hover { border-color: var(--seat, var(--talk)); }
+.bubble.right { margin-left: auto; border-left-width: 1px; border-right: 4px solid var(--seat, var(--talk)); border-radius: 10px 10px 2px 10px; }
+.bubble .blabel { display: block; font-size: 0.74rem; color: var(--ink-soft); margin-bottom: 1px; white-space: normal; }
+.bubble.small { font-size: 0.84rem; padding: 4px 8px; margin: 4px 0; }
+.bubble.said { max-width: 100%; }
+.bubble.tocoach { max-width: 100%; border-left-color: var(--coach); }
+.bubble.coachmsg { --seat: var(--coach); }
+.bubble.coachmsg.calm { opacity: 0.75; }
+.bubble.coachmsg.flagged { background: var(--coach-bg); }
+.bubble.playermsg.none { opacity: 0.6; font-style: italic; }
+.bubble .played { display: block; margin-top: 3px; font-size: 0.76rem; color: var(--ink-soft); font-style: normal; white-space: normal; }
+.bubble .played .sym { height: 1em; vertical-align: -0.15em; }
+.bubble.hit { outline: 2px solid var(--mark-bg); }
+.chat { display: flex; flex-direction: column; }
+.chat .later { opacity: 0.38; }
+.chat .now, .chat .cturn.now .bubble { box-shadow: 0 0 0 2px var(--moss); }
+.chatround { margin: 12px 0 2px; font: 700 0.8rem var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); text-align: center; }
+.cturn { display: flex; flex-direction: column; padding: 2px 0; border-radius: 6px; }
+.cturn.later { opacity: 0.38; }
+.cturn.now { box-shadow: none; }
+.dtabs { display: flex; gap: 4px; margin: 8px 0 10px; border-bottom: 1px solid var(--line); }
+.dtabs button { border: none; border-bottom: 2px solid transparent; border-radius: 0; background: none; padding: 4px 10px; font: 500 0.95rem var(--font-display); color: var(--ink-soft); }
+.dtabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--moss); }
+.coachrules { margin-top: 12px; }
+.steps { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.step { position: relative; padding: 6px 0 0 14px; border-left: 2px solid var(--line); }
+.step.s-digest { border-left-color: var(--talk); }
+.step.s-coach { border-left-color: var(--coach); }
+.step.s-main { border-left-color: var(--moss); }
+.shead { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 4px; }
+.snum { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; font-size: 0.72rem; font-weight: 700; color: var(--paper); background: var(--ink-soft); }
+.s-digest .snum { background: var(--talk); }
+.s-coach .snum { background: var(--coach); }
+.s-main .snum { background: var(--moss); }
+.stokens { margin-left: auto; font-size: 0.76rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.notes { padding: 6px 10px; border-radius: 4px; font-size: 0.9rem; white-space: pre-wrap; background: var(--paper-2); border: 1px solid var(--line); }
+.notes.flagged { background: var(--coach-bg); border-color: var(--coach); }
+.notes.calm { color: var(--ink-soft); }
+.notes.talknotes { border-color: var(--talk); }
+.readmsgs { margin: 2px 0 6px; }
+.readmsgs > .blabel { font-size: 0.76rem; color: var(--ink-soft); }
+.auxmore { margin-top: 4px; font-size: 0.9rem; }
+.auxmore > summary { color: var(--ink-soft); font-size: 0.84rem; cursor: pointer; }
+.seatcard .tokens { margin-top: 6px; font-size: 0.84rem; }
+.seatcard .tokens ul { margin: 2px 0 0; padding-left: 18px; color: var(--ink-soft); }
 details.thinking > summary, details.rawplan > summary, details.prompt > summary { font-size: 0.84rem; }
 .hidden-thought { border-left-color: var(--ink-soft); font-style: italic; color: var(--ink-soft); max-height: 340px; overflow: auto; }
 .prompt-text { font: 0.8rem/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; border-left-color: var(--line); }
