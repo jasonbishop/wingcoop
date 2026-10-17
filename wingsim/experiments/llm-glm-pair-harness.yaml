@@ -1,0 +1,24 @@
+# llm-glm-pair-talk.yaml with the split-call harness: before each action a coach call flags problems and,
+# when the partner has said something new, a digest call reads the talk. Same seed, deal and rules as the
+# no-talk and talk games. budget_usd counts both seats and all their calls (~$1-1.30 a game).
+#   .venv/bin/python -m wingsim.runner wingsim/experiments/llm-glm-pair-harness.yaml --workers 1 --no-report
+name: llm-glm-pair-harness
+seeds: {start: 103, count: 1}
+players: [2]
+conditions:
+  coop_plan_after:
+    plugins:
+      coop_goals:
+        penalty: avg_x_d
+        allowed_changes: [0, 1]
+    open_hands: true
+    win_condition: team_total
+    agents:
+    - {type: llm, model: z-ai/glm-5.3-flash, reasoning: full, thinking: high, max_tokens: 16000, timeout: 900, budget_usd: 2.5,
+      prompt: plan, plan: true, compact: true, outcomes: true, talk: true, coach: true, digest: true}
+    - {type: llm, model: z-ai/glm-5.3-flash, reasoning: full, thinking: high, max_tokens: 16000, timeout: 900, budget_usd: 2.5,
+      prompt: plan, plan: true, compact: true, outcomes: true, talk: true, coach: true, digest: true}
+motivation: [1.0]
+group_policy: [fixed(2)]
+group_share: [false]
+logging: {level: full, snapshots: decision}
