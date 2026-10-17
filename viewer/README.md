@@ -32,6 +32,8 @@ The starting-birds decision is shown as the 5 dealt birds with the kept ones tic
 
 **Turns tab.** Every turn with its action; click to jump. **Game tab.** Settings, seats, round-goal results, final scores.
 
+**Scorecard.** When playback reaches the end of the game, a score sheet in the style of the paper score pad comes up (also *Show the scorecard* in the Step and Game tabs once the game is over; Esc closes it). A row per category and a column per player, numbers in pen. Under co-op goals it is split: individual scores, then the team score (each round goal with its difficulty, every player's count, met or missed and the points), then the combined score, players' totals plus the team score (`team_total`). A normal game has round goals as an individual row, and names the winner.
+
 **Model tab** (games with a language-model seat). Follows the replay cursor: it shows the model decision at the cursor, or the latest one before it.
 - Each reply split into its parts: hidden thinking (collapsed, from `info.thinking` or a `<think>…</think>` pair; a lone `<think>` is a server quirk and only the tag is dropped), the reasoning, the `ANSWER:` line, and in plan games the plan block. With two replies the second is marked *retry* and the first *not accepted*.
 - **Random move** in a red box when `fallback` is `"random"`: the option played was not the model's choice.
@@ -62,6 +64,7 @@ app/viewer/
   scene/layout.js          where seats, shared pieces and cameras go
   ui/                      top bar, tabs, transport, inspector, opening screen, styles;
                            ui/model.js: the Model tab, transcript and rules drawer
+                           ui/scorecard.js: the end-of-game score sheet
   birdArt.js               finds bird illustrations by id or name
 app/feeder.html, feeder/   the birdfeeder on its own (physics tuning)
 components/                table pieces: no game rules, no HTML (see below)
