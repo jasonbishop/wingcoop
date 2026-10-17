@@ -1,0 +1,23 @@
+# llm-glm-pair.yaml with table talk: the two GLM-5.3 Flash seats may leave each other one message a turn.
+# The same seed, deal and rules, so it pairs with the no-talk game. budget_usd counts both seats (~$0.75).
+#   .venv/bin/python -m wingsim.runner wingsim/experiments/llm-glm-pair-talk.yaml --workers 1 --no-report
+name: llm-glm-pair-talk
+seeds: {start: 103, count: 1}
+players: [2]
+conditions:
+  coop_plan_after:
+    plugins:
+      coop_goals:
+        penalty: avg_x_d
+        allowed_changes: [0, 1]
+    open_hands: true
+    win_condition: team_total
+    agents:
+    - {type: llm, model: z-ai/glm-5.3-flash, reasoning: full, thinking: high, max_tokens: 16000, timeout: 900, budget_usd: 1.5,
+      prompt: plan, plan: true, compact: true, outcomes: true, talk: true}
+    - {type: llm, model: z-ai/glm-5.3-flash, reasoning: full, thinking: high, max_tokens: 16000, timeout: 900, budget_usd: 1.5,
+      prompt: plan, plan: true, compact: true, outcomes: true, talk: true}
+motivation: [1.0]
+group_policy: [fixed(2)]
+group_share: [false]
+logging: {level: full, snapshots: decision}

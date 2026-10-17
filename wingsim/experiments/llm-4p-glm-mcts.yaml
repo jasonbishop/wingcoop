@@ -1,0 +1,26 @@
+# Four players under the co-op rules: two GLM-5.3 Flash seats (full reasoning, high thinking, table talk)
+# and two tree-search seats (3000 iterations a move), alternating. The bots neither read nor speak.
+# budget_usd counts both language-model seats (~$1-1.50 a game).
+#   .venv/bin/python -m wingsim.runner wingsim/experiments/llm-4p-glm-mcts.yaml --workers 1 --no-report
+name: llm-4p-glm-mcts
+seeds: {start: 103, count: 1}
+players: [4]
+conditions:
+  coop_talk:
+    plugins:
+      coop_goals:
+        penalty: avg_x_d
+        allowed_changes: [0, 1]
+    open_hands: true
+    win_condition: team_total
+    agents:
+    - {type: llm, model: z-ai/glm-5.3-flash, reasoning: full, thinking: high, max_tokens: 16000, timeout: 900, budget_usd: 2.5,
+      prompt: plan, plan: true, compact: true, outcomes: true, talk: true}
+    - {type: mcts, iterations: 3000, minor_iterations: 600}
+    - {type: llm, model: z-ai/glm-5.3-flash, reasoning: full, thinking: high, max_tokens: 16000, timeout: 900, budget_usd: 2.5,
+      prompt: plan, plan: true, compact: true, outcomes: true, talk: true}
+    - {type: mcts, iterations: 3000, minor_iterations: 600}
+motivation: [1.0]
+group_policy: [fixed(2)]
+group_share: [false]
+logging: {level: full, snapshots: decision}
