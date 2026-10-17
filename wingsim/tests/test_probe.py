@@ -32,6 +32,7 @@ def test_rebuilt_prompts_match_the_log(endpoint, tmp_path):
     path, lines = logged_game(e.url, tmp_path)
     args = argparse.Namespace(model=None, base_url=None, reasoning="logged", thinking="logged", plan="logged",
                               extra_body=None, timeout=60, budget_usd=None, outcomes=None, goal_status=None, talk=None,
+                              coach=None, digest=None,
                               temperature=0.0, max_tokens=None)
     asked = [ln for ln in lines if ln["t"] == "decision" and (ln.get("info") or {}).get("prompt")]
     assert any("THIS TURN SO FAR" in ln["info"]["prompt"] for ln in asked)

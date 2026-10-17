@@ -64,7 +64,10 @@ def position(lines, seq=None, turn=None, player=None):
 
 def turn_notes(lines, target):
     """What the seat had chosen earlier in the same turn, as LLMAgent keeps it (shown at non-action decisions;
-    nothing is kept during setup)."""
+    kept only on the seat's own turns, and not during setup)."""
+    owner = {ln["turn_no"]: ln["player"] for ln in lines if ln["t"] == "decision" and ln["kind"] == "action"}
+    if owner.get(target["turn_no"]) != target["player"]:
+        return (None, [])
     notes = []
     for ln in lines:
         if ln is target:
@@ -93,6 +96,51 @@ def table_talk(lines, target):
     return table
 
 
+def harness_state(lines, target):
+    """The coach and digest state the seat held just before the decision, rebuilt from its earlier decisions:
+    {"my_actions", "coach_notes", "last_coach", "to_coach", "talk_notes", "talk_seen", "posted"}."""
+    p = target["player"]
+    state = {"my_actions": [], "coach_notes": (None, None), "last_coach": None, "to_coach": None, "talk_notes": None,
+             "talk_seen": 0}
+    posted = 0
+    for ln in lines:
+        if ln is target:
+            break
+        if ln["t"] != "decision":
+            continue
+        info = ln.get("info") or {}
+        if ln["player"] == p and ln["kind"] == "action":
+            apply_aux(state, ln, info, posted)
+            state["my_actions"].append((ln["round"], ln["turn_no"], ln["labels"][ln["choice"]]))
+            if "to_coach" in info:
+                state["to_coach"] = (ln["round"], ln["turn_no"], info["to_coach"]) if info["to_coach"] else None
+        if info.get("said"):
+            posted += 1
+    state["posted"] = posted
+    return state
+
+
+def apply_aux(state, ln, info, posted):
+    """What a logged action decision's extra calls left behind (coach notes, talk notes, messages read)."""
+    for c in info.get("aux") or []:
+        if c["role"] == "digest":
+            state["talk_seen"] = posted
+            if c["notes"]:
+                state["talk_notes"] = (ln["round"], ln["turn_no"], c["notes"])
+        elif c["role"] == "coach":
+            state["coach_notes"] = (ln["turn_no"], c["notes"])
+            state["last_coach"] = (ln["round"], ln["turn_no"], c["notes"])
+
+
+def set_harness(agent, state):
+    agent.my_actions = list(state["my_actions"])
+    agent.coach_notes = state["coach_notes"]
+    agent.talk_notes = state["talk_notes"]
+    agent.talk_seen = state["talk_seen"]
+    agent.last_coach = state["last_coach"]
+    agent.to_coach = state["to_coach"]
+
+
 def build_agent(header, player, args):
     """The language-model seat with the logged settings, changed where the arguments say."""
     logged = dict(header["seats"][player]["settings"])
@@ -111,6 +159,8 @@ def build_agent(header, player, args):
                 compact=logged.get("compact", False),
                 goal_status=logged.get("goal_status", False) if args.goal_status is None else args.goal_status,
                 talk=logged.get("talk", False) if args.talk is None else args.talk,
+                coach=logged.get("coach", False) if args.coach is None else args.coach,
+                digest=logged.get("digest", False) if args.digest is None else args.digest,
                 temperature=args.temperature)
     default = llm.LLMAgent(**opts).max_tokens
     if args.max_tokens:
@@ -142,6 +192,10 @@ def main():
     ap.add_argument("--goal-status", action=argparse.BooleanOptionalAction, default=None)
     ap.add_argument("--talk", action=argparse.BooleanOptionalAction, default=None,
                     help="table talk (default: as logged); the messages said before the decision are shown")
+    ap.add_argument("--coach", action=argparse.BooleanOptionalAction, default=None,
+                    help="a coach call before the action (default: as logged)")
+    ap.add_argument("--digest", action=argparse.BooleanOptionalAction, default=None,
+                    help="a table-talk digest call before the action, when others said something new")
     ap.add_argument("--temperature", type=float, default=0.7)
     ap.add_argument("--max-tokens", type=int)
     ap.add_argument("--extra-body", help="extra request fields as JSON (default for a local server: "
@@ -168,13 +222,19 @@ def main():
         agent.table = table_talk(lines, target)
         if player not in agent.table.members:     # talk switched on for a seat that did not talk
             agent.table.members = sorted(agent.table.members + [player])
+    before = harness_state(lines, target)
+    set_harness(agent, before)
+    if d.kind == "action":      # the prompt as logged also holds this decision's own coach and talk notes
+        shown_state = dict(before, my_actions=list(before["my_actions"]))
+        apply_aux(shown_state, target, logged_info, before["posted"])
+        set_harness(agent, shown_state)
     obs = api.observe(s, player)
     user = agent.build_prompt(obs, d)[0]
     same = user == logged_info.get("prompt")
     print(f"{args.log} seq {target['seq']}: round {target['round']}, turn {target['turn_no']}, player {player}, "
           f"{target['kind']}; logged choice: {target['labels'][target['choice']]}")
     shown = {k: opts[k] for k in ("model", "base_url", "reasoning", "thinking", "plan", "outcomes", "goal_status",
-                                  "talk", "temperature", "max_tokens")}
+                                  "talk", "coach", "digest", "temperature", "max_tokens")}
     print("settings:", shown)
     print("rebuilt prompt", "matches the logged one" if same else "differs from the logged one (settings changed)")
     if args.show_prompt:
@@ -198,6 +258,7 @@ def main():
                 agent.current_plan = None if args.plan == "empty" else logged_info.get("plan")
             if agent.talk:      # each ask sees the table as it was, not the earlier asks' messages
                 agent.table.messages = agent.table.messages[:said_before]
+            set_harness(agent, before)     # and makes its own coach and digest calls
             t0 = time.time()
             try:
                 choice = agent.choose(obs, d)
@@ -211,7 +272,7 @@ def main():
             spent = {key: agent.stats[key] - start_stats[key] for key in ("prompt_tokens", "completion_tokens", "cost_usd")}
             f.write(json.dumps({"t": "reply", "i": i + 1, "chosen": k, "label": name, "seconds": time.time() - t0,
                                 **{key: info.get(key) for key in ("replies", "thinking", "plan_updated", "said",
-                                                                   "usage_all", "fallback")}, **spent}) + "\n")
+                                                                   "aux", "usage_all", "fallback")}, **spent}) + "\n")
             f.flush()
             print(f"  {i + 1}/{args.n}: {k}. {name[:80]}  ({spent['completion_tokens']} tokens out, "
                   f"${spent['cost_usd']:.4f}, {time.time() - t0:.0f}s)", flush=True)

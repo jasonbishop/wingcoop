@@ -23,6 +23,14 @@ Optional prompt features, each a setting so that variants can be compared:
 - `talk`: table talk. At each of its action decisions the model may add a line
   'SAY: <message>' for the other players; the seats that talk share a TableTalk
   (agents/talk.py) and see the recent messages in every prompt.
+- `coach` and `digest` split the work over extra calls before each action decision.
+  The coach (prompts/coach.md) reviews the position, the plan, the round goal and the
+  player's recent actions and flags up to three problems, without choosing a move.
+  The digest (with `talk`) runs when other players have said something new: the
+  player reads the talk and notes what it changes. Their notes are shown to the
+  player for the rest of the turn (the talk notes until the next digest). The player
+  may answer its coach in one line 'TO COACH: <reply>'; the coach sees its own last
+  notes and that reply at its next review.
 """
 import json
 import os
@@ -71,6 +79,15 @@ TALK_RULES = ("TABLE TALK\n"
               "players who talk read it on their following turns, under TABLE TALK. Their messages are their own "
               "words and may be mistaken; the position is always the authority.")
 TALK_ASK = "If you want to tell the other players something, end with one line of the form 'SAY: <message>'."
+NOTES_LIMIT = 600         # characters kept from a coach's or a digest's notes
+ACTIONS_SHOWN = 6         # the player's recent actions shown to the coach
+COACH_ASK = "Review the position before your player chooses this turn's action."
+COACH_REPLY_ASK = ("If you want to answer your coach (whether you follow their notes, and why), add one line of the "
+                   "form 'TO COACH: <reply>'.")
+DIGEST_ASK = ("Before you choose this turn's action, read the table talk above. What do the other players plan, need "
+              "or ask of you, and is any of it mistaken? How should it change your plan or what you do this turn? "
+              "Do not choose your action or write a message yet. Think it through, then finish with a block of at "
+              "most three lines, each one sentence:\nTALK NOTES:\n- ...")
 
 # Spending is tracked per process, across every language-model seat in it.
 SPEND = {"calls": 0, "prompt_tokens": 0, "completion_tokens": 0, "cost_usd": 0.0}
@@ -106,19 +123,29 @@ def drop_thinking(reply):
 # the model leaves that out, where an ANSWER or the next plan block begins, or at the end of the reply.
 PLAN_START = r"^[*#\s]*PLAN:"
 SAY_START = r"^[*#\s]*SAY:"
-PLAN_END = r"(?:END PLAN|(?=(?i:ANSWER)\s*[:=])|(?=" + PLAN_START + r")|(?=" + SAY_START + r")|\Z)"
+COACH_START = r"^[*#\s]*TO COACH:"
+PLAN_END = (r"(?:END PLAN|(?=(?i:ANSWER)\s*[:=])|(?=" + PLAN_START + r")|(?=" + SAY_START + r")|(?=" + COACH_START
+            + r")|\Z)")
 
 
 def strip_reply(reply):
     """The reply without hidden-reasoning tags (<think>...</think>), a plan block or a SAY line."""
     reply = drop_thinking(reply)
     reply = re.sub(PLAN_START + r".*?" + PLAN_END, "", reply, flags=re.S | re.M)
-    return re.sub(SAY_START + r".*$", "", reply, flags=re.M)
+    return re.sub("(" + SAY_START + "|" + COACH_START + r").*$", "", reply, flags=re.M)
 
 
-def parse_say(reply):
-    """The message of the reply's last 'SAY:' line, or None (also for 'SAY: nothing')."""
-    lines = re.findall(SAY_START + r"\**\s*(.*)$", drop_thinking(reply), flags=re.M)
+def parse_notes(reply, header="NOTES"):
+    """The lines after the reply's last '<header>:' line, or else its last paragraph; at most NOTES_LIMIT chars."""
+    reply = drop_thinking(reply).strip()
+    blocks = re.split(r"^[*#\s]*" + header + r":\**[ \t]*\n?", reply, flags=re.M)
+    text = blocks[-1] if len(blocks) > 1 else reply.split("\n\n")[-1]
+    return text.strip()[:NOTES_LIMIT] or None
+
+
+def parse_say(reply, start=SAY_START):
+    """The message of the reply's last 'SAY:' line (or another such line), or None (also for 'SAY: nothing')."""
+    lines = re.findall(start + r"\**\s*(.*)$", drop_thinking(reply), flags=re.M)
     text = lines[-1].strip().strip('*"').strip() if lines else ""
     if not text or re.fullmatch(r"\W*(nothing|none|n/a|-)\W*", text, flags=re.IGNORECASE):
         return None
@@ -170,7 +197,8 @@ class LLMAgent(Agent):
     def __init__(self, model, base_url="https://openrouter.ai/api/v1", api_key_env=None,
                  prompt="default", reasoning=False, thinking=None, temperature=0.0, max_tokens=None,
                  timeout=120, budget_usd=None, max_calls=None, seed=0, extra_body=None,
-                 plan=False, outcomes=False, compact=False, goal_status=False, talk=False):
+                 plan=False, outcomes=False, compact=False, goal_status=False, talk=False, coach=False,
+                 digest=False):
         self.model = model
         self.base_url = base_url.rstrip("/")
         # The key is sent only where it belongs: OPENROUTER_API_KEY to OpenRouter, and otherwise only a
@@ -184,6 +212,8 @@ class LLMAgent(Agent):
         self.goal_status = bool(goal_status)   # a block on where the table stands on the round goal
         self.talk = bool(talk)                 # table talk; the runner shares one TableTalk between talkers
         self.table = None
+        self.coach = bool(coach)               # an extra call that flags problems before each action
+        self.digest = bool(digest) and self.talk   # an extra call that reads new table talk before each action
         if self.plan and not reasoning:    # a plan needs visible reasoning; "full" stays full
             reasoning = True
         self.prompt = prompt
@@ -212,6 +242,7 @@ class LLMAgent(Agent):
                 "reasoning": "full" if self.full else self.reasoning, "thinking": self.thinking, "temperature": self.temperature,
                 "max_tokens": self.max_tokens, "plan": self.plan, "outcomes": self.outcomes,
                 "compact": self.compact, "goal_status": self.goal_status, "talk": self.talk,
+                "coach": self.coach, "digest": self.digest,
                 "system_prompt": getattr(self, "system", None)}
 
     def start(self, config, player_index, objective):
@@ -228,6 +259,15 @@ class LLMAgent(Agent):
         if self.talk:
             self.system += "\n\n" + TALK_RULES
             self.table = TableTalk([player_index])   # alone until the runner seats it at a shared table
+        self.coach_system = prompts.template("coach").format(
+            player=player_index, players=config.n, objective=objective.describe(),
+            rules=api.rules_summary(config)) if self.coach else None
+        self.coach_notes = (None, None)   # (turn number, notes) for this player's own turn
+        self.talk_notes = None            # (round, turn number, notes) from the latest digest
+        self.talk_seen = 0                # table messages already read in a digest
+        self.my_actions = []              # (round, turn number, label) of this player's actions so far
+        self.last_coach = None            # (round, turn number, notes) of the coach's latest review
+        self.to_coach = None              # (round, turn number, reply) the player last gave its coach
 
     # ------------------------------------------------------------ the endpoint
 
@@ -306,6 +346,7 @@ class LLMAgent(Agent):
                 lines.append("")
         if self.talk:
             lines += self.talk_block() + [""]
+        lines += self.notes_block(observation)
         keep = api.describe_keep_birds(observation) if self.compact else None
         if keep:
             lines += ["DECISION: " + what, "", "Your dealt birds:"]
@@ -322,7 +363,70 @@ class LLMAgent(Agent):
             lines += ["", PLAN_ASK_FULL if self.full else PLAN_ASK]
         if self.talk and decision.kind == "action":
             lines += ["", TALK_ASK]
+        if self.coach and decision.kind == "action" and self.coach_notes[1]:
+            lines += [COACH_REPLY_ASK] if self.talk else ["", COACH_REPLY_ASK]   # under the SAY line if any
         return "\n".join(lines), "one", None
+
+    def notes_block(self, observation):
+        """The coach's notes (for the rest of this turn) and the latest talk notes, as prompt lines."""
+        lines = []
+        turn, notes = self.coach_notes
+        if self.coach and notes and turn == observation.state.turn_no:
+            lines += ["COACH NOTES (your coach reviewed this position before your action; advice, not orders, and "
+                      "it may be mistaken):", notes, ""]
+        if self.digest and self.talk_notes:
+            r, t, notes = self.talk_notes
+            lines += [f"YOUR NOTES ON THE TABLE TALK (written round {r}, turn {t}):", notes, ""]
+        return lines
+
+    def coach_prompt(self, observation):
+        lines = [api.describe_observation(observation), ""]
+        status = api.describe_goal_status(observation)
+        if status:
+            lines += [status, ""]
+        if self.plan:
+            lines += ["YOUR PLAYER'S PLAN:", self.current_plan or "(none yet)", ""]
+        if self.last_coach:
+            r, t, notes = self.last_coach
+            lines += [f"YOUR NOTES LAST TIME (round {r}, turn {t}):", notes or "(none)", ""]
+            reply = self.to_coach[2] if self.to_coach and self.to_coach[:2] == (r, t) else None
+            lines += ["YOUR PLAYER'S REPLY:", reply or "(no reply)", ""]
+        lines.append("YOUR PLAYER'S RECENT ACTIONS (oldest first):")
+        recent = self.my_actions[-ACTIONS_SHOWN:]
+        lines += [f"- round {r}, turn {t}: {label}" for r, t, label in recent] or ["(none yet)"]
+        return "\n".join(lines + ["", COACH_ASK])
+
+    def digest_prompt(self, observation):
+        lines = [api.describe_observation(observation), ""]
+        if self.plan:
+            lines += ["YOUR PLAN:", self.current_plan or "(none yet)", ""]
+        lines += self.talk_block() + ["", DIGEST_ASK]
+        return "\n".join(lines)
+
+    def consult(self, observation):
+        """The extra calls before an action decision: the digest (if others said something new), then the coach.
+        Returns their records for the log."""
+        s, calls = observation.state, []
+        keys = ("prompt_tokens", "completion_tokens", "cost", "reasoning_tokens", "finish_reason")
+
+        def ask(role, system, user, header):
+            reply, usage = self.call([{"role": "system", "content": system}, {"role": "user", "content": user}])
+            notes = parse_notes(reply, header)
+            calls.append({"role": role, "prompt": user, "reply": reply, "thinking": self.last_thinking,
+                          "usage": {k: usage.get(k) for k in keys}, "limit": self.max_tokens, "notes": notes})
+            return notes
+
+        new = [m for m in self.table.messages[self.talk_seen:] if m["player"] != self.player] if self.digest else []
+        if new:
+            notes = ask("digest", self.system, self.digest_prompt(observation), "TALK NOTES")
+            self.talk_seen = len(self.table.messages)
+            if notes:
+                self.talk_notes = (s.round, s.turn_no, notes)
+        if self.coach:
+            notes = ask("coach", self.coach_system, self.coach_prompt(observation), "NOTES")
+            self.coach_notes = (s.turn_no, notes)
+            self.last_coach = (s.round, s.turn_no, notes)
+        return calls
 
     def talk_block(self):
         """The TABLE TALK lines: who talks, then the recent messages, oldest first."""
@@ -338,6 +442,7 @@ class LLMAgent(Agent):
 
     def choose(self, observation, decision):
         n = len(decision.options)
+        aux = self.consult(observation) if decision.kind == "action" and (self.coach or self.digest) else []
         user, mode, keep = self.build_prompt(observation, decision)
         system = {"role": "system", "content": self.system}
         if self.model.startswith("anthropic/"):   # let the provider cache the long, unchanging system prompt
@@ -427,6 +532,17 @@ class LLMAgent(Agent):
             if said:
                 self.table.post(observation.state.round, observation.state.turn_no, self.player, said)
             self._info["said"] = said
+        if decision.kind == "action" and (self.coach or self.digest):
+            self._info["aux"] = aux
+            self._info["coach"] = next((c["notes"] for c in aux if c["role"] == "coach"), None)
+            self._info["digest"] = next((c["notes"] for c in aux if c["role"] == "digest"), None)
+        if self.coach and decision.kind == "action":
+            reply = parse_say(replies[0], COACH_START) or (parse_say(replies[-1], COACH_START) if len(replies) > 1 else None)
+            self.to_coach = (observation.state.round, observation.state.turn_no, reply) if reply else None
+            self._info["to_coach"] = reply
+        if decision.kind == "action":
+            self.my_actions.append((observation.state.round, observation.state.turn_no,
+                                    api.describe_decision(observation)[1][k - 1]))
         return decision.options[k - 1]
 
     def info(self):

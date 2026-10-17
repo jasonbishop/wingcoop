@@ -2,6 +2,8 @@
 
 rules.md       the base-game rules summary (house rules are appended by the engine)
 default.md     the system prompt template; copy it to try a variant and set `prompt: <name>` on the agent
+plan.md        the system prompt for seats with `plan` on
+coach.md       the system prompt of the coach call (`coach: true`)
 """
 import pathlib
 

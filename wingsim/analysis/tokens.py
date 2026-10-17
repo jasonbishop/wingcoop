@@ -42,6 +42,7 @@ def from_log(path):
                 continue
             usages = info.get("usage_all") or [info.get("usage") or {}]
             partial |= len(usages) < len(info["replies"])
+            usages = usages + [c.get("usage") or {} for c in info.get("aux") or []]   # coach and digest calls
             for u in usages:
                 calls += 1
                 inp += u.get("prompt_tokens") or 0
