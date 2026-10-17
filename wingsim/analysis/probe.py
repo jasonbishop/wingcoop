@@ -2,8 +2,9 @@
 
 The game is replayed from its full log up to the chosen decision, so the position is exact. The language-model
 seat is rebuilt with the logged settings, any of which can be changed (model, endpoint, reasoning, hidden
-thinking, plan, outcomes, goal status, temperature), and is given the plan it held at that point (or none). With
-the logged settings the rebuilt prompt should match the logged one; the script says whether it does.
+thinking, plan, outcomes, goal status, table talk, temperature), and is given the plan it held at that point (or
+none) and the table talk said before it. With the logged settings the rebuilt prompt should match the logged one;
+the script says whether it does.
 
 Each reply is saved to a JSON-lines file (prompt, replies, hidden thinking when the server returns it, the
 choice, the plan written, tokens and cost) and a tally of the choices is printed.
@@ -28,6 +29,7 @@ import time
 
 from ..agents import llm
 from ..agents.base import Objective
+from ..agents.talk import TableTalk
 from ..engine import api
 from ..engine.log import api_options, read_log
 
@@ -78,6 +80,19 @@ def turn_notes(lines, target):
     return (target["turn_no"], notes) if notes else (None, [])
 
 
+def table_talk(lines, target):
+    """The table talk as it stood at the decision: who talks, and what was said before it."""
+    members = [i for i, s in enumerate(lines[0]["seats"]) if (s.get("settings") or {}).get("talk")]
+    table = TableTalk(members)
+    for ln in lines:
+        if ln is target:
+            break
+        said = (ln.get("info") or {}).get("said") if ln["t"] == "decision" else None
+        if said:
+            table.post(ln["round"], ln["turn_no"], ln["player"], said)
+    return table
+
+
 def build_agent(header, player, args):
     """The language-model seat with the logged settings, changed where the arguments say."""
     logged = dict(header["seats"][player]["settings"])
@@ -95,6 +110,7 @@ def build_agent(header, player, args):
                 outcomes=logged.get("outcomes", False) if args.outcomes is None else args.outcomes,
                 compact=logged.get("compact", False),
                 goal_status=logged.get("goal_status", False) if args.goal_status is None else args.goal_status,
+                talk=logged.get("talk", False) if args.talk is None else args.talk,
                 temperature=args.temperature)
     default = llm.LLMAgent(**opts).max_tokens
     if args.max_tokens:
@@ -124,6 +140,8 @@ def main():
                          "plan yet; off: no plan feature")
     ap.add_argument("--outcomes", action=argparse.BooleanOptionalAction, default=None)
     ap.add_argument("--goal-status", action=argparse.BooleanOptionalAction, default=None)
+    ap.add_argument("--talk", action=argparse.BooleanOptionalAction, default=None,
+                    help="table talk (default: as logged); the messages said before the decision are shown")
     ap.add_argument("--temperature", type=float, default=0.7)
     ap.add_argument("--max-tokens", type=int)
     ap.add_argument("--extra-body", help="extra request fields as JSON (default for a local server: "
@@ -146,13 +164,17 @@ def main():
     if agent.plan:
         agent.current_plan = None if args.plan == "empty" else logged_info.get("plan")
         agent.turn_notes = turn_notes(lines, target)
+    if agent.talk:
+        agent.table = table_talk(lines, target)
+        if player not in agent.table.members:     # talk switched on for a seat that did not talk
+            agent.table.members = sorted(agent.table.members + [player])
     obs = api.observe(s, player)
     user = agent.build_prompt(obs, d)[0]
     same = user == logged_info.get("prompt")
     print(f"{args.log} seq {target['seq']}: round {target['round']}, turn {target['turn_no']}, player {player}, "
           f"{target['kind']}; logged choice: {target['labels'][target['choice']]}")
     shown = {k: opts[k] for k in ("model", "base_url", "reasoning", "thinking", "plan", "outcomes", "goal_status",
-                                  "temperature", "max_tokens")}
+                                  "talk", "temperature", "max_tokens")}
     print("settings:", shown)
     print("rebuilt prompt", "matches the logged one" if same else "differs from the logged one (settings changed)")
     if args.show_prompt:
@@ -166,6 +188,7 @@ def main():
                                    f"-{pathlib.Path(args.log).parent.name}-seq{target['seq']}-{label}.jsonl")
     out.parent.mkdir(parents=True, exist_ok=True)
     tally = collections.Counter()
+    said_before = len(agent.table.messages) if agent.talk else 0
     with open(out, "a") as f:
         f.write(json.dumps({"t": "probe", "log": args.log, "seq": target["seq"], "settings": shown,
                             "logged_choice": target["choice"] + 1, "prompt": user, "system": agent.system}) + "\n")
@@ -173,6 +196,8 @@ def main():
             start_stats = dict(agent.stats)
             if agent.plan:
                 agent.current_plan = None if args.plan == "empty" else logged_info.get("plan")
+            if agent.talk:      # each ask sees the table as it was, not the earlier asks' messages
+                agent.table.messages = agent.table.messages[:said_before]
             t0 = time.time()
             try:
                 choice = agent.choose(obs, d)
@@ -185,8 +210,8 @@ def main():
             tally[name] += 1
             spent = {key: agent.stats[key] - start_stats[key] for key in ("prompt_tokens", "completion_tokens", "cost_usd")}
             f.write(json.dumps({"t": "reply", "i": i + 1, "chosen": k, "label": name, "seconds": time.time() - t0,
-                                **{key: info.get(key) for key in ("replies", "thinking", "plan_updated", "usage_all",
-                                                                   "fallback")}, **spent}) + "\n")
+                                **{key: info.get(key) for key in ("replies", "thinking", "plan_updated", "said",
+                                                                   "usage_all", "fallback")}, **spent}) + "\n")
             f.flush()
             print(f"  {i + 1}/{args.n}: {k}. {name[:80]}  ({spent['completion_tokens']} tokens out, "
                   f"${spent['cost_usd']:.4f}, {time.time() - t0:.0f}s)", flush=True)

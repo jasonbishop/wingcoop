@@ -15,6 +15,7 @@ from .agents.base import Objective
 from .agents.greedy import GreedyAgent
 from .agents.mcts import MCTSAgent
 from .agents.random import RandomAgent
+from .agents.talk import TableTalk
 from .analysis.metrics import DecisionTally
 from .engine import api
 from .engine.log import GameLog
@@ -126,6 +127,11 @@ def play_cell_game(cell, seed, full_log=False):
                          cell["team_target"], record_events=full_log)
     table = Table(cell, cfg)
     agents = table.make_agents(seed)
+    talkers = [a for a in agents if getattr(a, "talk", False)]
+    if talkers:     # the seats that talk share one table
+        talk = TableTalk([a.player for a in talkers])
+        for a in talkers:
+            a.table = talk
     policy = None
     if cell["policy"]:
         policy = group_policies.parse(cell["policy"])

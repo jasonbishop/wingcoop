@@ -20,6 +20,9 @@ Optional prompt features, each a setting so that variants can be compared:
   changes right away (worked out by the engine from what the player can see).
 - `compact`: food payments are labelled by the part that differs, and the
   starting birds are chosen by naming them instead of from 32 combinations.
+- `talk`: table talk. At each of its action decisions the model may add a line
+  'SAY: <message>' for the other players; the seats that talk share a TableTalk
+  (agents/talk.py) and see the recent messages in every prompt.
 """
 import json
 import os
@@ -33,6 +36,7 @@ import urllib.request
 from .. import prompts
 from ..engine import api
 from .base import Agent
+from .talk import TableTalk
 
 ANSWER_ONLY = "Reply with only the number of the option you choose. No other text."
 ANSWER_REASONED = ("Think briefly (three sentences at most) about which option best serves your objective, "
@@ -58,6 +62,15 @@ KEEP_ASK_FULL = ("Think through which birds to keep, taking the space you need, 
                  "'ANSWER: <numbers>' listing the birds you keep, separated by commas (for example 'ANSWER: 1, 4'), "
                  "or 'ANSWER: none'.")
 RETRY_LIMIT = 300         # tokens for the reply to "your answer was cut off"
+TALK_LIMIT = 300          # characters kept from a message
+TALK_SHOWN = 10           # recent messages shown in a prompt
+TALK_RULES = ("TABLE TALK\n"
+              "The players can talk to each other. When you choose your action on your turn, you may add one line of "
+              "the form 'SAY: <message>' at the end of your reply: two sentences at most, to the other players. Use "
+              "it to say what you are planning or need, to ask for something, or to answer what others said. The "
+              "players who talk read it on their following turns, under TABLE TALK. Their messages are their own "
+              "words and may be mistaken; the position is always the authority.")
+TALK_ASK = "If you want to tell the other players something, end with one line of the form 'SAY: <message>'."
 
 # Spending is tracked per process, across every language-model seat in it.
 SPEND = {"calls": 0, "prompt_tokens": 0, "completion_tokens": 0, "cost_usd": 0.0}
@@ -92,13 +105,24 @@ def drop_thinking(reply):
 # reasoning is not one; matching it once cut the ANSWER line off a reply). It ends at "END PLAN", or, when
 # the model leaves that out, where an ANSWER or the next plan block begins, or at the end of the reply.
 PLAN_START = r"^[*#\s]*PLAN:"
-PLAN_END = r"(?:END PLAN|(?=(?i:ANSWER)\s*[:=])|(?=" + PLAN_START + r")|\Z)"
+SAY_START = r"^[*#\s]*SAY:"
+PLAN_END = r"(?:END PLAN|(?=(?i:ANSWER)\s*[:=])|(?=" + PLAN_START + r")|(?=" + SAY_START + r")|\Z)"
 
 
 def strip_reply(reply):
-    """The reply without hidden-reasoning tags (<think>...</think>) or a plan block."""
+    """The reply without hidden-reasoning tags (<think>...</think>), a plan block or a SAY line."""
     reply = drop_thinking(reply)
-    return re.sub(PLAN_START + r".*?" + PLAN_END, "", reply, flags=re.S | re.M)
+    reply = re.sub(PLAN_START + r".*?" + PLAN_END, "", reply, flags=re.S | re.M)
+    return re.sub(SAY_START + r".*$", "", reply, flags=re.M)
+
+
+def parse_say(reply):
+    """The message of the reply's last 'SAY:' line, or None (also for 'SAY: nothing')."""
+    lines = re.findall(SAY_START + r"\**\s*(.*)$", drop_thinking(reply), flags=re.M)
+    text = lines[-1].strip().strip('*"').strip() if lines else ""
+    if not text or re.fullmatch(r"\W*(nothing|none|n/a|-)\W*", text, flags=re.IGNORECASE):
+        return None
+    return text[:TALK_LIMIT]
 
 
 def parse_plan(reply):
@@ -146,7 +170,7 @@ class LLMAgent(Agent):
     def __init__(self, model, base_url="https://openrouter.ai/api/v1", api_key_env=None,
                  prompt="default", reasoning=False, thinking=None, temperature=0.0, max_tokens=None,
                  timeout=120, budget_usd=None, max_calls=None, seed=0, extra_body=None,
-                 plan=False, outcomes=False, compact=False, goal_status=False):
+                 plan=False, outcomes=False, compact=False, goal_status=False, talk=False):
         self.model = model
         self.base_url = base_url.rstrip("/")
         # The key is sent only where it belongs: OPENROUTER_API_KEY to OpenRouter, and otherwise only a
@@ -158,6 +182,8 @@ class LLMAgent(Agent):
         self.outcomes = bool(outcomes)
         self.compact = bool(compact)
         self.goal_status = bool(goal_status)   # a block on where the table stands on the round goal
+        self.talk = bool(talk)                 # table talk; the runner shares one TableTalk between talkers
+        self.table = None
         if self.plan and not reasoning:    # a plan needs visible reasoning; "full" stays full
             reasoning = True
         self.prompt = prompt
@@ -185,7 +211,7 @@ class LLMAgent(Agent):
         return {"model": self.model, "base_url": self.base_url, "prompt": self.prompt,
                 "reasoning": "full" if self.full else self.reasoning, "thinking": self.thinking, "temperature": self.temperature,
                 "max_tokens": self.max_tokens, "plan": self.plan, "outcomes": self.outcomes,
-                "compact": self.compact, "goal_status": self.goal_status,
+                "compact": self.compact, "goal_status": self.goal_status, "talk": self.talk,
                 "system_prompt": getattr(self, "system", None)}
 
     def start(self, config, player_index, objective):
@@ -199,6 +225,9 @@ class LLMAgent(Agent):
             player=player_index, players=config.n, objective=objective.describe(),
             rules=api.rules_summary(config),
             answer_format=ANSWER_FULL if self.full else ANSWER_REASONED if self.reasoning else ANSWER_ONLY)
+        if self.talk:
+            self.system += "\n\n" + TALK_RULES
+            self.table = TableTalk([player_index])   # alone until the runner seats it at a shared table
 
     # ------------------------------------------------------------ the endpoint
 
@@ -275,6 +304,8 @@ class LLMAgent(Agent):
                 for label, why in notes:
                     lines.append(f"- You chose: {label}" + (f" Your reasoning: {why}" if why else ""))
                 lines.append("")
+        if self.talk:
+            lines += self.talk_block() + [""]
         keep = api.describe_keep_birds(observation) if self.compact else None
         if keep:
             lines += ["DECISION: " + what, "", "Your dealt birds:"]
@@ -289,7 +320,21 @@ class LLMAgent(Agent):
                 lines.append(f"   After: {after[i - 1]}")
         if self.plan and decision.kind == "action":
             lines += ["", PLAN_ASK_FULL if self.full else PLAN_ASK]
+        if self.talk and decision.kind == "action":
+            lines += ["", TALK_ASK]
         return "\n".join(lines), "one", None
+
+    def talk_block(self):
+        """The TABLE TALK lines: who talks, then the recent messages, oldest first."""
+        who = ", ".join(f"player {p}" + (" (you)" if p == self.player else "") for p in self.table.members)
+        lines = [f"TABLE TALK (players who talk: {who}; the others are bots and neither read nor speak):"]
+        shown = self.table.recent(TALK_SHOWN)
+        if not shown:
+            lines.append("(nothing said yet)")
+        for m in shown:
+            you = " (you)" if m["player"] == self.player else ""
+            lines.append(f"- round {m['round']}, turn {m['turn_no']}, player {m['player']}{you}: {m['text']}")
+        return lines
 
     def choose(self, observation, decision):
         n = len(decision.options)
@@ -377,6 +422,11 @@ class LLMAgent(Agent):
         if self.plan:
             self._info["plan"] = plan_in
             self._info["plan_updated"] = plan_out
+        if self.talk and decision.kind == "action":
+            said = parse_say(replies[0]) or (parse_say(replies[-1]) if len(replies) > 1 else None)
+            if said:
+                self.table.post(observation.state.round, observation.state.turn_no, self.player, said)
+            self._info["said"] = said
         return decision.options[k - 1]
 
     def info(self):

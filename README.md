@@ -79,7 +79,9 @@ Prompt features, each a setting so variants can be compared (`wingsim/agents/llm
 `plan` (a short written plan carried between turns, with the `plan` template), `outcomes` (a line per
 action option saying what it changes right away), `compact` (shorter payment choices; starting birds
 chosen by naming them), `goal_status` (a block on the current round goal: each player's count against
-the co-op difficulty, what the round would score if it ended now, turns left, earlier rounds).
+the co-op difficulty, what the round would score if it ended now, turns left, earlier rounds), `talk`
+(table talk: the language-model seats leave each other one short message a turn, 'SAY: ...', shown to all
+the seats that talk; bots neither read nor speak).
 `experiments/llm-prompts-moe.yaml` compares them against a local model; run
 it with `--workers 1`, and `--resume` to continue after a stop (every finished game is saved in
 `results/<experiment>/rows.jsonl`). `experiments/llm-mcts-moe.yaml` pairs the local model with a
