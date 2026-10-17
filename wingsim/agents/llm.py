@@ -88,19 +88,24 @@ def drop_thinking(reply):
     return reply.replace("<think>", "")
 
 
+# A plan block starts with "PLAN:" at the start of a line, as the prompt asks ("my plan: ..." inside the
+# reasoning is not one; matching it once cut the ANSWER line off a reply). It ends at "END PLAN", or, when
+# the model leaves that out, where an ANSWER or the next plan block begins, or at the end of the reply.
+PLAN_START = r"^[*#\s]*PLAN:"
+PLAN_END = r"(?:END PLAN|(?=(?i:ANSWER)\s*[:=])|(?=" + PLAN_START + r")|\Z)"
+
+
 def strip_reply(reply):
     """The reply without hidden-reasoning tags (<think>...</think>) or a plan block."""
     reply = drop_thinking(reply)
-    # A plan block starts with "PLAN:" at the start of a line, as the prompt asks; "my plan: ..." inside the
-    # reasoning is not one (matching it once cut the ANSWER line off a reply).
-    return re.sub(r"^[*#\s]*PLAN:.*?(END PLAN|\Z)", "", reply, flags=re.S | re.M)
+    return re.sub(PLAN_START + r".*?" + PLAN_END, "", reply, flags=re.S | re.M)
 
 
 def parse_plan(reply):
     """The plan block of a reply (between 'PLAN:' and 'END PLAN'), or None."""
     reply = drop_thinking(reply)
     # the last block: the updated plan comes after the answer, and the reasoning may quote the old one
-    blocks = re.findall(r"^[*#\s]*PLAN:\**\s*(.*?)\s*(?:END PLAN|\Z)", reply, flags=re.S | re.M)
+    blocks = re.findall(PLAN_START + r"\**\s*(.*?)\s*" + PLAN_END, reply, flags=re.S | re.M)
     m = blocks[-1] if blocks else None
     if not m or not m.strip():
         return None

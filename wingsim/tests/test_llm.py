@@ -240,6 +240,15 @@ def test_replies_are_read_past_thinking_tags_and_plan_blocks():
     assert llm.parse_plan(PLANNED).startswith("Engine: forest")
     quoted = "My old plan:\nPLAN:\nEngine: ducks\nEND PLAN\nIt still holds.\nANSWER: 2\nPLAN:\nEngine: geese\nEND PLAN"
     assert llm.parse_plan(quoted) == "Engine: geese" and parse_choice(quoted, 3, strict=True) == 2
+    # The plan first with no END PLAN, the answer after it (or on its last line): the answer is still read,
+    # and the plan stops where the answer begins.
+    first = "Plan holds.\nPLAN:\nEngine: ducks\nPivot if: no fish\n\nANSWER: 2"
+    assert parse_choice(first, 3, strict=True) == 2 and llm.parse_plan(first) == "Engine: ducks\nPivot if: no fish"
+    inline = "PLAN:\nEngine: ducks\nPivot if: no fish. ANSWER: 3"
+    assert parse_choice(inline, 3, strict=True) == 3 and llm.parse_plan(inline) == "Engine: ducks\nPivot if: no fish."
+    twice = "PLAN:\nEngine: ducks\n\nANSWER: 1\nPLAN:\nEngine: geese\nEND PLAN"     # old plan restated, then the new
+    assert parse_choice(twice, 3, strict=True) == 1 and llm.parse_plan(twice) == "Engine: geese"
+    assert llm.parse_numbers("PLAN:\nEngine: ducks\nANSWER: 1, 4", 5) == [1, 4]
     assert llm.parse_numbers("I keep two. ANSWER: 1, 4", 5) == [1, 4]
     assert llm.parse_numbers("ANSWER: none", 5) == []
     assert llm.parse_numbers("ANSWER: 1, 6", 5) is None
