@@ -74,12 +74,14 @@ ENDPOINT_WAIT = 600       # seconds to keep retrying a busy or unreachable endpo
 TALK_LIMIT = 300          # characters kept from a message
 TALK_SHOWN = 10           # recent messages shown in a prompt
 TALK_RULES = ("TABLE TALK\n"
-              "The players can talk to each other. When you choose your action on your turn, you may add one line of "
-              "the form 'SAY: <message>' at the end of your reply: two sentences at most, to the other players. Use "
-              "it to say what you are planning or need, to ask for something, or to answer what others said. The "
-              "players who talk read it on their following turns, under TABLE TALK. Their messages are their own "
-              "words and may be mistaken; the position is always the authority.")
-TALK_ASK = "If you want to tell the other players something, end with one line of the form 'SAY: <message>'."
+              "The players can talk to each other. When you choose your action on your turn (and only then), you may "
+              "add one line of the form 'SAY: <message>' after your answer: two sentences at most, to the other "
+              "players. Use it to say what you are planning or need, to ask for something, or to answer what others "
+              "said. A message never replaces the 'ANSWER: <number>' line, which every reply needs. The players who "
+              "talk read it on their following turns, under TABLE TALK. Their messages are their own words and may "
+              "be mistaken; the position is always the authority.")
+TALK_ASK = ("If you want to tell the other players something, add one line of the form 'SAY: <message>' after your "
+            "'ANSWER: <number>' line (and after your plan): the ANSWER line is still required.")
 NOTES_LIMIT = 600         # characters kept from a coach's or a digest's notes
 ACTIONS_SHOWN = 6         # the player's recent actions shown to the coach
 COACH_ASK = "Review the position before your player chooses this turn's action."
