@@ -70,6 +70,7 @@ KEEP_ASK_FULL = ("Think through which birds to keep, taking the space you need, 
                  "'ANSWER: <numbers>' listing the birds you keep, separated by commas (for example 'ANSWER: 1, 4'), "
                  "or 'ANSWER: none'.")
 RETRY_LIMIT = 300         # tokens for the reply to "your answer was cut off"
+ENDPOINT_WAIT = 600       # seconds to keep retrying a busy or unreachable endpoint (a local server restarting)
 TALK_LIMIT = 300          # characters kept from a message
 TALK_SHOWN = 10           # recent messages shown in a prompt
 TALK_RULES = ("TABLE TALK\n"
@@ -290,7 +291,8 @@ class LLMAgent(Agent):
         data = json.dumps(body).encode()
         last = None
         t0 = time.time()
-        for attempt in range(4):
+        waited, attempt = 0, 0
+        while True:
             try:
                 req = urllib.request.Request(self.base_url + "/chat/completions", data=data, headers=headers)
                 with urllib.request.urlopen(req, timeout=self.timeout) as resp:
@@ -305,9 +307,11 @@ class LLMAgent(Agent):
                     raise last
             except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
                 last = RuntimeError(f"could not reach the model endpoint: {e}")
-            time.sleep(2 ** attempt)
-        else:
-            raise last
+            if waited >= ENDPOINT_WAIT:
+                raise last
+            delay = min(2 ** attempt, 30)
+            time.sleep(delay)
+            waited, attempt = waited + delay, attempt + 1
         usage = out.get("usage") or {}
         cost = float(usage.get("cost") or 0.0)
         for stats in (self.stats, SPEND):

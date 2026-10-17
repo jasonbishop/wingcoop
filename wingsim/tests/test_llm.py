@@ -144,6 +144,13 @@ def test_busy_endpoint_is_retried_and_budget_stops_the_game(endpoint, monkeypatc
     s, d, bad = agent_at_first_decision(e3.url, monkeypatch)
     with pytest.raises(RuntimeError, match="HTTP 401"):
         bad.choose(api.observe(s, d.player), d)
+    # a server that is down (restarting) is retried for ENDPOINT_WAIT seconds, then the game stops
+    slept = []
+    monkeypatch.setattr(llm.time, "sleep", slept.append)
+    s, d, gone = agent_at_first_decision("http://127.0.0.1:9/v1", monkeypatch)
+    with pytest.raises(RuntimeError, match="could not reach"):
+        gone.choose(api.observe(s, d.player), d)
+    assert sum(slept) >= llm.ENDPOINT_WAIT and max(slept) == 30
 
 
 def test_openrouter_thinking_setting(monkeypatch):
