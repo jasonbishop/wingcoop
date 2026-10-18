@@ -84,7 +84,10 @@ the co-op difficulty, what the round would score if it ended now, turns left, ea
 the seats that talk; bots neither read nor speak), `coach` (an extra call before each action that reviews
 the position, plan, round goal and recent actions and flags up to three problems; the player may answer it
 with 'TO COACH: ...'), `digest` (with `talk`: an extra call that reads new table talk and notes what it
-changes).
+changes), `reply_format` (`lines`, the default, or `json`: the answer, message and coach reply come as one
+JSON object, `{"answer": 2, "say": "...", "to_coach": "..."}`). The group policy `talk` lets the seats
+that talk set the co-op difficulty together: before each round each proposes a d with a message; if
+they disagree they propose once more, and then the lowest proposal is set.
 `experiments/llm-prompts-moe.yaml` compares them against a local model; run
 it with `--workers 1`, and `--resume` to continue after a stop (every finished game is saved in
 `results/<experiment>/rows.jsonl`). `experiments/llm-mcts-moe.yaml` pairs the local model with a

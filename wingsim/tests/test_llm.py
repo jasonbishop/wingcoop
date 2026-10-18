@@ -16,7 +16,8 @@ from .conftest import random_game
 
 
 class FakeEndpoint:
-    """Answers chat requests with scripted replies (the last one repeats) and records what it was sent."""
+    """Answers chat requests with scripted replies (the last one repeats; a function answers from the request
+    body) and records what it was sent."""
 
     def __init__(self, replies, status=None):
         self.replies = list(replies)
@@ -35,6 +36,8 @@ class FakeEndpoint:
                     self.wfile.write(b"busy")
                     return
                 reply = outer.replies.pop(0) if len(outer.replies) > 1 else outer.replies[0]
+                if callable(reply):     # a function of the request body
+                    reply = reply(body)
                 message = reply if isinstance(reply, dict) else {"content": reply}   # a dict: the whole message
                 out = {"choices": [{"message": {"role": "assistant", **message}}],
                        "usage": {"prompt_tokens": 1000, "completion_tokens": 2, "cost": 0.001}}

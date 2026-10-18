@@ -21,6 +21,10 @@ class GroupPolicy:
     def choose(self, observation, decision):
         raise NotImplementedError
 
+    def decide(self, state, decision):
+        """The choice for a group decision; the policy sees what the whole table may see."""
+        return self.choose(api.observe(state, decision.player), decision)
+
     def info(self):
         return None
 
@@ -92,6 +96,41 @@ class Estimate(GroupPolicy):
         return self._info
 
 
+class TalkVote(GroupPolicy):
+    """talk: the seats that talk (language-model agents with table talk) set the difficulty together. Each
+    proposes a d in seat order, seeing the proposals before theirs in the table talk; if they all agree, that d is
+    set, otherwise each proposes once more, and then the lowest proposal is set. The runner seats the voters."""
+
+    label = "talk"
+
+    def __init__(self):
+        self.voters = []
+        self._info = None
+
+    def choose(self, observation, decision):
+        raise RuntimeError("the talk policy decides from the full state (decide)")
+
+    def decide(self, state, decision):
+        if not self.voters:
+            raise RuntimeError("the talk group policy needs seats that talk")
+        votes, proposals = [], {}
+        for rnd in (1, 2):
+            for agent in self.voters:
+                option = agent.choose(api.observe(state, agent.player), decision, vote=rnd)
+                proposals[agent.player] = option
+                info = agent.info() or {}
+                votes.append({"pass": rnd, "player": agent.player, "d": option[1], "round": state.round,
+                              "turn_no": state.turn_no, **info})
+            if len({o[1] for o in proposals.values()}) == 1:
+                break
+        chosen = min(proposals.values(), key=lambda o: o[1])
+        self._info = {"votes": votes, "agreed": len({o[1] for o in proposals.values()}) == 1, "d": chosen[1]}
+        return chosen
+
+    def info(self):
+        return self._info
+
+
 def play_round(s, agents):
     """Play the state forward in place until the current round has been scored."""
     r = s.round
@@ -104,10 +143,12 @@ def play_round(s, agents):
 
 
 def parse(spec):
-    """Build a policy from its text form: fixed(2), ladder(2,+1,0), estimate, estimate(4)."""
+    """Build a policy from its text form: fixed(2), ladder(2,+1,0), estimate, estimate(4), talk."""
     if isinstance(spec, GroupPolicy):
         return spec
     text = str(spec).replace(" ", "")
+    if text == "talk":
+        return TalkVote()
     m = re.fullmatch(r"fixed\((\d)\)", text)
     if m:
         return Fixed(int(m[1]))

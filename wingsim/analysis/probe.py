@@ -83,6 +83,15 @@ def turn_notes(lines, target):
     return (target["turn_no"], notes) if notes else (None, [])
 
 
+def posts(ln):
+    """The table-talk messages a logged decision added: [(round, turn number, player, text)]. A group
+    decision under the talk policy holds the proposals of the difficulty, each posted with its message."""
+    info = (ln.get("info") or {}) if ln["t"] == "decision" else {}
+    if info.get("votes"):
+        return [(v["round"], v["turn_no"], v["player"], v["posted"]) for v in info["votes"] if v.get("posted")]
+    return [(ln["round"], ln["turn_no"], ln["player"], info["said"])] if info.get("said") else []
+
+
 def table_talk(lines, target):
     """The table talk as it stood at the decision: who talks, and what was said before it."""
     members = [i for i, s in enumerate(lines[0]["seats"]) if (s.get("settings") or {}).get("talk")]
@@ -90,9 +99,8 @@ def table_talk(lines, target):
     for ln in lines:
         if ln is target:
             break
-        said = (ln.get("info") or {}).get("said") if ln["t"] == "decision" else None
-        if said:
-            table.post(ln["round"], ln["turn_no"], ln["player"], said)
+        for message in posts(ln):
+            table.post(*message)
     return table
 
 
@@ -114,8 +122,7 @@ def harness_state(lines, target):
             state["my_actions"].append((ln["round"], ln["turn_no"], ln["labels"][ln["choice"]]))
             if "to_coach" in info:
                 state["to_coach"] = (ln["round"], ln["turn_no"], info["to_coach"]) if info["to_coach"] else None
-        if info.get("said"):
-            posted += 1
+        posted += len(posts(ln))
     state["posted"] = posted
     return state
 
@@ -161,7 +168,7 @@ def build_agent(header, player, args):
                 talk=logged.get("talk", False) if args.talk is None else args.talk,
                 coach=logged.get("coach", False) if args.coach is None else args.coach,
                 digest=logged.get("digest", False) if args.digest is None else args.digest,
-                temperature=args.temperature)
+                reply_format=logged.get("reply_format", "lines"), temperature=args.temperature)
     default = llm.LLMAgent(**opts).max_tokens
     if args.max_tokens:
         opts["max_tokens"] = args.max_tokens
@@ -214,6 +221,8 @@ def main():
     agent, opts = build_agent(header, player, args)
     seat = header["seats"][player]
     agent.start(cfg, player, Objective(seat.get("w", 0.0), cfg.n, seat.get("group_share", False)))
+    if seat["settings"].get("votes") and agent.talk:
+        agent.join_vote()
     logged_info = target.get("info") or {}
     if agent.plan:
         agent.current_plan = None if args.plan == "empty" else logged_info.get("plan")

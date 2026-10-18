@@ -38,15 +38,17 @@ def from_log(path):
         for line in f:
             d = json.loads(line)
             info = d.get("info") or {} if d.get("t") == "decision" else {}
-            if not info.get("replies"):
-                continue
-            usages = info.get("usage_all") or [info.get("usage") or {}]
-            partial |= len(usages) < len(info["replies"])
-            usages = usages + [c.get("usage") or {} for c in info.get("aux") or []]   # coach and digest calls
-            for u in usages:
-                calls += 1
-                inp += u.get("prompt_tokens") or 0
-                out += u.get("completion_tokens") or 0
+            # a group decision under the talk policy holds each seat's proposal of the difficulty
+            for info in info.get("votes") or [info]:
+                if not info.get("replies"):
+                    continue
+                usages = info.get("usage_all") or [info.get("usage") or {}]
+                partial |= len(usages) < len(info["replies"])
+                usages = usages + [c.get("usage") or {} for c in info.get("aux") or []]   # coach and digest calls
+                for u in usages:
+                    calls += 1
+                    inp += u.get("prompt_tokens") or 0
+                    out += u.get("completion_tokens") or 0
     return {"game": str(path), "calls": calls, "input": inp, "output": out, "partial": partial}
 
 

@@ -136,6 +136,10 @@ def play_cell_game(cell, seed, full_log=False):
     if cell["policy"]:
         policy = group_policies.parse(cell["policy"])
         policy.start(cfg, table, seed)
+        if isinstance(policy, group_policies.TalkVote):     # the seats that talk set the difficulty
+            policy.voters = talkers
+            for a in talkers:
+                a.join_vote()
     log = None
     if full_log:
         seats = [{"type": a.type, "settings": a.settings(), "w": a.objective.w,

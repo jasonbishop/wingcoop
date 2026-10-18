@@ -22,9 +22,11 @@ def play_game(cfg, seed, agents, group_policy=None, log=None, tally=None, max_de
             if group_policy is None:
                 raise RuntimeError(f"group decision {d.kind!r} raised but no group policy was given")
             chooser = group_policy
+            decide = getattr(chooser, "decide", None)
+            choice = decide(s, d) if decide else chooser.choose(api.observe(s, d.player), d)
         else:
             chooser = agents[d.player]
-        choice = chooser.choose(api.observe(s, d.player), d)
+            choice = chooser.choose(api.observe(s, d.player), d)
         if tally is not None:
             tally.record(s, d, choice)
         if log is not None:

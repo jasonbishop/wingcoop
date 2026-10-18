@@ -80,9 +80,23 @@ TALK_RULES = ("TABLE TALK\n"
               "said. A message never replaces the 'ANSWER: <number>' line, which every reply needs. The players who "
               "talk read it on their following turns, under TABLE TALK. Their messages are their own words and may "
               "be mistaken; the position is always the authority.")
+TALK_RULES_JSON = ("TABLE TALK\n"
+                   "The players can talk to each other. When you choose your action on your turn (and only then), you "
+                   "may add a message for the other players in a \"say\" field of your JSON answer: two sentences at "
+                   "most. Use it to say what you are planning or need, to ask for something, or to answer what others "
+                   "said. The players who talk read it on their following turns, under TABLE TALK. Their messages "
+                   "are their own words and may be mistaken; the position is always the authority.")
 TALK_ASK = ("If you want to tell the other players something, add one line of the form 'SAY: <message>' after your "
             "'ANSWER: <number>' line (and after your plan): the ANSWER line is still required.")
-NOTES_LIMIT = 600         # characters kept from a coach's or a digest's notes
+
+
+def talk_rules(json_format=False, votes=False):
+    """The TABLE TALK rules for the system prompt; with votes, the players also speak when they propose a d."""
+    text = TALK_RULES_JSON if json_format else TALK_RULES
+    if votes:
+        text = text.replace(" (and only then),", ", and when you propose a difficulty d,")
+    return text
+NOTES_LIMIT = 1000        # characters kept from a coach's or a digest's notes (cut at a line end)
 ACTIONS_SHOWN = 6         # the player's recent actions shown to the coach
 COACH_ASK = "Review the position before your player chooses this turn's action."
 COACH_REPLY_ASK = ("If you want to answer your coach (whether you follow their notes, and why), add one line of the "
@@ -91,6 +105,45 @@ DIGEST_ASK = ("Before you choose this turn's action, read the table talk above. 
               "or ask of you, and is any of it mistaken? How should it change your plan or what you do this turn? "
               "Do not choose your action or write a message yet. Think it through, then finish with a block of at "
               "most three lines, each one sentence:\nTALK NOTES:\n- ...")
+
+# reply_format "json": the answer, the message and the reply to the coach come in one JSON object instead of
+# 'ANSWER:', 'SAY:' and 'TO COACH:' lines. A reply without one is still read the line way.
+JSON_ONE = '{"answer": <number>}'
+JSON_ANSWER_ONLY = "Reply with only a JSON object naming the option you choose, like " + '{"answer": 2}' + ". No other text."
+JSON_ANSWER_REASONED = ("Think briefly (three sentences at most) about which option best serves your objective, "
+                        "then finish with a JSON object on its own line: " + JSON_ONE + ".")
+JSON_ANSWER_FULL = ("Think through which option best serves your objective, in a few short paragraphs at most: what "
+                    "each serious option gains now and what it sets up for later rounds. Then finish with a JSON "
+                    "object on its own line: " + JSON_ONE + ".")
+JSON_PLAN_ASK = ("First check your plan against the position above: does it still hold given what has changed? Keep "
+                 "it, adjust it or drop it, and say why in one or two sentences. Then give your choice as a JSON "
+                 "object on its own line: " + JSON_ONE + ". Then write your updated plan, short, in exactly this "
+                 "form:\n" + PLAN_FORM)
+JSON_PLAN_ASK_FULL = ("First check your plan against the position above: does it still hold given what has changed? "
+                      "Think through your options, taking the space you need, and decide whether to keep, adjust or "
+                      "drop the plan. Then give your choice as a JSON object on its own line: " + JSON_ONE + ". Then "
+                      "write your updated plan, short, in exactly this form:\n" + PLAN_FORM)
+JSON_KEEP_ASK = ("Reply with your reasoning in three sentences at most, then a JSON object on its own line listing "
+                 'the birds you keep (for example {"answer": [1, 4]}, or {"answer": []} for none).')
+JSON_KEEP_ASK_FULL = ("Think through which birds to keep, taking the space you need, then finish with a JSON object on "
+                      'its own line listing the birds you keep (for example {"answer": [1, 4]}, or {"answer": []} '
+                      "for none).")
+JSON_TALK_ASK = ('If you want to tell the other players something, add a "say" field to your JSON object: two '
+                 "sentences at most. Leave it out to say nothing.")
+JSON_COACH_REPLY_ASK = ('If you want to answer your coach (whether you follow their notes, and why), add a "to_coach" '
+                        "field to your JSON object: one sentence or two.")
+JSON_RE = re.compile(r'\{[^{}]*"answer"[^{}]*\}', re.S)     # a JSON answer object (flat: no nested braces)
+JSON_START = r'(?=^[ \t]*(?:```(?:json)?\s*)?\{\s*"answer")'
+
+# The talk group policy (agents/group_policies.py): the players who talk set the co-op difficulty together.
+VOTE_RULES = ("SETTING THE DIFFICULTY\n"
+              "The players who talk set the co-op difficulty d together, before round 1 and again before each later "
+              "round (within the changes the rules allow). Each of them proposes a d in turn, seeing the proposals "
+              "made before theirs under TABLE TALK. If all the proposals agree, that d is set. Otherwise each "
+              "proposes once more, seeing all the first proposals, and then the lowest proposal is set.")
+VOTE_ASK = {1: "Propose the difficulty d for the coming round.",
+            2: "The first proposals did not agree (they are under TABLE TALK). Propose once more: after this, the "
+               "lowest proposal is set."}
 
 # Spending is tracked per process, across every language-model seat in it.
 SPEND = {"calls": 0, "prompt_tokens": 0, "completion_tokens": 0, "cost_usd": 0.0}
@@ -128,31 +181,56 @@ PLAN_START = r"^[*#\s]*PLAN:"
 SAY_START = r"^[*#\s]*SAY:"
 COACH_START = r"^[*#\s]*TO COACH:"
 PLAN_END = (r"(?:END PLAN|(?=(?i:ANSWER)\s*[:=])|(?=" + PLAN_START + r")|(?=" + SAY_START + r")|(?=" + COACH_START
-            + r")|\Z)")
+            + r")|" + JSON_START + r"|\Z)")
 
 
 def strip_reply(reply):
-    """The reply without hidden-reasoning tags (<think>...</think>), a plan block or a SAY line."""
+    """The reply without hidden-reasoning tags (<think>...</think>), a plan block, a SAY line or a JSON answer."""
     reply = drop_thinking(reply)
     reply = re.sub(PLAN_START + r".*?" + PLAN_END, "", reply, flags=re.S | re.M)
+    reply = re.sub(r"```(?:json)?\s*(" + JSON_RE.pattern + r")\s*```", "", reply)
+    reply = JSON_RE.sub("", reply)
     return re.sub("(" + SAY_START + "|" + COACH_START + r").*$", "", reply, flags=re.M)
 
 
+def parse_json(reply):
+    """The last JSON object of the reply that has an "answer" field, as a dict, or None."""
+    for text in reversed(JSON_RE.findall(drop_thinking(reply))):
+        try:
+            obj = json.loads(text)
+        except ValueError:
+            continue
+        if isinstance(obj, dict) and "answer" in obj:
+            return obj
+    return None
+
+
 def parse_notes(reply, header="NOTES"):
-    """The lines after the reply's last '<header>:' line, or else its last paragraph; at most NOTES_LIMIT chars."""
+    """The lines after the reply's last '<header>:' line, or else its last paragraph, without any answer the
+    reply gave (a digest sometimes chooses the move anyway); at most NOTES_LIMIT characters, cut at a line end."""
     reply = drop_thinking(reply).strip()
     blocks = re.split(r"^[*#\s]*" + header + r":\**[ \t]*\n?", reply, flags=re.M)
     text = blocks[-1] if len(blocks) > 1 else reply.split("\n\n")[-1]
-    return text.strip()[:NOTES_LIMIT] or None
+    text = JSON_RE.sub("", re.sub(r"^[*#\s]*ANSWER\s*[:=].*$", "", text, flags=re.M | re.IGNORECASE))
+    text = re.sub(r"```(?:json)?\s*```", "", text).strip()
+    if len(text) > NOTES_LIMIT:
+        cut = text[:NOTES_LIMIT]
+        text = cut[:cut.rfind("\n")] if "\n" in cut else cut
+    return text.strip() or None
+
+
+def clean_message(text):
+    """A message as kept: None for nothing, 'none' or the like; at most TALK_LIMIT characters."""
+    text = text.strip().strip('*"').strip() if isinstance(text, str) else ""
+    if not text or re.fullmatch(r"\W*(nothing|none|null|n/a|-)\W*", text, flags=re.IGNORECASE):
+        return None
+    return text[:TALK_LIMIT]
 
 
 def parse_say(reply, start=SAY_START):
     """The message of the reply's last 'SAY:' line (or another such line), or None (also for 'SAY: nothing')."""
     lines = re.findall(start + r"\**\s*(.*)$", drop_thinking(reply), flags=re.M)
-    text = lines[-1].strip().strip('*"').strip() if lines else ""
-    if not text or re.fullmatch(r"\W*(nothing|none|n/a|-)\W*", text, flags=re.IGNORECASE):
-        return None
-    return text[:TALK_LIMIT]
+    return clean_message(lines[-1]) if lines else None
 
 
 def parse_plan(reply):
@@ -201,7 +279,7 @@ class LLMAgent(Agent):
                  prompt="default", reasoning=False, thinking=None, temperature=0.0, max_tokens=None,
                  timeout=120, budget_usd=None, max_calls=None, seed=0, extra_body=None,
                  plan=False, outcomes=False, compact=False, goal_status=False, talk=False, coach=False,
-                 digest=False):
+                 digest=False, reply_format="lines"):
         self.model = model
         self.base_url = base_url.rstrip("/")
         # The key is sent only where it belongs: OPENROUTER_API_KEY to OpenRouter, and otherwise only a
@@ -217,6 +295,10 @@ class LLMAgent(Agent):
         self.table = None
         self.coach = bool(coach)               # an extra call that flags problems before each action
         self.digest = bool(digest) and self.talk   # an extra call that reads new table talk before each action
+        if reply_format not in ("lines", "json"):
+            raise ValueError(f"unknown reply_format: {reply_format!r} (lines or json)")
+        self.json = reply_format == "json"     # the answer, message and coach reply as one JSON object
+        self.votes = False                     # proposes the co-op difficulty (the talk group policy)
         if self.plan and not reasoning:    # a plan needs visible reasoning; "full" stays full
             reasoning = True
         self.prompt = prompt
@@ -246,6 +328,7 @@ class LLMAgent(Agent):
                 "max_tokens": self.max_tokens, "plan": self.plan, "outcomes": self.outcomes,
                 "compact": self.compact, "goal_status": self.goal_status, "talk": self.talk,
                 "coach": self.coach, "digest": self.digest,
+                "reply_format": "json" if self.json else "lines", "votes": self.votes,
                 "system_prompt": getattr(self, "system", None),
                 "coach_system_prompt": getattr(self, "coach_system", None)}
 
@@ -259,9 +342,9 @@ class LLMAgent(Agent):
         self.system = prompts.template(self.prompt).format(
             player=player_index, players=config.n, objective=objective.describe(),
             rules=api.rules_summary(config),
-            answer_format=ANSWER_FULL if self.full else ANSWER_REASONED if self.reasoning else ANSWER_ONLY)
+            answer_format=self.answer_text("full" if self.full else "reasoned" if self.reasoning else "only"))
         if self.talk:
-            self.system += "\n\n" + TALK_RULES
+            self.system += "\n\n" + talk_rules(self.json)
             self.table = TableTalk([player_index])   # alone until the runner seats it at a shared table
         self.coach_system = prompts.template("coach").format(
             player=player_index, players=config.n, objective=objective.describe(),
@@ -272,6 +355,24 @@ class LLMAgent(Agent):
         self.my_actions = []              # (round, turn number, label) of this player's actions so far
         self.last_coach = None            # (round, turn number, notes) of the coach's latest review
         self.to_coach = None              # (round, turn number, reply) the player last gave its coach
+
+    def join_vote(self):
+        """Seat this talking player among those who set the co-op difficulty (the talk group policy)."""
+        if not self.talk:
+            raise ValueError("only a seat that talks can propose the difficulty")
+        self.votes = True
+        self.system = self.system.replace(talk_rules(self.json), talk_rules(self.json, votes=True))
+        self.system += "\n\n" + VOTE_RULES
+
+    def answer_text(self, name):
+        """The answer instructions in this seat's reply format."""
+        lines = {"only": ANSWER_ONLY, "reasoned": ANSWER_REASONED, "full": ANSWER_FULL, "plan": PLAN_ASK,
+                 "plan_full": PLAN_ASK_FULL, "keep": KEEP_ASK, "keep_full": KEEP_ASK_FULL, "talk": TALK_ASK,
+                 "coach": COACH_REPLY_ASK}
+        as_json = {"only": JSON_ANSWER_ONLY, "reasoned": JSON_ANSWER_REASONED, "full": JSON_ANSWER_FULL,
+                   "plan": JSON_PLAN_ASK, "plan_full": JSON_PLAN_ASK_FULL, "keep": JSON_KEEP_ASK,
+                   "keep_full": JSON_KEEP_ASK_FULL, "talk": JSON_TALK_ASK, "coach": JSON_COACH_REPLY_ASK}
+        return (as_json if self.json else lines)[name]
 
     # ------------------------------------------------------------ the endpoint
 
@@ -332,8 +433,9 @@ class LLMAgent(Agent):
 
     # ------------------------------------------------------------ choosing
 
-    def build_prompt(self, observation, decision):
-        """The user message, and how its answer is read: "one" (an option number) or "keep" (bird numbers)."""
+    def build_prompt(self, observation, decision, vote=None):
+        """The user message, and how its answer is read: "one" (an option number) or "keep" (bird numbers).
+        `vote` (1 or 2) makes it a proposal of the co-op difficulty, in that pass of the talk group policy."""
         if self.compact:
             what, labels = api.describe_decision_compact(observation)
         else:
@@ -346,7 +448,7 @@ class LLMAgent(Agent):
             lines += ["YOUR PLAN (your own notes from earlier turns; they may be out of date. If they conflict "
                       "with the position above, trust the position):", self.current_plan or "(none yet)", ""]
             turn, notes = self.turn_notes
-            if notes and turn == observation.state.turn_no and decision.kind != "action":
+            if notes and turn == observation.state.turn_no and decision.kind != "action" and vote is None:
                 lines.append("THIS TURN SO FAR:")
                 for label, why in notes:
                     lines.append(f"- You chose: {label}" + (f" Your reasoning: {why}" if why else ""))
@@ -358,7 +460,7 @@ class LLMAgent(Agent):
         if keep:
             lines += ["DECISION: " + what, "", "Your dealt birds:"]
             lines += [f"{i}. {line}" for i, (_, line) in enumerate(keep, 1)]
-            lines += ["", KEEP_ASK_FULL if self.full else KEEP_ASK]
+            lines += ["", self.answer_text("keep_full" if self.full else "keep")]
             return "\n".join(lines), "keep", keep
         after = api.describe_outcomes(observation) if self.outcomes else None
         lines += ["DECISION: " + what, "", "Your options:"]
@@ -367,11 +469,14 @@ class LLMAgent(Agent):
             if after and after[i - 1]:
                 lines.append(f"   After: {after[i - 1]}")
         if self.plan and decision.kind == "action":
-            lines += ["", PLAN_ASK_FULL if self.full else PLAN_ASK]
-        if self.talk and decision.kind == "action":
-            lines += ["", TALK_ASK]
+            lines += ["", self.answer_text("plan_full" if self.full else "plan")]
+        if vote:
+            lines += ["", VOTE_ASK[vote]]
+        if self.talk and (decision.kind == "action" or vote):
+            lines += ["", self.answer_text("talk")]
         if self.coach and decision.kind == "action" and self.coach_notes[1]:
-            lines += [COACH_REPLY_ASK] if self.talk else ["", COACH_REPLY_ASK]   # under the SAY line if any
+            ask = self.answer_text("coach")
+            lines += [ask] if self.talk else ["", ask]   # under the SAY line if any
         return "\n".join(lines), "one", None
 
     def notes_block(self, observation):
@@ -447,23 +552,46 @@ class LLMAgent(Agent):
             lines.append(f"- round {m['round']}, turn {m['turn_no']}, player {m['player']}{you}: {m['text']}")
         return lines
 
-    def choose(self, observation, decision):
+    def choose(self, observation, decision, vote=None):
+        """The option chosen. `vote` (1 or 2): this is a proposal of the co-op difficulty, in that pass of the
+        talk group policy; the proposal goes to the table talk with the message, if any."""
         n = len(decision.options)
-        aux = self.consult(observation) if decision.kind == "action" and (self.coach or self.digest) else []
-        user, mode, keep = self.build_prompt(observation, decision)
+        acting = decision.kind == "action"
+        aux = self.consult(observation) if acting and (self.coach or self.digest) else []
+        user, mode, keep = self.build_prompt(observation, decision, vote)
         system = {"role": "system", "content": self.system}
         if self.model.startswith("anthropic/"):   # let the provider cache the long, unchanging system prompt
             system = {"role": "system", "content": [{"type": "text", "text": self.system,
                                                      "cache_control": {"type": "ephemeral"}}]}
         messages = [system, {"role": "user", "content": user}]
-        planning = self.plan and decision.kind == "action"
+        planning = self.plan and acting
         limit = self.plan_max_tokens if planning else None
 
         def read(reply, bare_ok=False):
+            obj = parse_json(reply) if self.json else None
+            if obj is not None:
+                return read_json(obj["answer"])
             if mode == "one":
                 bare = bare_ok and re.fullmatch(r"\W*\d+\W*", strip_reply(reply) or "")
                 return parse_choice(reply, n, strict=self.reasoning and not bare)
-            nums = parse_numbers(reply, len(keep))
+            return kept(parse_numbers(reply, len(keep)))
+
+        def read_json(answer):
+            if mode == "one":
+                try:
+                    k = int(answer)
+                except (TypeError, ValueError):
+                    return None
+                return k if 1 <= k <= n else None
+            if isinstance(answer, (int, str)) and not isinstance(answer, bool):
+                answer = [] if str(answer).strip().lower() in ("", "none") else [answer]
+            try:
+                nums = sorted({int(x) for x in answer})
+            except (TypeError, ValueError):
+                return None
+            return kept(nums) if all(1 <= x <= len(keep) for x in nums) else None
+
+        def kept(nums):
             if nums is None:
                 return None
             wanted = {keep[k - 1][0] for k in nums}
@@ -482,19 +610,26 @@ class LLMAgent(Agent):
         if k is None:
             self.stats["retries"] += 1
             retry_limit = limit
+            if self.json:
+                form, line = '{"answer": <number>}', "JSON answer"
+            else:
+                form, line = "'ANSWER: <number>'", "'ANSWER: <number>' line"
             if mode == "keep":
-                again = "That was not a valid answer. " + (KEEP_ASK_FULL if self.full else KEEP_ASK)
+                again = "That was not a valid answer. " + self.answer_text("keep_full" if self.full else "keep")
             elif planning:
-                again = (f"Your reply had no valid 'ANSWER: <number>' line (it may have been cut off). Reply now with "
-                         f"only 'ANSWER: <number>' (1 to {n}), then your plan in the same form, kept short.")
+                again = (f"Your reply had no valid {line} (it may have been cut off). Reply now with "
+                         f"only {form} (1 to {n})" + (", with any other fields you meant to add" if self.json else "")
+                         + ", then your plan in the same form, kept short.")
             elif self.reasoning:
                 # The usual cause is reasoning that ran past max_tokens; asking again with the same room only
                 # lets it run out again. Some models start reasoning again even when told not to, so the
                 # reply gets room for a sentence or two.
-                again = (f"Your reply had no 'ANSWER: <number>' line (it may have been cut off). Do not start over: "
-                         f"in one sentence at most, finish your decision, then give the line 'ANSWER: <number>' "
-                         f"(1 to {n}).")
+                again = (f"Your reply had no {line} (it may have been cut off). Do not start over: "
+                         f"in one sentence at most, finish your decision, then give "
+                         + (f"the JSON object {form}" if self.json else f"the line {form}") + f" (1 to {n}).")
                 retry_limit = RETRY_LIMIT
+            elif self.json:
+                again = f"That was not a valid choice. Reply with only {form}, the option you choose (1 to {n})."
             else:
                 again = f"That was not a valid choice. Reply with one number from 1 to {n}: the option you choose."
             messages += [{"role": "assistant", "content": reply or "(no answer)"}, {"role": "user", "content": again}]
@@ -514,11 +649,12 @@ class LLMAgent(Agent):
             plan_out = parse_plan(replies[0]) or (parse_plan(replies[-1]) if len(replies) > 1 else None)
             if plan_out:
                 self.current_plan = plan_out
-        if self.plan and observation.state.phase == api.TURNS and observation.state.turn == self.player:
+        if (self.plan and vote is None and observation.state.phase == api.TURNS
+                and observation.state.turn == self.player):
             turn = observation.state.turn_no
             notes = self.turn_notes[1] if self.turn_notes[0] == turn else []
             why = None
-            if decision.kind == "action":
+            if acting:
                 why = strip_reply(replies[-1])
                 why = re.sub(r"ANSWER\s*[:=].*", "", why, flags=re.S | re.IGNORECASE).strip()[:NOTE_LIMIT] or None
             label = api.describe_decision(observation)[1][k - 1]
@@ -534,23 +670,36 @@ class LLMAgent(Agent):
         if self.plan:
             self._info["plan"] = plan_in
             self._info["plan_updated"] = plan_out
-        if self.talk and decision.kind == "action":
-            said = parse_say(replies[0]) or (parse_say(replies[-1]) if len(replies) > 1 else None)
-            if said:
-                self.table.post(observation.state.round, observation.state.turn_no, self.player, said)
+        s = observation.state
+        if self.talk and (acting or vote):
+            said = self.message(replies, "say", SAY_START)
             self._info["said"] = said
-        if decision.kind == "action" and (self.coach or self.digest):
+            if vote:
+                text = f"(proposes d = {decision.options[k - 1][1]})" + (" " + said if said else "")
+                self._info["posted"] = text
+                self.table.post(s.round, s.turn_no, self.player, text)
+            elif said:
+                self.table.post(s.round, s.turn_no, self.player, said)
+        if acting and (self.coach or self.digest):
             self._info["aux"] = aux
             self._info["coach"] = next((c["notes"] for c in aux if c["role"] == "coach"), None)
             self._info["digest"] = next((c["notes"] for c in aux if c["role"] == "digest"), None)
-        if self.coach and decision.kind == "action":
-            reply = parse_say(replies[0], COACH_START) or (parse_say(replies[-1], COACH_START) if len(replies) > 1 else None)
-            self.to_coach = (observation.state.round, observation.state.turn_no, reply) if reply else None
+        if self.coach and acting:
+            reply = self.message(replies, "to_coach", COACH_START)
+            self.to_coach = (s.round, s.turn_no, reply) if reply else None
             self._info["to_coach"] = reply
-        if decision.kind == "action":
-            self.my_actions.append((observation.state.round, observation.state.turn_no,
-                                    api.describe_decision(observation)[1][k - 1]))
+        if acting:
+            self.my_actions.append((s.round, s.turn_no, api.describe_decision(observation)[1][k - 1]))
         return decision.options[k - 1]
+
+    def message(self, replies, field, start):
+        """A message of the first reply, or else of the retry: the JSON field (in the json format) or the line."""
+        for reply in (replies[:1] + replies[1:][-1:]):
+            obj = parse_json(reply) if self.json else None
+            text = clean_message(obj.get(field)) if obj and field in obj else parse_say(reply, start)
+            if text:
+                return text
+        return None
 
     def info(self):
         return self._info

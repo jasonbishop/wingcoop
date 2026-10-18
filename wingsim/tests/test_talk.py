@@ -128,3 +128,94 @@ def test_coach_and_digest_calls_feed_the_action_prompt(endpoint, tmp_path):
             probe.apply_aux(state, t, ln["info"], state["posted"])
         probe.set_harness(a, state)
         assert a.build_prompt(api.observe(s, t["player"]), d)[0] == ln["info"]["prompt"], ln["seq"]
+
+
+def test_json_replies_and_notes_are_read():
+    reply = ('Eggs now.\n```json\n{"answer": 2, "say": "Leave me the fish.", "to_coach": "Agreed."}\n```\n'
+             "PLAN:\nEngine: eggs\nNeed next: fish\n")
+    assert llm.parse_json(reply) == {"answer": 2, "say": "Leave me the fish.", "to_coach": "Agreed."}
+    assert llm.parse_plan(reply) == "Engine: eggs\nNeed next: fish"
+    assert "answer" not in llm.strip_reply(reply) and "```" not in llm.strip_reply(reply)
+    # a plan written first, with no END PLAN, stops where the JSON answer starts
+    first = 'PLAN:\nEngine: eggs\n{"answer": 3}'
+    assert llm.parse_plan(first) == "Engine: eggs" and llm.parse_json(first) == {"answer": 3}
+    assert llm.parse_json('I pick {"answer": 1} no, {"answer": 2}') == {"answer": 2}
+    assert llm.parse_json("ANSWER: 2") is None and llm.parse_json('{"answer": 2') is None
+    assert llm.clean_message(None) is None and llm.clean_message("null") is None
+    # notes lose any answer the call gave, and are cut at a line end
+    assert llm.parse_notes("x\nTALK NOTES:\n- They need fish.\nANSWER: 3\n{\"answer\": 3}", "TALK NOTES") == "- They need fish."
+    long = "NOTES:\n" + "\n".join("- " + "w" * 400 for _ in range(3))
+    assert llm.parse_notes(long) == "- " + "w" * 400 + "\n- " + "w" * 400
+
+
+def voting_reply(body):
+    """Seat 0 proposes d = 2 and seat 2 d = 3 before round 1 (both passes); later rounds keep d."""
+    system, user = body["messages"][0]["content"], body["messages"][-1]["content"]
+    if llm.VOTE_ASK[1] in user or llm.VOTE_ASK[2] in user:
+        first = "Set the difficulty to 5" in user
+        k = (2 if "player 0 of 3" in system else 3) if first else 1
+        return 'Thinking it over.\n{"answer": %d, "say": "I can reach %d."}' % (k, k)
+    if llm.DIGEST_ASK in user:
+        return 'They want fish.\nTALK NOTES:\n- They need fish.\nANSWER: 2\n{"answer": 2}'
+    if user.startswith(llm.COACH_ASK) or llm.COACH_ASK in user:
+        return "Looks fine.\nNOTES:\n- Too many cards in hand."
+    return ('The plan holds.\n{"answer": 1, "say": "I need fish.", "to_coach": "Agreed, taking food."}\n'
+            "PLAN:\nEngine: forest\nBonus target: none\nRound goal: birds\nNeed next: fish\nPivot if: no fish\n"
+            "END PLAN")
+
+
+def test_talkers_set_the_difficulty_together_with_json_replies(endpoint, tmp_path):
+    e = endpoint([voting_reply])
+    seat = {"type": "llm", "model": "test/model", "base_url": e.url, "prompt": "plan", "plan": True,
+            "compact": True, "talk": True, "coach": True, "digest": True, "reply_format": "json"}
+    exp = {"name": "vote", "seeds": {"start": 5, "count": 1}, "players": [3],
+           "conditions": {"coop": {"plugins": {"coop_goals": {}}, "win_condition": "team_total",
+                                   "agents": [seat, {"type": "greedy"}, dict(seat)]}},
+           "motivation": [1.0], "group_policy": ["talk"], "group_share": [False],
+           "logging": {"level": "full", "snapshots": "decision"}}
+    games, _, _ = runner.run_experiment(exp, ".", workers=1, out_root=tmp_path / "results",
+                                        log_root=tmp_path / "logs", progress=False)
+    path, = (tmp_path / "logs" / "vote").rglob("*.jsonl.gz")
+    lines = read_log(path)
+    settings = lines[0]["seats"][0]["settings"]
+    assert settings["reply_format"] == "json" and settings["votes"] is True
+    assert llm.VOTE_RULES in settings["system_prompt"] and llm.talk_rules(True, votes=True) in settings["system_prompt"]
+    groups = [ln for ln in lines if ln["t"] == "decision" and ln["kind"] == "set_difficulty"]
+    assert len(groups) == 4
+    first = groups[0]["info"]
+    assert [(v["pass"], v["player"], v["d"]) for v in first["votes"]] == [(1, 0, 2), (1, 2, 3), (2, 0, 2), (2, 2, 3)]
+    assert first["agreed"] is False and first["d"] == 2 and groups[0]["labels"][groups[0]["choice"]].endswith(" 2")
+    assert "(proposes d = 2) I can reach 2." in first["votes"][1]["prompt"]       # the second voter sees the first
+    assert llm.VOTE_ASK[2] in first["votes"][2]["prompt"] and llm.JSON_TALK_ASK in first["votes"][0]["prompt"]
+    assert all(g["info"]["agreed"] and len(g["info"]["votes"]) == 2 for g in groups[1:])
+    assert games.r1_d.iloc[0] == 2 and games.r4_d.iloc[0] == 2
+    acts = [ln for ln in lines if ln["t"] == "decision" and ln["kind"] == "action" and ln["player"] in (0, 2)]
+    assert all(ln["info"]["said"] == "I need fish." for ln in acts)
+    assert acts[0]["info"]["to_coach"] == "Agreed, taking food." and acts[0]["info"]["coach"] == "- Too many cards in hand."
+    assert "(proposes d = 3) I can reach 3." in acts[0]["info"]["prompt"]          # proposals stay in the talk
+    assert acts[1]["info"]["digest"] == "- They need fish."                         # the answer it gave is dropped
+    assert llm.JSON_COACH_REPLY_ASK in acts[1]["info"]["prompt"]
+    # every call is counted, the votes' too
+    from wingsim.analysis import tokens
+    assert tokens.from_log(path)["calls"] == games.llm_calls.iloc[0]
+    # the probe rebuilds the prompts, proposals included in the table talk
+    args = argparse.Namespace(model=None, base_url=None, reasoning="logged", thinking="logged", plan="logged",
+                              extra_body=None, timeout=60, budget_usd=None, outcomes=None, goal_status=None,
+                              talk=None, coach=None, digest=None, temperature=0.0, max_tokens=None)
+    asked = [ln for ln in lines if ln["t"] == "decision" and ln["kind"] != "set_difficulty"
+             and (ln.get("info") or {}).get("prompt")]
+    for ln in asked[::5]:
+        cfg, s, d, t = probe.position(lines, seq=ln["seq"])
+        a, _ = probe.build_agent(lines[0], t["player"], args)
+        a.start(cfg, t["player"], Objective(1.0, 3))
+        if lines[0]["seats"][t["player"]]["settings"].get("votes"):
+            a.join_vote()
+        a.current_plan = ln["info"].get("plan")
+        a.turn_notes = probe.turn_notes(lines, t)
+        a.table = probe.table_talk(lines, t)
+        state = probe.harness_state(lines, t)
+        if d.kind == "action":
+            probe.apply_aux(state, t, ln["info"], state["posted"])
+        probe.set_harness(a, state)
+        assert a.system == lines[0]["seats"][t["player"]]["settings"]["system_prompt"]
+        assert a.build_prompt(api.observe(s, t["player"]), d)[0] == ln["info"]["prompt"], ln["seq"]

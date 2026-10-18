@@ -3,7 +3,7 @@
 #   coop_plan_after_thinking: hidden thinking on as well, as in the GLM game (runs first)
 #   coop_plan_after:          full visible reasoning, thinking off
 # Thinking needs room: the prompt (~4,000 tokens) plus max_tokens (+600 for the plan) must fit the server's
-# context_length, set to 32,768 for this run (with 16,384, max_tokens must stay near 11,000).
+# context_length: 16,384 on the Mac server, so max_tokens stays at 11,000 (it was 16,000 with 32,768).
 # Run it serially:
 #   .venv/bin/python -m wingsim.runner wingsim/experiments/llm-qwen-full.yaml --workers 1 --no-report
 name: llm-qwen-full
@@ -22,7 +22,7 @@ conditions:
       base_url: http://10.20.0.86:8000/v1
       reasoning: full
       thinking: high          # the local server has no effort levels; this switches thinking on and is logged
-      max_tokens: 16000
+      max_tokens: 11000
       timeout: 1800
       extra_body:
         chat_template_kwargs: {enable_thinking: true}

@@ -1,0 +1,27 @@
+# llm-glm-pair-harness.yaml (talk, coach, digest) with three changes:
+#   - group_policy talk: the two players set the co-op difficulty d together before each round, instead of
+#     fixed(2) (which they could not change, though the rules text said the group may)
+#   - reply_format json: the answer, the message and the reply to the coach come as one JSON object
+#   - thinking medium (high ran away: 5 decisions spent all 16,000 tokens thinking and fell back to random)
+# Same seed and deal. budget_usd counts both seats and all their calls (~$0.80-1.20 a game).
+#   .venv/bin/python -m wingsim.runner wingsim/experiments/llm-glm-pair-vote.yaml --workers 1 --no-report
+name: llm-glm-pair-vote
+seeds: {start: 103, count: 1}
+players: [2]
+conditions:
+  coop_plan_after:
+    plugins:
+      coop_goals:
+        penalty: avg_x_d
+        allowed_changes: [0, 1]
+    open_hands: true
+    win_condition: team_total
+    agents:
+    - &glm {type: llm, model: z-ai/glm-5.3-flash, reasoning: full, thinking: medium, max_tokens: 16000, timeout: 900,
+      budget_usd: 2.5, prompt: plan, plan: true, compact: true, outcomes: true, talk: true, coach: true, digest: true,
+      reply_format: json}
+    - *glm
+motivation: [1.0]
+group_policy: [talk]
+group_share: [false]
+logging: {level: full, snapshots: decision}
