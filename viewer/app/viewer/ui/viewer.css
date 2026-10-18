@@ -226,6 +226,7 @@ button.bubble:hover { border-color: var(--seat, var(--talk)); }
 .notes.flagged { background: var(--coach-bg); border-color: var(--coach); }
 .notes.calm { color: var(--ink-soft); }
 .notes.talknotes { border-color: var(--talk); }
+.notescut { display: block; margin-top: 4px; font-size: 0.78rem; font-style: italic; color: var(--ink-soft); white-space: normal; }
 .readmsgs { margin: 2px 0 6px; }
 .readmsgs > .blabel { font-size: 0.76rem; color: var(--ink-soft); }
 .auxmore { margin-top: 4px; font-size: 0.9rem; }

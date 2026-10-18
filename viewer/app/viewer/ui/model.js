@@ -161,8 +161,15 @@ function talkNodes(entry, q) {
 }
 
 /** A notes box: the short result of an extra call, as the main prompt got it. */
-function notesBox(notes, q, cls = '') {
-  return el('div.notes', { class: cls, html: notes ? prose(notes, q) : '<i>No notes.</i>' });
+function notesBox(call, q, cls = '') {
+  return el('div.notes', { class: cls, html: notesHtml(call, q) });
+}
+
+/** An extra call's notes, marked where the agent cut them short. */
+function notesHtml(call, q) {
+  if (!call.notes) return '<i>No notes.</i>';
+  return prose(call.notes, q) + (call.notesCut
+    ? `<span class="notescut" title="The agent keeps 600 characters of notes; the rest is in the full reply">… cut short here: the player saw only this much</span>` : '');
 }
 
 /** One extra call (digest or coach): notes first, full reply and hidden thinking behind toggles. */
@@ -181,7 +188,7 @@ function auxStep(entry, a, n, q, entries) {
     }
   }
   const flagged = a.role === 'coach' && entry.flags.coachFlagged;
-  out.push(notesBox(a.notes, q, a.role === 'coach' ? (flagged ? 'flagged' : 'calm') : 'talknotes'));
+  out.push(notesBox(a, q, a.role === 'coach' ? (flagged ? 'flagged' : 'calm') : 'talknotes'));
   const more = el('details.auxmore', {}, el('summary', {}, `Full ${a.role} reply${a.thinking ? ' and hidden thinking' : ''}`));
   if (a.thinking) more.append(el('details.thinking', {}, el('summary', {}, `Hidden thinking · ${plural(wordCount(a.thinking), 'word')}`), el('div.reply.hidden-thought', { html: prose(a.thinking, q) })));
   more.append(el('div.reply', { html: a.body ? prose(a.body, q) : '<i>(empty reply)</i>' }));
@@ -747,7 +754,7 @@ class SideDrawer {
       if (coach) {
         turn.append(el('button.bubble.coachmsg', { class: e.flags.coachFlagged ? 'flagged' : 'calm', onclick: () => p.show(e.index), title: `Decision ${e.index + 1}` },
           el('span.blabel', {}, `Coach · round ${e.round}, turn ${e.turn_no + 1}${e.flags.coachFlagged ? ' · ⚑' : ''}`),
-          el('span', { html: coach.notes ? prose(coach.notes, q) : '<i>No notes.</i>' })));
+          el('span', { html: notesHtml(coach, q) })));
       }
       turn.append(el('button.bubble.right.playermsg', { class: e.toCoach ? '' : 'none', style: { '--seat': seatCss(e.seatNo) }, onclick: () => p.show(e.index) },
         el('span.blabel', {}, `${playerName(e.seatNo)}${e.toCoach ? '' : ' did not reply'}`),

@@ -25,10 +25,10 @@ export const llmSeats = header => (header.seats || []).map((s, p) => (s.type ===
  * Split one raw reply into its parts.
  * - `hidden`: text inside real <think>…</think> pairs (hidden thinking).
  * - A lone <think> with no closing tag is a server quirk: the tag goes, the text stays.
- * - `body`: the reasoning and the ANSWER line, without the plan block.
+ * - `body`: the reasoning and the ANSWER line, without the plan blocks.
  * - `answer`: { text, value, start, end } for the last ANSWER line in `body` (start/end
  *   index into `body`), or null.
- * - `plan`: the text of a PLAN: … END PLAN block, or null.
+ * - `plan`: the text of the last PLAN: … END PLAN block, or null.
  */
 export function parseReply(raw) {
   let s = String(raw ?? '');
@@ -36,13 +36,18 @@ export function parseReply(raw) {
   s = s.replace(/<think>([\s\S]*?)<\/think>/g, (m, t) => { if (t.trim()) hidden.push(t.trim()); return ''; });
   s = s.replace(/<\/?think>/g, '');
 
+  // every plan block goes; the last one is the plan. Like the agent, a block without END PLAN
+  // ends where an ANSWER, the next PLAN:, a SAY: or a TO COACH: line begins.
   let plan = null;
-  const pm = /^[ \t]*[*_#]*\s*PLAN[*_]*\s*:/m.exec(s);
-  if (pm) {
+  const start = /^[ \t]*[*_#]*\s*PLAN[*_]*\s*:/m;
+  for (let pm; (pm = start.exec(s));) {
     const rest = s.slice(pm.index + pm[0].length);
-    const end = /^[ \t]*[*_]*END PLAN\b.*$/im.exec(rest);
+    const ends = [/^[ \t]*[*_]*END PLAN\b.*$/im, /ANSWER\s*[:=]/i, start, /^[*#\s]*(?:SAY|TO COACH):/m]
+      .map(re => re.exec(rest)).filter(Boolean);
+    const end = ends.sort((a, b) => a.index - b.index)[0];
+    const closed = end && /END PLAN/i.test(end[0]);
     plan = (end ? rest.slice(0, end.index) : rest).trim() || null;
-    s = s.slice(0, pm.index) + (end ? rest.slice(end.index + end[0].length) : '');
+    s = s.slice(0, pm.index) + (end ? rest.slice(end.index + (closed ? end[0].length : 0)) : '');
   }
   const body = s.trim();
 
@@ -156,6 +161,18 @@ const NO_PROBLEMS = /^[\s\-*•]*no problems\b/i;
 export const coachFlagged = notes => !!notes && !NO_PROBLEMS.test(notes);
 
 /**
+ * Whether an extra call's notes were shortened: the notes are the tail of the reply, so reply
+ * text left after them means the agent cut them (at 600 characters in llm.py) and the player
+ * saw only this much.
+ */
+export function notesCut(call) {
+  if (!call?.notes || !call.reply) return false;
+  const reply = String(call.reply).replace(/<think>[\s\S]*?<\/think>/g, '');
+  const i = reply.lastIndexOf(call.notes);
+  return i >= 0 && reply.slice(i + call.notes.length).trim() !== '';
+}
+
+/**
  * Which reply looks cut off, judged from usage.completion_tokens against the limit, or -1.
  * `usage` covers the last call only (see FORMAT-REQUESTS.md, L2), so only the last reply
  * can be judged; and only against the first call's limit (L3).
@@ -183,7 +200,7 @@ export function modelEntry(header, position) {
     return {
       role: a.role, notes: a.notes ?? null, prompt: a.prompt ?? null, reply: a.reply ?? '', body: r.body,
       thinking: [a.thinking, ...r.hidden].filter(Boolean).join('\n\n') || null,
-      usage: a.usage || {}, limit: a.limit ?? null, cut: isCut(a.usage, a.limit),
+      usage: a.usage || {}, limit: a.limit ?? null, cut: isCut(a.usage, a.limit), notesCut: notesCut(a),
     };
   });
   const coachCall = aux.find(a => a.role === 'coach');

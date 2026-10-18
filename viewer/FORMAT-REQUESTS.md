@@ -33,12 +33,14 @@ The viewer's reducer and table handle the new events and still read older logs (
 
 ## Table talk and the harness (17 October 2026)
 
-Built from section 6 on `llm-glm-pair-talk` (talk only) and a game played against a local stand-in model with talk, coach and digest on (no real coach log yet). Nothing is missing; two things the viewer relies on that the document could say:
+Built from section 6 on `llm-glm-pair-talk` (talk only) and a game played against a local stand-in model with talk, coach and digest on, then checked on `llm-glm-pair-harness` (all three on; its seats have no `coach_system_prompt` yet, which the document allows). Nothing is missing; four things the viewer relies on that the document could say:
 
 | # | Request | Kind | Viewer today |
 | --- | --- | --- | --- |
 | T1 | When a coach "flags" a problem | documentation, or a field | counts notes as flagged unless they start "No problems", the wording `wingsim/prompts/coach.md` asks for. A `flagged` boolean on the coach call would make it exact |
 | T2 | What a digest read | documentation | rebuilds it from the `said` of other seats since this seat's previous digest. Worth one sentence in section 6 confirming that is exactly the set the digest saw (or log it, e.g. `aux[].read` as decision indexes) |
+| T3 | Where a plan block without `END PLAN` ends | documentation | section 6 says at an `ANSWER:` or the next `PLAN:` line; `PLAN_END` in `llm.py` also ends it at a `SAY:` or `TO COACH:` line. The viewer follows `llm.py` (in `llm-glm-pair-harness` the models often leave out `END PLAN` and put `SAY:` straight after the plan). Worth adding the two to that sentence |
+| T4 | Notes are kept to 600 characters | documentation (and maybe a bigger limit) | `NOTES_LIMIT` in `llm.py` cuts a coach's or digest's notes, and section 6 doesn't say so. In `llm-glm-pair-harness` 31 of 52 coach notes and 9 of 47 digest notes were cut, often mid-sentence, so the player saw only part of the advice. The viewer marks notes as cut when reply text is left after them. Worth a sentence in section 6, and perhaps a higher limit or a shorter-notes instruction in `coach.md` |
 
 ## Language-model data (14 October 2026)
 

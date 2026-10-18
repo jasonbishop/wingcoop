@@ -2,7 +2,7 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { parseReply, parsePlan, diffWords, planDiff, cutOffReply, replyCuts, coachFlagged, modelIndex, talkLog, digestRead, tokenTotals, excerpt } from '../app/viewer/llm.js';
+import { parseReply, parsePlan, diffWords, planDiff, cutOffReply, replyCuts, coachFlagged, notesCut, modelIndex, talkLog, digestRead, tokenTotals, excerpt } from '../app/viewer/llm.js';
 import { buildReplay } from '../app/viewer/replay/log.js';
 import { logFiles, readLog } from './helpers.mjs';
 
@@ -27,6 +27,23 @@ test('the plan block is split off, and a "plan:" in the reasoning is not it', ()
   assert.match(r.body, /in my plan: "fish"/);
   assert.equal(r.plan, 'Engine: A\nBonus target: B\nRound goal: C\nNeed next: D\nPivot if: E');
   assert.deepEqual(parsePlan(r.plan).fields, { Engine: 'A', 'Bonus target': 'B', 'Round goal': 'C', 'Need next': 'D', 'Pivot if': 'E' });
+});
+
+test('a plan block without END PLAN ends at an ANSWER, PLAN:, SAY: or TO COACH: line, as in the agent', () => {
+  const r = parseReply('Reasoning.\n\nPLAN:\nEngine: A\nPivot if: E\n\nSAY: leave me the fish\nTO COACH: agreed\nANSWER: 2');
+  assert.equal(r.plan, 'Engine: A\nPivot if: E');
+  assert.equal(r.say.text, 'SAY: leave me the fish');
+  assert.equal(r.toCoach.text, 'TO COACH: agreed');
+  assert.equal(r.answer.value, '2');
+  const two = parseReply('Old plan was:\nPLAN:\nEngine: old\nANSWER: 1\nPLAN:\nEngine: new\nEND PLAN\nAfter.');
+  assert.equal(two.plan, 'Engine: new');
+  assert.equal(two.body, 'Old plan was:\nANSWER: 1\n\nAfter.');
+});
+
+test('notes are cut short when reply text is left after them', () => {
+  assert.equal(notesCut({ reply: 'Thinking.\nNOTES:\n- Food is short.', notes: '- Food is short.' }), false);
+  assert.equal(notesCut({ reply: 'NOTES:\n- Food is short, so take the fish now.', notes: '- Food is short, so' }), true);
+  assert.equal(notesCut({ reply: 'x', notes: null }), false);
 });
 
 test('the last ANSWER line counts; none gives null', () => {
@@ -120,6 +137,9 @@ for (const file of logFiles()) {
         assert.ok(roles.indexOf('digest') <= 0, `digest not first at ${e.d.seq}`);
         if (e.flags.readTalk) assert.ok(digestRead(entries, e).length > 0, `digest with nothing new at ${e.d.seq}`);
       }
+      // the logged message is on a SAY: / TO COACH: line the viewer finds (not swallowed by a plan)
+      if (info.said) assert.ok(e.replies.some(r => r.say), `said not found in a reply at ${e.d.seq}`);
+      if (info.to_coach) assert.ok(e.replies.some(r => r.toCoach), `to_coach not found in a reply at ${e.d.seq}`);
       if (Array.isArray(info.usage_all)) assert.equal(e.cuts.length, info.replies.length);
       if (e.flags.planChanged) assert.equal(e.d.kind, 'action');
       // the reply the viewer shows keeps all the text apart from the tags and the plan block
